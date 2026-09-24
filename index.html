@@ -126,6 +126,23 @@
   .rr-correct { font-size: 12px; color: var(--blue); font-weight: 700; margin-top: 3px; }
 
   /* IO */
+  /* ---- cloud sync ---- */
+  .cs-box { background:white; border-radius:14px; padding:16px; box-shadow:var(--shadow); margin-bottom:12px; border:2px solid var(--honey); }
+  .cs-head { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+  .cs-head .io-icon { font-size:24px; }
+  .cs-title { font-weight:800; color:var(--dark); }
+  .cs-desc { font-size:12px; color:#8a7560; margin-bottom:12px; }
+  .cs-code { width:100%; box-sizing:border-box; padding:10px; border:2px solid #EADFC6; border-radius:10px;
+             font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:19px; letter-spacing:.22em;
+             text-align:center; text-transform:uppercase; background:var(--cream); color:var(--dark); }
+  .cs-code:focus { outline:none; border-color:var(--honey); }
+  .cs-row { display:flex; gap:8px; margin-top:10px; }
+  .cs-row .btn { flex:1; }
+  .cs-msg { margin-top:10px; font-size:12px; line-height:1.5; min-height:18px; color:#8a7560; }
+  .cs-msg.ok { color:var(--green); }
+  .cs-msg.ng { color:var(--red); }
+  .cs-warn { margin-top:10px; font-size:11px; line-height:1.6; color:#9a6b00; background:#FFF6E0;
+             border-radius:8px; padding:8px 10px; }
   .io-item { background: white; border-radius: 14px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
   .io-icon { font-size: 24px; }
   .io-info { flex: 1; }
@@ -439,6 +456,21 @@
   <div class="back-link" onclick="goHome()">← ホームに戻る</div>
   <div class="page-title">💾 データ管理</div>
   <div class="page-sub">学習履歴のエクスポート・インポート</div>
+
+  <div class="cs-box">
+    <div class="cs-head"><div class="io-icon">☁️</div><div class="cs-title">クラウド同期</div></div>
+    <div class="cs-desc">同じコードを使えば、会社PCと自宅PCで学習履歴と★お気に入りを共有できる。APIキーは同期されへん。</div>
+    <input class="cs-code" id="cs-code" placeholder="CODE" maxlength="8" autocomplete="off" spellcheck="false">
+    <div class="cs-row">
+      <button class="btn btn-primary btn-sm" onclick="cloudPush()">⬆ アップ</button>
+      <button class="btn btn-primary btn-sm" onclick="cloudPull()">⬇ ダウン</button>
+    </div>
+    <div class="cs-row">
+      <button class="btn btn-sm" style="background:#F5ECD6;color:var(--honey-dark)" onclick="cloudNewCode()">新しいコードを発行</button>
+    </div>
+    <div class="cs-msg" id="cs-msg"></div>
+    <div class="cs-warn">⚠️ このコードは必ず紙かスマホに控えとくこと。PCのデータが初期化されたら、コードだけが復元の手がかりになる。</div>
+  </div>
 
   <div class="io-item">
     <div class="io-icon">📤</div>
@@ -961,7 +993,7 @@ function save(){
   try{ localStorage.setItem('school_v2',JSON.stringify({history:S.history,favs:S.favs})); }catch(e){}
 }
 
-window.onload=()=>{ load(); renderHome(); updateStats(); renderChatSetup(); };
+window.onload=()=>{ load(); renderHome(); updateStats(); renderChatSetup(); csInit(); };
 
 /* ---------- 集計ヘルパー ---------- */
 function patCount(patKey){
@@ -1387,6 +1419,112 @@ function resetData(){
   S.history={}; save(); updateStats(); renderHome(); showToast('🗑️ リセット完了');
 }
 
+
+/* ==================== クラウド同期 ==================== */
+/* Supabase: ITpassプロジェクト相乗り。テーブル public.sync_data を app='english' で共用 */
+const CS_URL  = 'https://lsgmhzbsxueqiwxgepxv.supabase.co/rest/v1/sync_data';
+const CS_KEY  = 'sb_publishable_91WPu0UrqFBWIdwcxCd15g_nBuZ4P68';  /* publishable: 公開可・RLS前提 */
+const CS_APP  = 'english';
+const CS_LS   = 'school_sync_code';
+/* ★ここに自分の同期コードを書いておくと、プロファイルが初期化されても
+      アプリを開くだけで自動で復元される。例: const CS_FIXED = 'ABC23XYZ'; */
+const CS_FIXED = 'HMQXBCBE';
+
+function csMsg(t, cls){ const e=document.getElementById('cs-msg'); if(!e)return; e.textContent=t; e.className='cs-msg'+(cls?' '+cls:''); }
+function csHead(){ return {'apikey':CS_KEY,'Content-Type':'application/json'}; }
+function csCode(){ return (document.getElementById('cs-code').value||'').trim().toUpperCase(); }
+function csKnownCode(){ return (localStorage.getItem(CS_LS)||CS_FIXED||'').trim().toUpperCase(); }
+
+function cloudNewCode(){
+  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';   /* 紛らわしい文字を除外 */
+  let c=''; for(let i=0;i<8;i++) c+=A[Math.floor(Math.random()*A.length)];
+  document.getElementById('cs-code').value=c;
+  csMsg('コードを発行した。⬆アップを押すと確定するで。');
+}
+
+/* 同期したい設定（APIキーは絶対に含めない） */
+function csCustom(){
+  const o={}; const m=localStorage.getItem('chat_model'); if(m) o.chat_model=m; return o;
+}
+
+async function cloudPush(silent){
+  const code=csCode();
+  if(!/^[A-Z0-9]{6,8}$/.test(code)){ if(!silent) csMsg('コードを入れてな（英数6〜8文字）','ng'); return; }
+  if(!silent) csMsg('アップ中…');
+  try{
+    const r=await fetch(CS_URL,{
+      method:'POST',
+      headers:Object.assign(csHead(),{'Prefer':'resolution=merge-duplicates,return=minimal'}),
+      body:JSON.stringify({code:code,app:CS_APP,stats:S.history||{},favs:S.favs||[],
+                           custom:csCustom(),updated_at:new Date().toISOString()})
+    });
+    if(!r.ok){ const t=await r.text(); if(!silent) csMsg('アップ失敗 '+r.status+' '+t.slice(0,70),'ng'); return; }
+    localStorage.setItem(CS_LS,code);
+    if(!silent){ csMsg('✅ アップ完了（'+new Date().toLocaleString('ja-JP')+'）','ok'); showToast('☁️ クラウドに保存したで'); }
+  }catch(e){ if(!silent) csMsg('通信エラー: '+e.message,'ng'); }
+}
+
+async function cloudPull(){
+  const code=csCode();
+  if(!/^[A-Z0-9]{6,8}$/.test(code)){ csMsg('コードを入れてな（英数6〜8文字）','ng'); return; }
+  csMsg('ダウン中…');
+  try{
+    const r=await fetch(CS_URL+'?code=eq.'+encodeURIComponent(code)+'&app=eq.'+CS_APP+'&select=*',{headers:csHead()});
+    if(!r.ok){ csMsg('取得失敗 '+r.status,'ng'); return; }
+    const rows=await r.json();
+    if(!rows.length){ csMsg('そのコードのデータが無い。英語アプリ用のコードか確認してや。','ng'); return; }
+    const d=rows[0];
+    /* インポートと同じくマージ（衝突時はクラウド側を採用） */
+    S.history=Object.assign({},S.history,d.stats||{});
+    if(Array.isArray(d.favs)) S.favs=Array.from(new Set([].concat(S.favs||[],d.favs)));
+    if(d.custom&&d.custom.chat_model) localStorage.setItem('chat_model',d.custom.chat_model);
+    save(); updateStats(); renderHome();
+    localStorage.setItem(CS_LS,code);
+    const when=d.updated_at?new Date(d.updated_at).toLocaleString('ja-JP'):'';
+    csMsg('✅ ダウン完了（クラウド側の更新: '+when+'）','ok');
+    showToast('📥 クラウドから復元したで');
+  }catch(e){ csMsg('通信エラー: '+e.message,'ng'); }
+}
+
+/* save() のたびに自動アップ（コード設定済みのときだけ・5秒デバウンス） */
+let csTimer=null;
+const _saveOrig=save;
+save=function(){
+  _saveOrig();
+  if(!localStorage.getItem(CS_LS)) return;
+  clearTimeout(csTimer);
+  csTimer=setTimeout(function(){ cloudPush(true); },5000);
+};
+
+function csInit(){
+  const el=document.getElementById('cs-code');
+  const c=csKnownCode();
+  if(el&&c){ el.value=c; csMsg('コード '+c+' で自動アップ中。別端末で同じコードを入れて⬇ダウン。'); }
+  if(c) localStorage.setItem(CS_LS,c);
+
+  /* 履歴が空でコードが分かっている＝プロファイルが飛んだ可能性。黙って復元を試みる */
+  const empty = !S.history || Object.keys(S.history).length===0;
+  if(c && empty) csAutoRestore(c);
+}
+
+async function csAutoRestore(code){
+  try{
+    const r=await fetch(CS_URL+'?code=eq.'+encodeURIComponent(code)+'&app=eq.'+CS_APP+'&select=*',{headers:csHead()});
+    if(!r.ok) return;
+    const rows=await r.json();
+    if(!rows.length) return;
+    const d=rows[0];
+    const n=Object.keys(d.stats||{}).length;
+    if(!n) return;
+    S.history=Object.assign({},S.history,d.stats||{});
+    if(Array.isArray(d.favs)) S.favs=Array.from(new Set([].concat(S.favs||[],d.favs)));
+    if(d.custom&&d.custom.chat_model) localStorage.setItem('chat_model',d.custom.chat_model);
+    _saveOrig();               /* 復元直後に再アップし返さない */
+    updateStats(); renderHome();
+    csMsg('☁️ クラウドから自動復元した（'+n+'問ぶん）','ok');
+    showToast('☁️ 学習履歴を自動復元したで（'+n+'問）');
+  }catch(e){}
+}
 
 /* ==================== 英語チャット ==================== */
 const CHAT_MODES=[
