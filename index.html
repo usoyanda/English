@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英会話スクール 授業復習 🐝</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --honey: #F5A623;
+    --honey-dark: #D4860A;
+    --cream: #FFFDF5;
+    --dark: #2C1810;
+    --green: #43A047;
+    --green-bg: #E8F5E9;
+    --red: #E53935;
+    --red-bg: #FFEBEE;
+    --blue: #1976D2;
+    --blue-bg: #E3F2FD;
+    --shadow: 0 4px 20px rgba(44,24,16,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: #FFF8E7; color: var(--dark); min-height: 100vh; }
+
+  .header {
+    background: var(--honey); padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 2px 12px rgba(245,166,35,0.4);
+    position: sticky; top: 0; z-index: 200;
+  }
+  .header h1 { font-size: 18px; font-weight: 900; color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.15); }
+  .header .sub { font-size: 11px; color: rgba(255,255,255,0.88); font-weight: 600; }
+
+  .screen { display: none; padding: 18px 16px 90px; max-width: 700px; margin: 0 auto; }
+  .screen.active { display: block; }
+
+  .page-title { font-family: 'Caveat', cursive; font-size: 28px; color: var(--honey-dark); margin-bottom: 6px; }
+  .page-sub { font-size: 13px; color: #999; margin-bottom: 20px; }
+  .section-label { font-size: 11px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #aaa; margin: 20px 0 8px; }
+
+  .card { background: white; border-radius: 18px; padding: 18px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .card h3 { font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+
+  /* STATS */
+  .stats-row { display: flex; gap: 10px; margin-bottom: 18px; }
+  .stat-card { flex: 1; background: white; border-radius: 16px; padding: 14px 10px; box-shadow: var(--shadow); text-align: center; }
+  .stat-num { font-family: 'Caveat', cursive; font-size: 32px; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 10px; font-weight: 800; color: #bbb; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 12px 22px; border-radius: 14px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary { background: var(--honey); color: white; box-shadow: 0 4px 0 var(--honey-dark); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--honey-dark); }
+  .btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--honey-dark); }
+  .btn-ghost { background: white; color: var(--dark); border: 2px solid #e0e0e0; box-shadow: none; }
+  .btn-ghost:hover { border-color: var(--honey); }
+  .btn-green { background: var(--green); color: white; box-shadow: 0 4px 0 #2E7D32; }
+  .btn-green:hover { transform: translateY(-2px); }
+  .btn-red { background: var(--red); color: white; box-shadow: 0 4px 0 #B71C1C; }
+  .btn-block { width: 100%; justify-content: center; }
+  .btn-sm { padding: 8px 16px; font-size: 13px; border-radius: 10px; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-row .btn { flex: 1; justify-content: center; }
+
+  .back-link { display: inline-flex; align-items: center; gap: 5px; color: var(--honey-dark); font-weight: 800; font-size: 14px; cursor: pointer; margin-bottom: 16px; }
+  .back-link:hover { text-decoration: underline; }
+
+  /* QUIZ */
+  .quiz-topbar { background: white; border-radius: 16px; padding: 14px 18px; box-shadow: var(--shadow); margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .quiz-title-sm { font-weight: 800; font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .progress-info { font-size: 12px; font-weight: 700; color: #aaa; white-space: nowrap; }
+  .progress-track { height: 6px; background: #eee; border-radius: 3px; margin-top: 6px; }
+  .progress-fill { height: 100%; background: var(--honey); border-radius: 3px; transition: width 0.4s ease; }
+
+  .q-card { background: white; border-radius: 20px; padding: 20px; box-shadow: var(--shadow); margin-bottom: 14px; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .q-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .q-num { font-size: 11px; font-weight: 800; color: var(--honey); letter-spacing: 1px; }
+  .q-type-badge { padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; background: var(--blue-bg); color: var(--blue); }
+  .q-lesson { font-size: 10px; color: #bbb; font-weight: 700; margin-left: auto; }
+  .q-text { font-size: 16px; font-weight: 700; line-height: 1.65; margin-bottom: 6px; }
+  .q-hint { font-size: 12px; color: #aaa; font-style: italic; margin-bottom: 14px; min-height: 18px; }
+
+  /* CHOICES */
+  .choice-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .choice-btn { padding: 12px 16px; border-radius: 12px; border: 2px solid #eee; background: #fafafa; cursor: pointer; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; text-align: left; transition: all 0.15s; color: var(--dark); display: flex; align-items: center; gap: 10px; }
+  .choice-btn:hover:not(:disabled) { border-color: var(--honey); background: #FFF8E7; }
+  .choice-btn.ok { border-color: var(--green); background: var(--green-bg); color: #1B5E20; }
+  .choice-btn.ng { border-color: var(--red); background: var(--red-bg); color: #B71C1C; }
+  .cletter { width: 28px; height: 28px; border-radius: 50%; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; flex-shrink: 0; }
+  .ok .cletter { background: var(--green); color: white; }
+  .ng .cletter { background: var(--red); color: white; }
+
+  /* INPUT */
+  .answer-inp { width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid #eee; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 600; outline: none; background: #fafafa; transition: all 0.2s; resize: vertical; min-height: 60px; margin-bottom: 10px; }
+  .answer-inp:focus { border-color: var(--honey); background: white; }
+
+  /* FEEDBACK */
+  .feedback { border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; display: none; animation: fadeUp 0.2s; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: var(--green-bg); border: 2px solid #A5D6A7; }
+  .feedback.ng { background: var(--red-bg); border: 2px solid #FFCDD2; }
+  .feedback.neutral { background: var(--blue-bg); border: 2px solid #90CAF9; }
+  .fb-title { font-size: 15px; font-weight: 900; margin-bottom: 6px; }
+  .fb-correct { font-size: 14px; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+  .fb-explain { background: rgba(255,255,255,0.7); border-radius: 10px; padding: 10px 14px; margin-top: 8px; font-size: 13px; line-height: 1.6; color: #444; }
+  .self-judge { display: flex; gap: 8px; margin-top: 10px; }
+  .self-judge .btn { flex: 1; justify-content: center; }
+
+  .quiz-actions { display: flex; gap: 10px; margin-top: 4px; }
+  .quiz-actions .btn { flex: 1; justify-content: center; }
+
+  /* RESULT */
+  .result-hero { text-align: center; padding: 28px 20px; background: white; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 18px; }
+  .result-emoji { font-size: 58px; margin-bottom: 10px; }
+  .result-score { font-family: 'Caveat', cursive; font-size: 52px; font-weight: 700; color: var(--honey); }
+  .result-sub { font-size: 14px; color: #aaa; margin-bottom: 14px; }
+  .grade-badge { display: inline-block; padding: 8px 28px; border-radius: 30px; font-size: 22px; font-weight: 900; }
+
+  .result-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+  .result-row:last-child { border-bottom: none; }
+  .rr-icon { font-size: 18px; flex-shrink: 0; padding-top: 2px; }
+  .rr-q { font-size: 12px; color: #999; font-weight: 700; }
+  .rr-type { padding: 1px 7px; border-radius: 5px; background: var(--blue-bg); color: var(--blue); font-weight: 800; font-size: 10px; margin-right: 4px; }
+  .rr-correct { font-size: 12px; color: var(--blue); font-weight: 700; margin-top: 3px; }
+
+  /* IO */
+  .io-item { background: white; border-radius: 14px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+  .io-icon { font-size: 24px; }
+  .io-info { flex: 1; }
+  .io-name { font-weight: 800; font-size: 14px; }
+  .io-desc { font-size: 12px; color: #aaa; margin-top: 2px; }
+  #import-file { display: none; }
+  .import-lbl { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; background: white; color: var(--dark); border: 2px solid #e0e0e0; transition: all 0.2s; }
+  .import-lbl:hover { border-color: var(--honey); }
+
+  /* BOTTOM NAV */
+  .bnav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #eee; display: flex; box-shadow: 0 -4px 20px rgba(0,0,0,0.07); z-index: 100; }
+  .bnav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px; cursor: pointer; font-size: 10px; font-weight: 800; color: #ccc; background: none; border: none; font-family: 'Nunito', sans-serif; transition: color 0.15s; }
+  .bnav-btn .ico { font-size: 21px; }
+  .bnav-btn.active { color: var(--honey); }
+
+  /* CATEGORY UI */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 7px 14px; border-radius: 20px; border: 2px solid #eee; background: white; color: #bbb; font-weight: 800; font-size: 12.5px; cursor: pointer; transition: all .15s; font-family:'Nunito',sans-serif; }
+  .chip:hover { border-color: var(--honey); color: var(--honey-dark); }
+  .chip.on { border-color: var(--honey); background: #FFF3CD; color: var(--honey-dark); }
+
+  .cat { background: white; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 10px; overflow: hidden; border: 2px solid transparent; transition: border-color .15s; }
+  .cat.open { border-color: var(--honey); }
+  .cat-head { display: flex; align-items: center; gap: 12px; padding: 15px 16px; cursor: pointer; }
+  .cat-ico { font-size: 21px; }
+  .cat-name { font-weight: 800; font-size: 14.5px; flex: 1; }
+  .cat-cnt { font-size: 11px; font-weight: 800; color: #ccc; }
+  .cat-arrow { font-size: 12px; color: #ccc; transition: transform .25s; }
+  .cat.open .cat-arrow { transform: rotate(90deg); }
+  .cat-sel { font-size: 11px; font-weight: 800; color: var(--honey-dark); background: #FFF3CD; padding: 2px 8px; border-radius: 8px; }
+  .cat-body { display: none; padding: 0 16px 14px; }
+  .cat.open .cat-body { display: block; }
+  .cat-all { font-size: 11.5px; font-weight: 800; color: var(--honey-dark); cursor: pointer; padding: 4px 0 9px; }
+  .cat-all:hover { text-decoration: underline; }
+
+  .pat { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 11px; background: #FAFAFA; border: 2px solid #f0f0f0; cursor: pointer; margin-bottom: 7px; transition: all .15s; }
+  .pat:hover { border-color: var(--honey); }
+  .pat.on { border-color: var(--honey); background: #FFF8E7; }
+  .pat-box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: 900; }
+  .pat.on .pat-box { background: var(--honey); border-color: var(--honey); }
+  .pat-txt { font-size: 13.5px; font-weight: 700; }
+  .pat-ex { font-size: 11px; color: #aaa; font-weight: 600; margin-top: 2px; }
+  .pat-cnt { font-size: 11px; font-weight: 800; color: #ccc; }
+
+  .side-box { background: white; border-radius: 16px; box-shadow: var(--shadow); padding: 15px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; border: 2px solid transparent; }
+  .side-box.on { border-color: var(--honey); background: #FFF8E7; }
+  .side-box.on .pat-box { background: var(--honey); border-color: var(--honey); }
+  .side-box.fav.on { border-color: #FFB300; background: #FFFDE7; }
+  .side-box.fav.on .pat-box { background: #FFB300; border-color: #FFB300; }
+  .side-box.weak.on { border-color: var(--red); background: var(--red-bg); }
+  .side-box.weak.on .pat-box { background: var(--red); border-color: var(--red); }
+  .side-ico { font-size: 21px; }
+  .side-info { flex: 1; }
+  .side-name { font-weight: 800; font-size: 14.5px; }
+
+  .summary { background: var(--dark); color: white; border-radius: 14px; padding: 13px 16px; font-size: 13px; font-weight: 700; margin: 18px 0 10px; line-height: 1.6; }
+  .summary b { color: var(--honey); font-size: 15px; }
+  .btn-primary:disabled { background: #ddd; box-shadow: 0 4px 0 #bbb; cursor: not-allowed; transform: none; }
+
+  .deep-btn { margin-top: 10px; padding: 8px 16px; border-radius: 10px; border: 2px solid var(--blue); background: white; color: var(--blue); font-family:'Nunito',sans-serif; font-size: 12.5px; font-weight: 800; cursor: pointer; transition: all .15s; }
+  .deep-btn:hover { background: var(--blue-bg); }
+  .fb-deep { background: rgba(255,255,255,0.85); border-left: 4px solid var(--blue); border-radius: 10px; padding: 12px 14px; margin-top: 8px; font-size: 13px; line-height: 1.75; color: #333; animation: fadeUp .2s; }
+
+  .ex-code { background: #FFF3CD; color: var(--honey-dark); padding: 1px 6px; border-radius: 5px; font-weight: 800; font-size: 12.5px; }
+
+  .q-star { font-size: 23px; cursor: pointer; line-height: 1; user-select: none; margin-left: 6px; transition: transform .15s; }
+  .q-star:active { transform: scale(1.3); }
+  .q-star.on { color: #FFB300; }
+  .rr-star { font-size: 15px; cursor: pointer; margin-left: 6px; }
+  .rr-star.on { color: #FFB300; }
+
+  /* CHAT */
+  .sel-inp { padding: 11px 14px; border-radius: 12px; border: 2px solid #eee; font-family:'Nunito',sans-serif; font-size: 14px; font-weight: 700; background: #fafafa; outline: none; color: var(--dark); width: 100%; }
+  .sel-inp:focus { border-color: var(--honey); background: white; }
+  .mocknote { background: #FFF3CD; border: 2px dashed var(--honey); border-radius: 14px; padding: 12px 16px; font-size: 12.5px; font-weight: 700; color: var(--honey-dark); line-height: 1.6; margin-bottom: 16px; }
+
+  .chat-topbar { background: white; border-radius: 16px; padding: 12px 16px; box-shadow: var(--shadow); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+  .chat-log { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; min-height: 200px; }
+  .msg { max-width: 88%; padding: 12px 15px; border-radius: 16px; font-size: 14px; line-height: 1.7; animation: fadeUp .25s; }
+  .msg.ai { background: white; box-shadow: var(--shadow); align-self: flex-start; border-bottom-left-radius: 5px; }
+  .msg.me { background: var(--honey); color: white; align-self: flex-end; border-bottom-right-radius: 5px; font-weight: 700; }
+  .msg.sys { background: #F0F0F0; color: #888; align-self: center; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 20px; }
+  .msg-jp { font-size: 12px; opacity: .75; margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(0,0,0,.12); }
+  .msg-speak { font-size: 15px; cursor: pointer; margin-left: 8px; opacity: .55; }
+  .msg-speak:hover { opacity: 1; }
+
+  .correction { background: var(--red-bg); border: 2px solid #FFCDD2; border-radius: 12px; padding: 11px 14px; margin-top: 9px; font-size: 12.5px; line-height: 1.7; }
+  .correction.good { background: var(--green-bg); border-color: #A5D6A7; }
+  .corr-ttl { font-weight: 900; font-size: 12px; margin-bottom: 5px; }
+  .corr-fix { color: var(--green); font-weight: 800; }
+  .corr-was { color: #999; text-decoration: line-through; }
+
+  .chat-input-row { display: flex; gap: 8px; align-items: flex-start; }
+  .chat-input-row .answer-inp { flex: 1; }
+  .typing { display: inline-flex; gap: 4px; }
+  .typing span { width: 7px; height: 7px; border-radius: 50%; background: #ccc; animation: blink 1.2s infinite; }
+  .typing span:nth-child(2){animation-delay:.2s} .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink { 0%,60%,100%{opacity:.25} 30%{opacity:1} }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--dark); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 800; transition: transform 0.3s ease, opacity 0.3s; z-index: 999; opacity: 0; }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span style="font-size:26px">🐝</span>
+  <div>
+    <h1>英会話スクール 授業復習</h1>
+    <div class="sub">School Lesson Review</div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="screen active" id="s-home">
+  <div class="page-title">📝 授業の復習しよ！</div>
+  <div class="page-sub">スクールのメモから生成した問題で練習するで</div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="stat-total" style="color:var(--dark)">0</div><div class="stat-label">TOTAL</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-correct" style="color:var(--green)">0</div><div class="stat-label">CORRECT</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-weak" style="color:var(--red)">0</div><div class="stat-label">WEAK</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-rate" style="color:var(--honey)">-</div><div class="stat-label">RATE%</div></div>
+  </div>
+
+  <div class="section-label">出題形式（ここで1回だけ選ぶ）</div>
+  <div class="chips" id="fmt-chips"></div>
+
+  <div class="section-label">出題数</div>
+  <div class="chips" id="cnt-chips"></div>
+
+  <div class="section-label">カテゴリ</div>
+  <div id="cat-list"></div>
+
+  <div class="section-label">単語だけ流したいとき</div>
+  <div class="side-box" id="vocab-box" onclick="toggleVocab()">
+    <div class="pat-box" id="vocab-chk"></div>
+    <div class="side-ico">🏷️</div>
+    <div class="side-info">
+      <div class="side-name">単語チェック</div>
+      <div class="pat-ex">layover / purebred / calf など、意味だけ覚えるやつ</div>
+    </div>
+    <div class="cat-cnt" id="vocab-cnt">0問</div>
+  </div>
+
+  <div class="section-label">自分で★を付けたやつ</div>
+  <div class="side-box fav" id="fav-box" onclick="toggleFav()">
+    <div class="pat-box" id="fav-chk"></div>
+    <div class="side-ico">⭐</div>
+    <div class="side-info">
+      <div class="side-name">お気に入りだけ</div>
+      <div class="pat-ex">クイズ中に★を付けた問題だけを出す</div>
+    </div>
+    <div class="cat-cnt" id="fav-cnt">0問</div>
+  </div>
+
+  <div id="weak-box-wrap" style="display:none">
+    <div class="section-label">まちがえたやつ</div>
+    <div class="side-box weak" id="weak-box" onclick="toggleWeak()">
+      <div class="pat-box" id="weak-chk"></div>
+      <div class="side-ico">💪</div>
+      <div class="side-info">
+        <div class="side-name">苦手だけ</div>
+        <div class="pat-ex">正解より不正解が多い問題を集中的に</div>
+      </div>
+      <div class="cat-cnt" id="weak-cnt">0問</div>
+    </div>
+  </div>
+
+  <div class="summary" id="sel-summary">まだ何も選んでへんで</div>
+  <button class="btn btn-primary btn-block" id="start-btn" onclick="startSession()" disabled>🚀 スタート！</button>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="s-quiz">
+  <div class="back-link" onclick="goHome()">← ホームに戻る</div>
+
+  <div class="quiz-topbar">
+    <div style="flex:1;overflow:hidden">
+      <div class="quiz-title-sm" id="q-session-label">授業復習セッション</div>
+      <div class="progress-track"><div class="progress-fill" id="q-prog-bar" style="width:0%"></div></div>
+    </div>
+    <div class="progress-info" id="q-prog-text">1/25</div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-meta">
+      <div class="q-num" id="q-num">Q1</div>
+      <div class="q-type-badge" id="q-type-badge">単語</div>
+      <div class="q-lesson" id="q-lesson"></div>
+      <div class="q-star" id="q-star" onclick="toggleStar()">☆</div>
+    </div>
+    <div class="q-text" id="q-text"></div>
+    <div class="q-hint" id="q-hint"></div>
+    <div id="q-body"></div>
+  </div>
+
+  <div class="feedback" id="q-feedback">
+    <div class="fb-title" id="fb-title"></div>
+    <div class="fb-correct" id="fb-correct"></div>
+    <div class="fb-explain" id="fb-explain" style="display:none"></div>
+    <div id="fb-deep-wrap" style="display:none">
+      <button class="deep-btn" id="fb-deep-btn" onclick="toggleDeep()">🔍 もっと詳しく</button>
+      <div class="fb-deep" id="fb-deep" style="display:none"></div>
+    </div>
+    <div id="fb-self-judge"></div>
+  </div>
+
+  <div class="quiz-actions">
+    <button class="btn btn-ghost" onclick="goHome()">🏠</button>
+    <button class="btn btn-primary" id="q-next-btn" onclick="nextQuestion()" style="display:none">次へ →</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="s-result">
+  <div class="result-hero">
+    <div class="result-emoji" id="r-emoji">🎉</div>
+    <div class="result-score" id="r-score">0%</div>
+    <div class="result-sub" id="r-sub">0問中0問正解</div>
+    <div class="grade-badge" id="r-grade"></div>
+  </div>
+
+  <div class="section-label">問題の振り返り</div>
+  <div class="card" id="r-list"></div>
+
+  <div class="btn-row" style="margin-top:14px">
+    <button class="btn btn-ghost" onclick="goHome()">← ホーム</button>
+    <button class="btn btn-primary" onclick="startSession()">もう一度</button>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="screen" id="s-chat">
+  <div class="page-title">💬 英語で話す</div>
+  <div class="page-sub">AI講師と英語でやりとりして、口を動かす練習をするで</div>
+
+  <div id="chat-setup">
+    <div id="chat-nokey" class="mocknote" style="display:none">
+      APIキーが未設定や。下の「設定」から自分のAnthropic APIキーを入れてな。キーはこの端末のブラウザにだけ保存されて、外には出えへん。
+    </div>
+
+    <div class="section-label">モード</div>
+    <div class="chips" id="chat-mode-chips"></div>
+
+    <div class="section-label">テーマ</div>
+    <div class="chips" id="chat-topic-kind"></div>
+    <div style="margin-top:10px"><select id="chat-topic" class="sel-inp"></select></div>
+
+    <div class="section-label">レベル</div>
+    <div class="chips" id="chat-level-chips"></div>
+
+    <button class="btn btn-primary btn-block" id="chat-start-btn" onclick="startChat()" style="margin-top:16px">🚀 会話スタート</button>
+    <button class="btn btn-ghost btn-block" onclick="showScreen('apikey')" style="margin-top:10px">⚙️ APIキーの設定</button>
+  </div>
+
+  <div id="chat-room" style="display:none">
+    <div class="chat-topbar">
+      <div style="flex:1;overflow:hidden">
+        <div class="quiz-title-sm" id="chat-label"></div>
+        <div class="pat-ex" id="chat-sub"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="endChat()">終了</button>
+    </div>
+    <div class="chat-log" id="chat-log"></div>
+    <div class="chat-input-row">
+      <textarea class="answer-inp" id="chat-inp" placeholder="英語で入力してな..." style="min-height:52px;margin-bottom:0"></textarea>
+      <button class="btn btn-primary" id="chat-send" onclick="sendChat()">送信</button>
+    </div>
+    <div class="pat-ex" style="margin-top:6px">Enterで送信 / Shift+Enterで改行</div>
+  </div>
+</div>
+
+<!-- APIKEY -->
+<div class="screen" id="s-apikey">
+  <div class="back-link" onclick="showScreen('chat')">← 戻る</div>
+  <div class="page-title">⚙️ APIキー設定</div>
+  <div class="page-sub">Anthropic APIキーを入れると会話機能が使えるようになる</div>
+
+  <div class="card">
+    <h3>🔑 APIキー</h3>
+    <input type="password" class="sel-inp" id="apikey-inp" placeholder="sk-ant-..." style="width:100%">
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-primary" onclick="saveApiKey()">保存</button>
+      <button class="btn btn-ghost" onclick="clearApiKey()">削除</button>
+    </div>
+    <div class="pat-ex" style="margin-top:12px;line-height:1.7">
+      ・キーはこの端末のブラウザ（localStorage）にだけ保存され、外部に送信されへん<br>
+      ・APIの利用料金は自分のAnthropicアカウントに課金される<br>
+      ・キーは <b>console.anthropic.com</b> で発行できる<br>
+      ・社内PC等でネットワーク制限がある場合は接続できへんことがある
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🤖 使うモデル</h3>
+    <div class="chips" id="model-chips"></div>
+    <div class="pat-ex" style="margin-top:10px">会話の質と料金が変わる。迷ったらSonnetでええ</div>
+  </div>
+
+  <div class="card">
+    <h3>🔌 接続テスト</h3>
+    <button class="btn btn-ghost btn-block" onclick="testApi()">つながるか試す</button>
+    <div id="api-test-result" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- DATA -->
+<div class="screen" id="s-data">
+  <div class="back-link" onclick="goHome()">← ホームに戻る</div>
+  <div class="page-title">💾 データ管理</div>
+  <div class="page-sub">学習履歴のエクスポート・インポート</div>
+
+  <div class="io-item">
+    <div class="io-icon">📤</div>
+    <div class="io-info"><div class="io-name">エクスポート</div><div class="io-desc">学習履歴をJSONで保存</div></div>
+    <button class="btn btn-primary btn-sm" onclick="exportData()">保存</button>
+  </div>
+  <div class="io-item">
+    <div class="io-icon">📥</div>
+    <div class="io-info"><div class="io-name">インポート</div><div class="io-desc">JSONから履歴を復元</div></div>
+    <label class="import-lbl" for="import-file">読込</label>
+    <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+  </div>
+  <div class="io-item">
+    <div class="io-icon">🗑️</div>
+    <div class="io-info"><div class="io-name">リセット</div><div class="io-desc">学習履歴をすべて削除</div></div>
+    <button class="btn btn-red btn-sm" onclick="resetData()">削除</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <button class="bnav-btn active" id="nav-home" onclick="navTo('home')"><span class="ico">🏠</span>ホーム</button>
+  <button class="bnav-btn" id="nav-chat" onclick="navTo('chat')"><span class="ico">💬</span>会話</button>
+  <button class="bnav-btn" id="nav-data" onclick="navTo('data')"><span class="ico">💾</span>データ</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const QB = [
+  // ===== 2603（3月）①YUTA 3/28 =====
+  {id:'v0101',pat:'favourite',month:'2603',type:'vocab',q:'「行きつけの場所」を英語で？',a:'go-to place',choices:['go-to place','favorite spot','usual place','home base'],explain:"「いつも行くお決まりの場所」という意味。`My go-to place is Yayoiken.` 場所以外にも go-to song（十八番）、go-to dish（定番料理）のように広く使える便利な形容詞。",lesson:'①3/28'},
+  {id:'v0102',pat:'__vocab__',month:'2603',type:'vocab',q:'「回転寿司」を英語で？',a:'conveyor belt sushi',choices:['conveyor belt sushi','spinning sushi','belt sushi','rolling sushi'],explain:"ベルトコンベアで寿司が回ってくる形式のこと。`Let's go to a conveyor belt sushi restaurant.` 海外でも sushi train と呼ぶ地域がある。",lesson:'①3/28'},
+  {id:'v0103',pat:'howoften',month:'2603',type:'vocab',q:'"twice" の意味は？',a:'2回',choices:['2回','3回','半分','1回'],explain:"「2回」を表す専用の語で、two times より自然。`I eat out twice a week.` 1回は once、3回以上は three times と数字＋times になる。",lesson:'①3/28'},
+  {id:'v0104',pat:'howoften',month:'2603',type:'vocab',q:'"once or twice" の日本語は？',a:'1〜2回',choices:['1〜2回','2〜3回','3〜4回','ほぼ毎日'],explain:"はっきり決まっていない回数をぼかして言う表現。`I go there once or twice a month.` 頻度を聞かれて即答しづらいときに便利。",lesson:'①3/28'},
+  {id:'v0105',pat:'howoften',month:'2603',type:'vocab',q:'"two or three times" の日本語は？',a:'2〜3回',choices:['2〜3回','1〜2回','3〜4回','4〜5回'],explain:"「2〜3回」と幅を持たせた言い方。`I cook two or three times a week.` once or twice と同じく、だいたいの頻度を答えるときに使う。",lesson:'①3/28'},
+  {id:'f0101',pat:'almost',month:'2603',type:'fill',q:'I eat out ___ every day.',blank:'almost',choices:['almost','always','never','rarely'],hint:'「ほぼ毎日外食する」',lesson:'①3/28'},
+  {id:'f0102',pat:'times',month:'2603',type:'fill',q:'I eat out about ___ a week.',blank:'twice',choices:['twice','two times','double','2 time'],hint:'「週に約2回」',deep:"【回数の言い方】1回は once、2回は twice、3回以上は `three times` のように数字＋times を使う。頻度を表すときは `once a week`（週1回）のように 回数＋a＋期間 の形にし、この a は「〜につき」を意味する per と同じ働きをする。`twice a week` を `two times in a week` と言っても通じるが不自然。曖昧にぼかしたいときは `once or twice a week`（週1〜2回）や `about twice a week`（週2回くらい）と幅を持たせる。",lesson:'①3/28'},
+  {id:'f0103',pat:'favourite',month:'2603',type:'fill',q:'My go-___ place is Yayoiken.',blank:'to',choices:['to','in','for','at'],hint:'行きつけ',lesson:'①3/28'},
+  {id:'f0104',pat:'favourite',month:'2603',type:'fill',q:'This is my go-to karaoke ___.',blank:'song',choices:['song','music','track','voice'],hint:'十八番',lesson:'①3/28'},
+  {id:'f0105',pat:'greeting',month:'2603',type:'fill',q:'___ are you? — I\'m fine.',blank:'How',choices:['How','What','Who','Where'],hint:'挨拶',lesson:'①3/28'},
+  {id:'g0101',pat:'almost',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'I almost eat out every day.',optB:'I eat out almost every day.',a:'B',explain:"\"almost\" は修飾する語の直前に置くのがルール。Aの \"I almost eat out\" だと「外食しかけた（実際はしてない）」という妙な意味になる。every day を修飾したいので almost every day の語順が正しい。",lesson:'①3/28'},
+  {id:'g0102',pat:'times',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'about 2 times in week',optB:'about twice a week',a:'B',explain:"回数は \"twice a week\"（週2回）のように、回数＋a＋期間で言うのが定番。\"2 times in week\" は不自然で、in ではなく a を使う。1回なら once、3回以上は three times と数字＋times になる。",deep:"【a と per】`twice a week` の a は「〜につき」の意味で、per と同じ働きをしている。`60 kilometers an hour`（時速60km）、`3 times a day`（1日3回）のように広く使われ、フォーマルな文書では `per week` `per hour` と置き換えられる。in を使った `two times in week` は誤りだが、`twice in a week` は「1週間のうちに2回も」と回数の多さを強調する別の言い方として成立する場合がある。基本は a を使うと覚えておけばよい。",lesson:'①3/28'},
+  {id:'g0103',pat:'howoften',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'How many you eat out?',optB:'How often do you eat out?',a:'B',explain:"頻度を聞くときは \"How often do you ~?\" が定番。\"How many\" は数を聞く表現なので、後ろに数える名詞（How many times など）が必要になる。回数を明示せず頻度そのものを聞くなら How often を使う。",deep:"【How often と How many times】`How often do you ~?` は頻度そのものを尋ねる定番形で、答えは `twice a week` など。`How many times ~?` は具体的な回数を尋ねる形で、必ず times が必要（×How many do you eat out?）。過去の合計回数を聞くなら `How many times have you been there?` と現在完了を使う。関連する疑問詞に `How long`（期間）、`How soon`（あとどれくらいで）、`How far`（距離）があり、How + 形容詞/副詞 で様々な尺度を尋ねられる。",lesson:'①3/28'},
+  {id:'g0104',pat:'favourite',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'My restaurant is Yayoiken.',optB:'My go-to restaurant is Yayoiken.',a:'B',explain:"\"go-to\" は「行きつけの・いつもの・定番の」という意味の形容詞。Aの \"My restaurant\" だと自分が経営している店に聞こえてしまう。go-to place / go-to song のように名詞の前に置いて使う。",lesson:'①3/28'},
+  {id:'g0105',pat:'greeting',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'I\'m Good.',optB:'Good. / I\'m fine.',a:'B',explain:"体調や気分を聞かれたときの返しは \"Good.\" や \"I'm fine.\"。Aの \"I'm Good.\" は大文字が誤りなだけでなく、カジュアルな会話では I'm を省いて Good. だけで充分。その後に And you? を続けると自然。",lesson:'①3/28'},
+  {id:'t0101',pat:'times',month:'2603',type:'translate',q:'「週に約2回外食します」',a:'I eat out about twice a week.',hint:'about / twice / a week',lesson:'①3/28'},
+  {id:'t0102',pat:'favourite',month:'2603',type:'translate',q:'「私の行きつけの店はやよい軒です」',a:'My go-to place is Yayoiken.',hint:'go-to place',lesson:'①3/28'},
+  {id:'t0103',pat:'howoften',month:'2603',type:'translate',q:'「どれくらい外食しますか？」',a:'How often do you eat out?',hint:'How often',lesson:'①3/28'},
+  {id:'t0104',pat:'times',month:'2603',type:'translate',q:'「週に1〜2回です」',a:'Once or twice a week.',hint:'once or twice',lesson:'①3/28'},
+  {id:'t0105',pat:'greeting',month:'2603',type:'translate',q:'「元気です、あなたは？」',a:"I'm fine. And you? / How about you?",hint:'And you? / How about you?',lesson:'①3/28'},
+  {id:'fr0101',pat:'howoften',month:'2603',type:'free',q:'「頻度」を聞く質問文を英語で書いてみよう',a:'How often do you ~?',hint:'How often ...',lesson:'①3/28'},
+  {id:'fr0102',pat:'favourite',month:'2603',type:'free',q:'"go-to" を使った例文を作ろう',a:'My go-to [place/song/food] is ~.',hint:'My go-to ... is ...',lesson:'①3/28'},
+  {id:'fr0103',pat:'almost',month:'2603',type:'free',q:'「ほぼ毎日〜する」を英語で',a:'I ~ almost every day.',hint:'almost every day',lesson:'①3/28'},
+  {id:'fr0104',pat:'times',month:'2603',type:'free',q:'「週に2〜3回」を英語で',a:'two or three times a week',hint:'times a week',lesson:'①3/28'},
+  {id:'fr0105',pat:'greeting',month:'2603',type:'free',q:'カジュアルに「元気だよ」と答える表現を3つ書こう',a:"I'm fine. / Good. / I'm okay.",hint:'fine / good / okay',lesson:'①3/28'},
+
+  // ===== 2604（4月）②YUTA 4/4 =====
+  {id:'v0201',pat:'favourite',month:'2604',type:'vocab',q:'"least favourite" の意味は？',a:'一番嫌いな',choices:['一番嫌いな','大好きな','あまり好きじゃない','そこそこ好き'],explain:"「一番嫌いな」という意味で、favourite（お気に入り）の反対。`My least favourite food is natto.` 直接 hate と言うより角が立たない言い方。",lesson:'②4/4'},
+  {id:'v0202',pat:'__vocab__',month:'2604',type:'vocab',q:'"addicted" の意味は？',a:'中毒になっている',choices:['中毒になっている','飽きた','夢中になれない','疲れた'],explain:"「やめられなくなっている」状態。`I'm addicted to this game.` 前置詞は to で、be addicted to ~ の形で使う。深刻な依存にも、冗談めかした「ハマってる」にも使える。",lesson:'②4/4'},
+  {id:'v0203',pat:'__vocab__',month:'2604',type:'vocab',q:'"ingredients" の意味は？',a:'食材・原材料',choices:['食材・原材料','調理器具','レシピ','料理名'],explain:"料理に使う材料のこと。`What ingredients do you need?` 通常は複数形で使い、レシピの話で頻出。",lesson:'②4/4'},
+  {id:'v0204',pat:'__vocab__',month:'2604',type:'vocab',q:'"bitter" の意味は？',a:'苦い',choices:['苦い','甘い','辛い','酸っぱい'],explain:"コーヒーやゴーヤのような苦味。`It tastes bitter.` 味の仲間は sweet（甘い）、sour（酸っぱい）、salty（塩辛い）、spicy（辛い）。",lesson:'②4/4'},
+  {id:'v0205',pat:'__vocab__',month:'2604',type:'vocab',q:'"hay fever" の意味は？',a:'花粉症',choices:['花粉症','インフル','頭痛','乾燥肌'],explain:"スギ花粉などで起きるアレルギー症状。`I have hay fever.` fever が付くが熱が出るわけではなく、くしゃみや鼻水を指す。",lesson:'②4/4'},
+  {id:'f0201',pat:'favourite',month:'2604',type:'fill',q:'My ___ favourite food is natto.',blank:'least',choices:['least','most','best','top'],hint:'一番嫌いな食べ物',lesson:'②4/4'},
+  {id:'f0202',pat:'taste',month:'2604',type:'fill',q:'It tastes ___.',blank:'bitter',choices:['bitter','biting','badly','bite'],hint:'苦い味がする',lesson:'②4/4'},
+  {id:'f0203',pat:'reasonwhy',month:'2604',type:'fill',q:'The reason ___ I started learning English is because ~.',blank:'why',choices:['why','that','which','when'],lesson:'②4/4'},
+  {id:'f0204',pat:'tiredof',month:'2604',type:'fill',q:'I\'m getting ___ of my commute.',blank:'tired',choices:['tired','boring','bored','tiring'],hint:'〜に飽き飽きしている',lesson:'②4/4'},
+  {id:'f0205',pat:'everexp',month:'2604',type:'fill',q:'How ___ countries have you been to?',blank:'many',choices:['many','much','long','often'],lesson:'②4/4'},
+  {id:'g0201',pat:'gerundnoun',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'My hobby is cook.',optB:'My hobby is cooking.',a:'B',explain:"\"My hobby is ~\" の後ろは動名詞(-ing)。Aの cook は動詞の原形なので「私の趣味は料理する」という文法的に崩れた形になる。My hobby is cooking / reading / traveling のように -ing にする。",deep:"【動名詞と不定詞の使い分け】`My hobby is cooking.` のように be動詞の後で「〜すること」を表すときは動名詞が自然。不定詞の `My hobby is to cook.` も文法的には可能だが硬く、趣味の話では使わない。一般に動名詞は「すでにしていること・経験」、不定詞は「これからすること・目的」を表す傾向がある。`I stopped smoking.`（吸うのをやめた）と `I stopped to smoke.`（吸うために立ち止まった）のように、動詞によっては意味が大きく変わる。",lesson:'②4/4'},
+  {id:'g0202',pat:'tiredof',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I\'m getting boring of my job.',optB:'I\'m getting tired of my job.',a:'B',explain:"\"be getting tired of ~\" で「〜に飽き飽きしてきた」。Aの boring は「（物が）退屈させる」という意味なので、主語が I だと「私は退屈な人間になってきた」になってしまう。飽きている側の人が主語なら tired。",lesson:'②4/4'},
+  {id:'g0203',pat:'whatdo',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'What\'s your work?',optB:'What\'s your job? / What do you do?',a:'B',explain:"職業を聞くときは \"What do you do?\" が最も自然で、少し丁寧なら \"What's your job?\"。Aの \"What's your work?\" は文法的には通じるが、work は不可算で「仕事内容・作業」を指すため職業を尋ねる表現としては使われない。",lesson:'②4/4'},
+  {id:'t0201',pat:'reasonwhy',month:'2604',type:'translate',q:'「私が英語を学び始めた理由は〜だからです」',a:'The reason why I started learning English is because ~.',lesson:'②4/4'},
+  {id:'t0202',pat:'favourite',month:'2604',type:'translate',q:'「私の一番嫌いな食べ物は〜です」',a:'My least favourite food is ~.',lesson:'②4/4'},
+  {id:'t0203',pat:'taste',month:'2604',type:'translate',q:'「苦い味がします」',a:'It tastes bitter.',lesson:'②4/4'},
+  {id:'fr0201',pat:'gerundnoun',month:'2604',type:'free',q:'趣味を3つ使って "My hobbies are ..." を作ろう',a:'My hobbies are [動名詞], [動名詞] and [動名詞].',lesson:'②4/4'},
+  {id:'fr0202',pat:'tiredof',month:'2604',type:'free',q:'「〜に飽き飽きしている」を使った文を作ろう',a:"I'm getting tired of ~.",lesson:'②4/4'},
+
+  // ===== 2604（4月）③AYANA 4/23 =====
+  {id:'v0301',pat:'__vocab__',month:'2604',type:'vocab',q:'"calf" の意味は？',a:'子牛・子象',choices:['子牛・子象','子犬','子猫','子馬'],explain:"子牛のほか、象やクジラの子どもも指す。複数形は calves と不規則に変化する。",lesson:'③4/23'},
+  {id:'v0302',pat:'__vocab__',month:'2604',type:'vocab',q:'"trunk" の意味は（象）？',a:'鼻',choices:['鼻','牙','しっぽ','耳'],explain:"象の長い鼻のこと。`The elephant lifted it with its trunk.` 車のトランクや木の幹も同じ単語で表す。",lesson:'③4/23'},
+  {id:'v0303',pat:'__vocab__',month:'2604',type:'vocab',q:'"foal" の意味は？',a:'子馬',choices:['子馬','子犬','子猫','子牛'],explain:"馬の子ども。`We saw a foal in the field.` 動物の子どもは種類ごとに専用の単語があり、犬は puppy、猫は kitten。",lesson:'③4/23'},
+  {id:'v0304',pat:'__vocab__',month:'2604',type:'vocab',q:'"cub" が使えない動物は？',a:'馬',choices:['馬','熊','ライオン','トラ'],explain:"cub は熊・ライオン・トラなど肉食獣の子に使う語。馬の子は foal と呼ぶので cub は使えない。",lesson:'③4/23'},
+  {id:'v0305',pat:'__vocab__',month:'2604',type:'vocab',q:'"orphanage" の意味は？',a:'孤児院',choices:['孤児院','学校','病院','養老院'],explain:"親のいない子どもを保護する施設。`I volunteered at an orphanage.` orphan（孤児）に場所を表す -age が付いた形。",lesson:'③4/23'},
+  {id:'f0301',pat:'pasttense',month:'2604',type:'fill',q:'I ___ to Nepal for my honeymoon.',blank:'went',choices:['went','go','have gone','gone'],lesson:'③4/23'},
+  {id:'f0302',pat:'prep',month:'2604',type:'fill',q:'I\'m gonna ___ at an orphanage.',blank:'volunteer',choices:['volunteer','work','help','join'],lesson:'③4/23'},
+  {id:'f0303',pat:'diffrom',month:'2604',type:'fill',q:'Poker is different ___ gambling.',blank:'from',choices:['from','than','of','as'],lesson:'③4/23'},
+  {id:'f0304',pat:'__vocab__',month:'2604',type:'fill',q:'dog → ___ / puppy',blank:'pup',choices:['pup','kit','foal','cub'],lesson:'③4/23'},
+  {id:'f0305',pat:'__vocab__',month:'2604',type:'fill',q:'cat → ___ / kitten',blank:'kit',choices:['kit','pup','foal','cub'],lesson:'③4/23'},
+  {id:'g0301',pat:'pasttense',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I holded the harness.',optB:'I held the harness.',a:'B',explain:"\"hold\" は不規則動詞で、過去形・過去分詞ともに \"held\"。Aのように -ed を付けた holded という形は存在しない。同じ不規則型に build→built、send→sent がある。",lesson:'③4/23'},
+  {id:'g0302',pat:'diffrom',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'Poker is different than gambling.',optB:'Poker is different from gambling.',a:'B',explain:"「〜とは違う」は \"different from ~\" が正式な形。Aの than は比較級（bigger than など）の後に使うもので、different は比較級ではないため than は取らない。会話では different than も聞くが、書き言葉では from が安全。",deep:"【different from / than / to】標準的で最も安全なのは `different from`。アメリカ英語の口語では `different than` も使われるが、書き言葉では避けた方がよい。イギリス英語では `different to` も一般的で、地域差がある。試験や文書では from を選んでおけば間違いない。関連表現として `be similar to`（〜に似ている）、`be the same as`（〜と同じ）があり、それぞれ前置詞が異なるのでセットで覚える。",lesson:'③4/23'},
+  {id:'t0301',pat:'pasttense',month:'2604',type:'translate',q:'「私はハネムーンでネパールへ行きました」',a:'I went to Nepal for my honeymoon.',lesson:'③4/23'},
+  {id:'t0302',pat:'pasttense',month:'2604',type:'translate',q:'「象に乗って手綱を握りました」',a:'I rode an elephant and held the harness.',lesson:'③4/23'},
+  {id:'fr0301',pat:'__vocab__',month:'2604',type:'free',q:'動物の赤ちゃん：犬・猫・馬・熊の英語を書こう',a:'puppy/pup / kitten/kit / foal / cub',lesson:'③4/23'},
+  {id:'fr0302',pat:'everexp',month:'2604',type:'free',q:'「象に乗ったことがありますか？」と英語で聞こう',a:'Have you ever ridden an elephant?',lesson:'③4/23'},
+
+  // ===== 2604（4月）④YUTA 4/25 =====
+  {id:'v0401',pat:'__vocab__',month:'2604',type:'vocab',q:'"immature" の意味は？',a:'幼稚な・未熟な',choices:['幼稚な・未熟な','成熟した','知的な','明るい'],explain:"年齢のわりに考え方が幼いこと。`That was an immature reaction.` 反対語は mature（成熟した）で、im- が否定を表す接頭辞。",lesson:'④4/25'},
+  {id:'v0402',pat:'__vocab__',month:'2604',type:'vocab',q:'"live-action version" の意味は？',a:'実写版',choices:['実写版','アニメ版','続編','リメイク'],explain:"アニメや漫画を俳優が演じる形で映像化したもの。`They made a live-action version of the anime.` アニメ版は anime version。",lesson:'④4/25'},
+  {id:'f0401',pat:'routine',month:'2604',type:'fill',q:'I get ___ at 6am.',blank:'up',choices:['up','out','off','on'],hint:'起床',lesson:'④4/25'},
+  {id:'f0402',pat:'routine',month:'2604',type:'fill',q:'I go to work ___ bike.',blank:'by',choices:['by','with','on','in'],hint:'手段',lesson:'④4/25'},
+  {id:'f0403',pat:'morethan',month:'2604',type:'fill',q:'USJ is ___ expensive than Disney.',blank:'more',choices:['more','most','much','very'],lesson:'④4/25'},
+  {id:'f0404',pat:'themost',month:'2604',type:'fill',q:'USJ is the ___ expensive amusement park.',blank:'most',choices:['most','more','very','so'],lesson:'④4/25'},
+  {id:'f0405',pat:'routine',month:'2604',type:'fill',q:'I ___ home at 6:50 am.',blank:'leave',choices:['leave','left','go','exit'],deep:"【go home と leave home は逆】`leave home`＝家を出る（出発）、`go home`＝家に帰る（到着先が家）。朝6:50に出勤するなら家を出るので leave が正解で、`I go home at 6:50 am.` だと「朝6:50に帰宅する」という意味になり夜勤明けの人の文になる。なお go home は home の前に to を付けない（×go to home）。home がここでは副詞として働くためで、同じ仲間に go abroad / go downtown がある。一方 leave は他動詞なので `leave home` `leave the office` と目的語を直接取る。",lesson:'④4/25'},
+  {id:'g0401',pat:'routine',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I am leaving home at 6:50 am every day.',optB:'I leave home at 6:50 am.',a:'B',explain:"毎日の習慣は現在形（Present Simple）で表す。Aの現在進行形 \"I am leaving\" は「今まさに出かけるところ」という一時的な動作を指すので、every day と組み合わせると矛盾する。習慣なら I leave home at 6:50。",deep:"【現在形と現在進行形の使い分け】現在形は「いつもそうしている」という習慣や変わらない事実、現在進行形は「今この瞬間やっている」一時的な動作を表す。`I leave home at 6:50.`＝毎日そうしている。`I'm leaving home now.`＝今まさに出るところ。ただし現在進行形には例外があり、`I'm leaving tomorrow.` のように確定した近い未来の予定にも使える。また always と組み合わせた `He's always complaining.` は「いつも文句ばかり言っている」という苛立ちを含む特別な使い方になる。",lesson:'④4/25'},
+  {id:'g0402',pat:'indirect',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I\'m wondering why you do.',optB:'I wonder why you do that.',a:'B',explain:'"I wonder why ..." が正しい構文',lesson:'④4/25'},
+  {id:'g0403',pat:'prep',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'The movie is based in a true story.',optB:'The movie is based on a true story.',a:'B',explain:"「〜に基づく」は \"based on ~\" で、前置詞は on で固定。Aの based in は「〜に拠点を置く」という別の意味で、The company is based in Osaka.（大阪に本社がある）のように使う。",deep:"【based on と based in】`based on`＝〜に基づく（根拠・題材）。`The movie is based on a true story.` `based in`＝〜に拠点を置く（場所）。`The company is based in Osaka.` 前置詞ひとつで「根拠」か「所在地」かが変わる。人について `I'm based in Tokyo.` と言えば「東京を拠点に活動している」という意味になり、単に住んでいる（live in）よりも仕事の拠点というニュアンスが強い。",lesson:'④4/25'},
+  {id:'t0401',pat:'routine',month:'2604',type:'translate',q:'「私は6時に起きます」',a:'I get up at 6am.',hint:'get up',lesson:'④4/25'},
+  {id:'t0402',pat:'routine',month:'2604',type:'translate',q:'「自転車で通勤しています」',a:'I go to work by bike / bicycle.',lesson:'④4/25'},
+  {id:'t0403',pat:'morethan',month:'2604',type:'translate',q:'「USJはディズニーより高い」',a:'USJ is more expensive than Disney.',lesson:'④4/25'},
+  {id:'t0404',pat:'favourite',month:'2604',type:'translate',q:'「大阪で一番好きな場所は？」',a:'Where is your favourite place in Osaka?',lesson:'④4/25'},
+  {id:'fr0401',pat:'routine',month:'2604',type:'free',q:'自分の朝のルーティンを3文で英語で書こう',a:'I get up at ~. After that, I ~. I leave home at ~.',lesson:'④4/25'},
+  {id:'fr0402',pat:'themost',month:'2604',type:'free',q:'「比較最上級」を使って何かについて書いてみよう',a:'~ is the most ... [noun].',lesson:'④4/25'},
+
+  // ===== 2605（5月）⑤Ray 5/9 =====
+  {id:'v0501',pat:'__vocab__',month:'2605',type:'vocab',q:'"abandoned" の意味は？',a:'捨てられた・廃墟の',choices:['捨てられた・廃墟の','新しい','有名な','発展した'],explain:"人がいなくなって放置された状態。`The house is abandoned.` 形容詞なので be動詞とセットで使う。動詞なら abandon（捨てる）。",lesson:'⑤5/9'},
+  {id:'v0502',pat:'__vocab__',month:'2605',type:'vocab',q:'"migration" の意味は？',a:'(動物の)移動・渡り',choices:['(動物の)移動・渡り','滅亡','繁殖','冬眠'],explain:"渡り鳥や動物が季節ごとに移動すること。`Bird migration happens every spring.` 人の移住を指すこともある。",lesson:'⑤5/9'},
+  {id:'v0503',pat:'__vocab__',month:'2605',type:'vocab',q:'"mulligan" はどのスポーツの用語？',a:'ゴルフ',choices:['ゴルフ','テニス','野球','バスケ'],explain:"ゴルフで打ち直しを認めるローカルルールのこと。カジュアルなラウンドで使われ、公式競技では認められていない。",lesson:'⑤5/9'},
+  {id:'v0504',pat:'__vocab__',month:'2605',type:'vocab',q:'"Springbok" の意味は？',a:'跳ぶ鹿（南ア産アンテロープ）',choices:['跳ぶ鹿（南ア産アンテロープ）','ペンギン','サイ','ライオン'],explain:"南アフリカに生息する跳ねるアンテロープ。同国のラグビー代表チームの愛称としても有名。",lesson:'⑤5/9'},
+  {id:'v0505',pat:'__vocab__',month:'2605',type:'vocab',q:'南アフリカの人口は約何百万人？',a:'65 million',choices:['65 million','122 million','45 million','80 million'],explain:"南アフリカの人口はおよそ6,500万人。million は100万を表すので、65 million = 6,500万。",lesson:'⑤5/9'},
+  {id:'f0501',pat:'beadj',month:'2605',type:'fill',q:'The house ___ abandoned.',blank:'is',choices:['is','was','has','does'],hint:'現在の状態',lesson:'⑤5/9'},
+  {id:'f0502',pat:'progress',month:'2605',type:'fill',q:'The area ___ developing.',blank:'is',choices:['is','was','has','does'],hint:'開発が進んでいる',lesson:'⑤5/9'},
+  {id:'f0503',pat:'progress',month:'2605',type:'fill',q:'They are ___.',blank:'migrating',choices:['migrating','migration','migrate','migrated'],lesson:'⑤5/9'},
+  {id:'g0501',pat:'progress',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'The area is developed.',optB:'The area is developing.',a:'B',explain:"開発が進行中なら現在進行形 \"is developing\"。Aの \"is developed\" は受動態で「開発され終わった・先進的な」という完了した状態を指す（a developed country = 先進国）。今まさに進んでいる最中なら -ing。",lesson:'⑤5/9'},
+  {id:'g0502',pat:'beadj',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'The house abandoned.',optB:'The house is abandoned.',a:'B',explain:"\"abandoned\" は「捨てられた」という状態を表す形容詞なので、be動詞が必要。Aのように The house abandoned だけでは動詞が過去形に見え「その家が（何かを）捨てた」という意味になってしまう。",lesson:'⑤5/9'},
+  {id:'t0501',pat:'beadj',month:'2605',type:'translate',q:'「その家は捨てられている」',a:'The house is abandoned.',lesson:'⑤5/9'},
+  {id:'t0502',pat:'progress',month:'2605',type:'translate',q:'「彼らは移動しています」',a:'They are migrating.',lesson:'⑤5/9'},
+  {id:'fr0501',pat:'__vocab__',month:'2605',type:'free',q:'南アフリカの3都市と役割を英語で書こう',a:'Pretoria=Executive / Bloemfontein=Judicial / Cape Town=Constitutional',lesson:'⑤5/9'},
+  {id:'fr0502',pat:'beadj',month:'2605',type:'free',q:'"abandoned" を使った文を2つ作ろう（形容詞と動詞）',a:'The house is abandoned. / I will abandon my house.',lesson:'⑤5/9'},
+
+  // ===== 2605（5月）⑥Yuichiro 5/12 =====
+  {id:'v0601',pat:'__vocab__',month:'2605',type:'vocab',q:'"blood vessel" の意味は？',a:'血管',choices:['血管','臓器','骨','筋肉'],explain:"体内で血液を運ぶ管のこと。`Exercise is good for your blood vessels.` artery（動脈）、vein（静脈）の総称にあたる。",lesson:'⑥5/12'},
+  {id:'v0602',pat:'__vocab__',month:'2605',type:'vocab',q:'"tissue" の意味は（医学）？',a:'組織',choices:['組織','紙','肌','細胞液'],explain:"医学では筋肉や皮膚などの「組織」を指す。日常語のティッシュペーパーと同じつづりなので、文脈で判断する。",lesson:'⑥5/12'},
+  {id:'v0603',pat:'pasttense',month:'2605',type:'vocab',q:'"in a row" の意味は？',a:'連続して',choices:['連続して','一列に','一度に','ランダムに'],explain:"「連続して」という意味。`I drank two days in a row.` 3日連続なら three days in a row。休まず続いたことを強調するときに使う。",lesson:'⑥5/12'},
+  {id:'v0604',pat:'edingadj',month:'2605',type:'vocab',q:'"moved / touched" の感情の意味は？',a:'感動した',choices:['感動した','驚いた','笑った','泣いた'],explain:"心を動かされた状態。`I was moved by the movie.` 人が主語なら moved/touched、映画など物が主語なら moving/touching と形が変わる。",lesson:'⑥5/12'},
+  {id:'v0605',pat:'__vocab__',month:'2605',type:'vocab',q:'"issue" の意味は？',a:'問題・課題',choices:['問題・課題','論文','出版物のみ','雑誌のみ'],explain:"「問題・課題」の意味で、解決すべきものを指す。`That's a big issue.` 雑誌の号という意味もあるが、会話では課題の意味で使うことが多い。",lesson:'⑥5/12'},
+  {id:'f0601',pat:'pasttense',month:'2605',type:'fill',q:'I ___ 2 days in a row.',blank:'drank',choices:['drank','drink','drunk','drinking'],hint:'過去形',lesson:'⑥5/12'},
+  {id:'f0602',pat:'lasttime',month:'2605',type:'fill',q:'The last ___ I watched a movie was a week ago.',blank:'time',choices:['time','day','moment','when'],lesson:'⑥5/12'},
+  {id:'f0603',pat:'times',month:'2605',type:'fill',q:'I do volunteer work ___ a month.',blank:'once',choices:['once','one','a','every'],lesson:'⑥5/12'},
+  {id:'f0604',pat:'reasonwhy',month:'2605',type:'fill',q:'I wrote a report ___ I finished an experiment.',blank:'because',choices:['because','when','after','since'],lesson:'⑥5/12'},
+  {id:'f0605',pat:'edingadj',month:'2605',type:'fill',q:'The movie is very ___.',blank:'touching',choices:['touching','touched','move','emotional'],hint:'感動的だ（形容詞）',lesson:'⑥5/12'},
+  {id:'g0601',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'I was moving by the movie.',optB:'I was moved by the movie.',a:'B',explain:"感情は \"be moved / touched\" で「（人が）感動させられた」と受け身で表す。Aの moving は「感動的な」という意味なので、主語が I だと「私が人を感動させる存在だ」になる。人が主語なら -ed、物が主語なら -ing。",deep:"【-ed と -ing の感情形容詞】感情を表す動詞は2つの形を持ち、-ed は「そう感じている人」、-ing は「そう感じさせる物や人」に使う。`I was moved.`＝私が感動した。`The movie was moving.`＝映画が感動的だった。取り違えると `I am boring.`（私は退屈な人間です）のように意図しない自己紹介になってしまうので注意。同じ型の代表例は interested/interesting、excited/exciting、surprised/surprising、confused/confusing。判断の目安は、主語が感情を持てる人間なら -ed、原因となる物なら -ing。",lesson:'⑥5/12'},
+  {id:'g0602',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'My job is tired.',optB:'My job is tiring.',a:'B',explain:"\"tiring\" は「（物が人を）疲れさせる」、\"tired\" は「（人が）疲れている」。主語が My job なので、疲れさせる側を表す tiring が正しい。人が主語なら I am tired. となる。interesting / interested も同じ関係。",deep:"【tired と tiring の主語の違い】`tiring`＝疲れさせる側（原因）、`tired`＝疲れている側（人）。`My job is tiring.`（仕事が疲れさせる）と `I am tired.`（私が疲れている）は主語が入れ替わる関係にある。両方を1文にすると `I'm tired because my job is tiring.` となる。なお `tired of ~` になると意味が変わり、「疲れた」ではなく「〜に飽きた」を表すので `I'm tired of my job.` は「仕事に飽き飽きしている」となる。前置詞 of の有無で意味が変わる点に注意。",lesson:'⑥5/12'},
+  {id:'g0603',pat:'lasttime',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'When was the last time you go on a trip?',optB:'When was the last time you went on a trip?',a:'B',explain:"\"the last time\" に続く節は過去形になる。最後に〜したのはいつか、という過ぎたことを聞いているため、Aの現在形 go は使えない。When was the last time you went / ate / saw ~? の形で覚える。",lesson:'⑥5/12'},
+  {id:'g0604',pat:'times',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'I make volunteer work once a month.',optB:'I do volunteer work once a month.',a:'B',explain:"「ボランティアをする」は \"do volunteer work\"。動詞は make ではなく do を使うのがルールで、make は何かを作り出すときの動詞。do homework / do the dishes と同じ仲間。",lesson:'⑥5/12'},
+  {id:'t0601',pat:'edingadj',month:'2605',type:'translate',q:'「その映画は感動的です」',a:'The movie is touching / moving.',lesson:'⑥5/12'},
+  {id:'t0602',pat:'edingadj',month:'2605',type:'translate',q:'「私は映画で感動した」',a:'I was moved / touched by the movie.',lesson:'⑥5/12'},
+  {id:'t0603',pat:'lasttime',month:'2605',type:'translate',q:'「最後に旅行したのはいつですか？」',a:'When was the last time you went on a trip?',lesson:'⑥5/12'},
+  {id:'t0604',pat:'times',month:'2605',type:'translate',q:'「月に1回ボランティアをします」',a:'I do volunteer work once a month.',lesson:'⑥5/12'},
+  {id:'fr0601',pat:'lasttime',month:'2605',type:'free',q:'"When was the last time you ..." で質問を3つ作ろう',a:'When was the last time you [過去形]?',lesson:'⑥5/12'},
+  {id:'fr0602',pat:'edingadj',month:'2605',type:'free',q:'"moved" と "moving" の違いを例文で説明しよう',a:'I was moved. (私が感動した) / The film was moving. (映画が感動的)',lesson:'⑥5/12'},
+
+  // ===== 2605（5月）⑦RINA 5/14 =====
+  {id:'v0701',pat:'ideal',month:'2605',type:'vocab',q:'"ideal" の意味は？',a:'理想の',choices:['理想の','普通の','最低の','現実の'],explain:"「理想の」という形容詞。`What is your ideal day off?` 現実的な話ではなく、理想を尋ねるときの定番の聞き方。",lesson:'⑦5/14'},
+  {id:'v0702',pat:'wordpair',month:'2605',type:'vocab',q:'"lightning" と "thunder" の違いは？',a:'lightning=稲妻(光) / thunder=雷(音)',choices:['lightning=稲妻(光) / thunder=雷(音)','lightning=雷(音) / thunder=稲妻(光)','同じ意味','lightningは雨'],explain:"lightning は空が光る「稲妻」、thunder は後から聞こえる「雷鳴」。`I saw lightning and heard thunder.` 光と音で使い分ける。",lesson:'⑦5/14'},
+  {id:'v0703',pat:'__vocab__',month:'2605',type:'vocab',q:'"wild boar" の意味は？',a:'イノシシ',choices:['イノシシ','クマ','サル','シカ'],explain:"山にいる野生のイノシシ。`Wild boars sometimes come down to the village.` boar 単体でも通じる。",lesson:'⑦5/14'},
+  {id:'v0704',pat:'ideal',month:'2605',type:'vocab',q:'理想の季節を聞く空欄は？ "What is your ideal ___?"',a:'season',choices:['season','weather','time','date'],explain:"理想の季節を尋ねる形。`What is your ideal season?` ideal の後ろには聞きたい名詞をそのまま入れる。",lesson:'⑦5/14'},
+  {id:'f0701',pat:'have',month:'2605',type:'fill',q:'My ideal house ___ a big kitchen.',blank:'has',choices:['has','have','is','with'],lesson:'⑦5/14'},
+  {id:'f0702',pat:'wanna',month:'2605',type:'fill',q:'She wants ___ give water to her plants.',blank:'to',choices:['to','of','for','at'],lesson:'⑦5/14'},
+  {id:'f0703',pat:'ideal',month:'2605',type:'fill',q:'What is your ___ day off?',blank:'ideal',choices:['ideal','perfect','best','good'],lesson:'⑦5/14'},
+  {id:'f0704',pat:'__vocab__',month:'2605',type:'fill',q:'Thunder is the ___, lightning is the light.',blank:'sound',choices:['sound','noise','music','voice'],lesson:'⑦5/14'},
+  {id:'g0701',pat:'ifclause',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'If you will get married, what is your ideal wedding?',optB:'If you get married, what is your ideal wedding party?',a:'B',explain:"if で始まる条件節の中は、未来のことでも現在形で書く。Aの \"If you will get married\" は will が余分で、正しくは If you get married。主節の方には will を使ってよい（If it rains, I will stay home.）。",deep:"【時と条件の副詞節では未来形を使わない】if や when で始まる節の中では、未来のことでも will を使わず現在形にする。`If you get married, ...` `When I get home, I'll call you.` 主節の方には will を使ってよい。ただし if が「〜かどうか」を意味する名詞節の場合は例外で、`I don't know if he will come.` のように will を使える。見分け方は、if を「もし」と訳せるなら現在形、「〜かどうか」と訳せるなら will も可。",lesson:'⑦5/14'},
+  {id:'g0702',pat:'have',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'My ideal house is a big kitchen.',optB:'My ideal house has a big kitchen.',a:'B',explain:"\"has\" は「〜を持っている・〜がある」。Aのように is を使うと「私の理想の家＝大きなキッチン」という意味になり、家とキッチンが同一のものになってしまう。設備を説明するときは has を使う。",lesson:'⑦5/14'},
+  {id:'t0701',pat:'have',month:'2605',type:'translate',q:'「私の理想の家には大きなキッチンがある」',a:'My ideal house has a big kitchen.',lesson:'⑦5/14'},
+  {id:'t0702',pat:'ideal',month:'2605',type:'translate',q:'「理想の休日は何ですか？」',a:'What is your ideal day off?',lesson:'⑦5/14'},
+  {id:'t0703',pat:'ideal',month:'2605',type:'translate',q:'「理想の旅行先はどこですか？」',a:'What is your ideal place for travelling?',lesson:'⑦5/14'},
+  {id:'fr0701',pat:'ideal',month:'2605',type:'free',q:'"ideal" を使った質問を2つ作ろう',a:'What is your ideal ~? / What would be your ideal ~?',lesson:'⑦5/14'},
+  {id:'fr0702',pat:'wordpair',month:'2605',type:'free',q:'thunder と lightning の違いを日本語で説明してから英文例を書こう',a:'Thunder=音(雷鳴) / Lightning=光(稲妻)\nI heard thunder. / I saw lightning.',lesson:'⑦5/14'},
+
+  // ===== 2606（6月）⑧1on1 6/10 =====
+  {id:'v0801',pat:'__vocab__',month:'2606',type:'vocab',q:'"waste of time" の意味は？',a:'時間の無駄',choices:['時間の無駄','暇つぶし','時間節約','無駄遣い'],explain:"やっても意味がなかったこと。`That meeting was a waste of time.` お金なら a waste of money。",lesson:'⑧6/10'},
+  {id:'v0802',pat:'__vocab__',month:'2606',type:'vocab',q:'"time-consuming" の意味は？',a:'時間がかかる',choices:['時間がかかる','時間を節約する','忙しい','急ぎの'],explain:"終わるまでに時間がかかること。`Cooking is time-consuming.` 手間がかかると伝えたいときに使う。",lesson:'⑧6/10'},
+  {id:'v0803',pat:'__vocab__',month:'2606',type:'vocab',q:'"hang out" の意味は？',a:'一緒に過ごす・つるむ',choices:['一緒に過ごす・つるむ','外出する','帰宅する','働く'],explain:"友達と一緒にダラダラ過ごすこと。`I hang out with my friends on weekends.` 目的のない気楽な時間を指す。",lesson:'⑧6/10'},
+  {id:'v0804',pat:'__vocab__',month:'2606',type:'vocab',q:'"open-minded" の意味は？',a:'心が広い・柔軟な',choices:['心が広い・柔軟な','頑固な','内向的な','慎重な'],explain:"新しい考えや違う価値観を受け入れられる性格。`She's very open-minded.` 反対は narrow-minded（頑固）。",lesson:'⑧6/10'},
+  {id:'v0805',pat:'__vocab__',month:'2606',type:'vocab',q:'"constantly" の意味は？',a:'絶えず・ずっと',choices:['絶えず・ずっと','たまに','最近','急に'],explain:"途切れずずっと続いているようす。`He's constantly checking his phone.` always より「絶え間なさ」が強い。",lesson:'⑧6/10'},
+  {id:'f0801',pat:'tooto',month:'2606',type:'fill',q:"I'm too lazy ___ cook.",blank:'to',choices:['to','for','of','at'],hint:'too ~ to ... 構文',lesson:'⑧6/10'},
+  {id:'f0802',pat:'wanna',month:'2606',type:'fill',q:"It's necessary ___ practice every day.",blank:'to',choices:['to','for','of','at'],hint:'necessary to + 動詞原形',lesson:'⑧6/10'},
+  {id:'f0803',pat:'prep',month:'2606',type:'fill',q:'I use AI every day, except ___ weekends.',blank:'for',choices:['for','of','on','in'],hint:'except for ～',deep:"【weekends と the weekend の違い】`on weekends`（複数形）＝毎週末・習慣として。`on the weekend`（単数＋the）＝特定の今度の週末、または話し手同士が分かっている週末。`I play tennis on weekends.` なら毎週の習慣、`What are you doing on the weekend?` なら今度の週末の予定を指す。イギリス英語では `at the weekend` と at を使うことが多い。この複数形＝習慣という考え方は曜日にも当てはまり、`on Mondays`＝毎週月曜、`on Monday`＝今度の月曜となる。",lesson:'⑧6/10'},
+  {id:'f0804',pat:'beusedto',month:'2606',type:'fill',q:"I'm used to ___ it because I do it every day.",blank:'doing',choices:['doing','do','done','did'],hint:'be used to + 動名詞',lesson:'⑧6/10'},
+  {id:'f0805',pat:'tiredof',month:'2606',type:'fill',q:'Cooking is very time-___.',blank:'consuming',choices:['consuming','wasting','taking','costing'],hint:'時間がかかる',lesson:'⑧6/10'},
+  {id:'g0801',pat:'usedto',month:'2606',type:'grammar',q:'どちらが正しい？（昔は料理していた）',optA:"I used to cooking.",optB:'I used to cook.',a:'B',explain:'"used to + 動詞の原形" で昔の習慣を表す。"be used to + ing" は「〜に慣れている」なので別の意味。',deep:"【used to / be used to / get used to】この3つは形も意味も違う。①`used to + 動詞の原形`＝昔は〜していた（今はしていない）。②`be used to + 名詞/動名詞`＝〜に慣れている（状態）。③`get used to + 名詞/動名詞`＝〜に慣れてきた（変化）。`I used to cook.`（昔は料理していた）と `I'm used to cooking.`（料理に慣れている）は全く別の意味になる。見分け方は be動詞の有無で、be や get があれば「慣れ」、なければ「過去の習慣」。なお②③の to は不定詞ではなく前置詞なので、後ろは必ず -ing 形になる。",lesson:'⑧6/10'},
+  {id:'g0802',pat:'tooto',month:'2606',type:'grammar',q:'どちらが正しい？',optA:"I'm too lazy for cook.",optB:"I'm too lazy to cook.",a:'B',explain:'"too + 形容詞 + to + 動詞原形" で「〜すぎて...できない」。"for" は不可。',deep:"【too ~ to と enough to】`too + 形容詞 + to + 原形`＝〜すぎて…できない、という否定的な意味を含む。`I'm too lazy to cook.`＝怠けすぎて料理できない。反対に肯定的に「〜するのに十分」と言うなら `形容詞 + enough + to`の語順で `I'm old enough to drive.` となり、enough は形容詞の後ろに置く点が独特。また `too` を `very` に置き換えると意味が変わり、`I'm very lazy.` は単に怠け者だという事実を述べるだけで、できないという含みは消える。",lesson:'⑧6/10'},
+  {id:'g0803',pat:'beadj',month:'2606',type:'grammar',q:'どちらが正しい？',optA:"It's very convenience.",optB:"It's very convenient.",a:'B',explain:"be動詞の後ろに置くのは形容詞なので \"convenient\" が正しい。Aの convenience は名詞で「便利さ・コンビニ」の意味。It's very convenient. / for your convenience のように品詞で使い分ける。",lesson:'⑧6/10'},
+  {id:'g0804',pat:'howcome',month:'2606',type:'grammar',q:'どちらが正しい？（なんで料理しないの？）',optA:"How come you don't cook?",optB:"How come don't you cook?",a:'A',explain:"\"How come\" の後ろは疑問文の語順にせず、主語＋動詞のまま続ける。Bのように don't you と倒置すると誤り。Why を使うときは Why don't you cook? と倒置が必要なので、How come だけ例外的な形になる。",lesson:'⑧6/10'},
+  {id:'t0801',pat:'tooto',month:'2606',type:'translate',q:'「料理するには怠け過ぎる」',a:"I'm too lazy to cook.",hint:'too ~ to ...',lesson:'⑧6/10'},
+  {id:'t0802',pat:'beusedto',month:'2606',type:'translate',q:'「毎日やってるから慣れた」',a:"I'm used to it because I do it every day.",hint:'be used to / because',lesson:'⑧6/10'},
+  {id:'t0803',pat:'prep',month:'2606',type:'translate',q:'「週末を除いて毎日使っています」',a:'I use it every day, except for weekends.',hint:'except for',lesson:'⑧6/10'},
+  {id:'t0804',pat:'howcome',month:'2606',type:'translate',q:'「なんでAIが不要なの？」（カジュアルに）',a:'How come AI is unnecessary for you?',hint:'How come + 主語 + 動詞',lesson:'⑧6/10'},
+  {id:'t0805',pat:'usedto',month:'2606',type:'translate',q:'「当時、私はとても内気でした」',a:'I was very shy back then.',hint:'back then',deep:"【back then と at that time はほぼ同じ】どちらも「当時は」を意味し、置き換えても通じる。違いは響きで、`back then` は口語的で「あの頃はさ」と昔を懐かしむニュアンスが出る。`at that time` はやや中立・フォーマルで、報告や説明でも使える。会話なら back then、書き言葉なら at that time が自然。似た表現に `in those days`（あの時代は）があり、これはより長い期間を指す。",lesson:'⑧6/10'},
+  {id:'fr0801',pat:'tooto',month:'2606',type:'free',q:'"too ~ to ..." を使った文を自由に作ろう',a:"I'm too tired to go out. / I'm too busy to study. など",hint:'too + 形容詞 + to + 動詞原形',lesson:'⑧6/10'},
+  {id:'fr0802',pat:'usedto',month:'2606',type:'free',q:'"used to" と "be used to" の違いを例文で書こう',a:"I used to cook.（昔は料理していた） / I'm used to cooking.（料理に慣れている）",lesson:'⑧6/10'},
+
+  // ===== 2606（6月）⑨Coco 6/25 =====
+  {id:'v0901',pat:'feellike',month:'2606',type:'vocab',q:'"feel like doing ~" の意味は？',a:'〜したい気分だ',choices:['〜したい気分だ','〜しなければならない','〜したくない','〜できる'],explain:"「〜したい気分だ」という軽い願望。`I feel like eating ramen.` 後ろは必ず動名詞(-ing)で、feel like to eat とは言わない。",lesson:'⑨6/25'},
+  {id:'v0902',pat:'__vocab__',month:'2606',type:'vocab',q:'"treat yourself" の意味は？',a:'自分にご褒美をあげる',choices:['自分にご褒美をあげる','自分を鍛える','自分を罰する','自分を紹介する'],explain:"自分を甘やかしてご褒美をあげること。`I treat myself to cake on Fridays.` 主語に合わせて treat yourself / treat myself と変える。",lesson:'⑨6/25'},
+  {id:'v0903',pat:'getdone',month:'2606',type:'vocab',q:'"get stuck in traffic" の意味は？',a:'渋滞にはまる',choices:['渋滞にはまる','事故に遭う','道に迷う','駐車する'],explain:"車が動かず渋滞に巻き込まれること。`I got stuck in traffic.` stuck は「動けない」状態を表し、エレベーターに閉じ込められたときにも使う。",lesson:'⑨6/25'},
+  {id:'v0904',pat:'goeswith',month:'2606',type:'vocab',q:'"goes well with ~" の意味は？',a:'〜によく合う',choices:['〜によく合う','〜と一緒に行く','〜より優れている','〜と交換する'],explain:"食べ物や飲み物の相性が良いこと。`Mentaiko goes well with beer.` 主語が三人称単数なので goes と s が付く点に注意。",lesson:'⑨6/25'},
+  {id:'v0905',pat:'__vocab__',month:'2606',type:'vocab',q:'"time flies" の意味は？',a:'時間があっという間に過ぎる',choices:['時間があっという間に過ぎる','時間が遅く感じる','時間が止まる','暇な時間'],explain:"楽しい時間ほど早く過ぎるという定番表現。`Time flies when you're having fun.` 別れ際の会話でよく使われる。",lesson:'⑨6/25'},
+  {id:'f0901',pat:'feellike',month:'2606',type:'fill',q:'I feel like ___ nothing today.',blank:'doing',choices:['doing','do','done','to do'],hint:'feel like + 動名詞',lesson:'⑨6/25'},
+  {id:'f0902',pat:'goeswith',month:'2606',type:'fill',q:'Mentaiko ___ well with beer.',blank:'goes',choices:['goes','go','is','fits'],hint:'〜によく合う',lesson:'⑨6/25'},
+  {id:'f0903',pat:'getdone',month:'2606',type:'fill',q:'I got my nails ___.',blank:'done',choices:['done','do','doing','did'],hint:'get + 目的語 + done',lesson:'⑨6/25'},
+  {id:'f0904',pat:'getdone',month:'2606',type:'fill',q:'I got ___ in traffic on the way home.',blank:'stuck',choices:['stuck','stock','stacked','stocked'],hint:'渋滞にはまる',lesson:'⑨6/25'},
+  {id:'f0905',pat:'wanna',month:'2606',type:'fill',q:'You can eat as much as you ___.',blank:'want',choices:['want','like','wish','can'],hint:'好きなだけ',lesson:'⑨6/25'},
+  {id:'g0901',pat:'feellike',month:'2606',type:'grammar',q:'どちらが正しい？',optA:'I feel like do nothing.',optB:'I feel like doing nothing.',a:'B',explain:'"feel like" の後は動名詞（-ing形）が必須。"feel like to do" も誤り。',deep:"【feel like の2つの意味】①`feel like + 動名詞`＝〜したい気分だ。`I feel like eating ramen.` ②`feel like + 名詞`＝〜のような感じがする。`It feels like winter.` どちらも後ろに動詞の原形は置けず、①では必ず -ing になる（×feel like to eat）。「〜したくない」なら `I don't feel like doing anything.` と否定形にする。似た表現の `would like to + 原形`（〜したい）は不定詞を取るので、形を混同しないよう注意。",lesson:'⑨6/25'},
+  {id:'g0902',pat:'usedto',month:'2606',type:'grammar',q:'どちらが正しい？（以前は大阪に住んでいた）',optA:'I was used to live in Osaka.',optB:'I used to live in Osaka.',a:'B',explain:'"used to + 動詞原形" で過去の習慣・状態。"was used to" は「慣れていた」なので意味が違う。',lesson:'⑨6/25'},
+  {id:'g0903',pat:'getdone',month:'2606',type:'grammar',q:'どちらが正しい？（美容院で髪をやってもらった）',optA:'I cut my hair.',optB:'I got my hair cut.',a:'B',explain:'"get + 目的語 + 過去分詞" で「〜してもらった」。"I cut my hair" は自分で切った意味。',deep:"【get + 目的語 + 過去分詞】「〜してもらう・〜される」を表す形で、自分でやったのではないことを示す。`I got my hair cut.`＝美容院で切ってもらった。`I cut my hair.` だと自分で切ったことになる。同じ意味で `have + 目的語 + 過去分詞`（I had my hair cut.）も使え、have の方がややフォーマル。また被害を表すこともでき、`I got my wallet stolen.`＝財布を盗まれた。語順は必ず 目的語→過去分詞 で、`I got cut my hair.` は誤り。",lesson:'⑨6/25'},
+  {id:'g0904',pat:'nightsdays',month:'2606',type:'grammar',q:'どちらが正しい？（2泊3日）',optA:'two days three nights',optB:'two nights, three days',a:'B',explain:"英語では宿泊数（nights）を先に言う。日本語の「2泊3日」をそのまま並べたAは不自然で、正しくは two nights, three days。旅行の話でよく出るので、日本語と語順が逆になる点に注意する。",deep:"【英語では泊数を先に言う】日本語の「2泊3日」を語順どおり訳すと通じにくく、英語では `two nights, three days` と宿泊数を先に置く。ホテルの予約では `I'd like to stay for two nights.` のように nights で数えるのが基本で、日数は補足的に添える形になる。旅行会社の広告でも `3 nights 4 days` の順で表記される。日本語と順序が逆転する数少ない例なので、旅行の話をするときは意識して切り替える。",lesson:'⑨6/25'},
+  {id:'t0901',pat:'getdone',month:'2606',type:'translate',q:'「ネイルをしてもらった」',a:'I got my nails done.',hint:'get + 目的語 + done',lesson:'⑨6/25'},
+  {id:'t0902',pat:'getdone',month:'2606',type:'translate',q:'「渋滞にはまった」',a:'I got stuck in traffic.',hint:'get stuck in traffic',lesson:'⑨6/25'},
+  {id:'t0903',pat:'feellike',month:'2606',type:'translate',q:'「何もしたくない気分だ」',a:'I feel like doing nothing.',hint:'feel like + doing',lesson:'⑨6/25'},
+  {id:'t0904',pat:'goeswith',month:'2606',type:'translate',q:'「ビールによく合います」',a:'It goes well with beer.',hint:'goes well with',lesson:'⑨6/25'},
+  {id:'t0905',pat:'feellike',month:'2606',type:'translate',q:'「いつ自分にご褒美をあげたくなりますか？」',a:'When do you feel like treating yourself?',hint:'feel like + treating',lesson:'⑨6/25'},
+  {id:'fr0901',pat:'feellike',month:'2606',type:'free',q:'"feel like doing ~" を使った文を3つ作ろう',a:'I feel like eating ramen. / I feel like going out. / I feel like doing nothing. など',hint:'feel like + 動名詞',lesson:'⑨6/25'},
+  {id:'fr0902',pat:'getdone',month:'2606',type:'free',q:'"get ~ done" を使った文を2つ作ろう（違う動作で）',a:'I got my hair cut. / I got my car fixed. / I got my nails done. など',hint:'get + 目的語 + 過去分詞',lesson:'⑨6/25'},
+
+  // ===== 2607（7月）⑩ちゃぴお先生 7/23 =====
+  {id:'v1001',pat:'sometimes',month:'2607',type:'vocab',q:'"sometime" と "sometimes" の違いは？',a:'sometime=いつか(未来) / sometimes=ときどき(頻度)',choices:['sometime=いつか(未来) / sometimes=ときどき(頻度)','同じ意味','sometime=頻度 / sometimes=未来','どちらも「いつか」'],explain:"sometime は「いつか（未来の一時点）」、sometimes は「ときどき（頻度）」。`Let's meet sometime.` と `I sometimes go there.` で意味がまったく変わる。",deep:"【sometime / sometimes / some time】①`sometime`＝いつか（未来の漠然とした一時点）。`Let's meet sometime.` ②`sometimes`＝ときどき（頻度）。`I sometimes go there.` ③`some time`（2語）＝しばらくの間。`It took some time.` s ひとつとスペースひとつで意味が全く変わる紛らわしい組み合わせ。頻度の sometimes は文頭・動詞の前・文末のどこにでも置けるが、動詞の前が最も自然。",lesson:'⑩7/23'},
+  {id:'v1002',pat:'wanna',month:'2607',type:'vocab',q:'"stay away from ~" の意味は？',a:'〜を避ける・〜に近づかない',choices:['〜を避ける・〜に近づかない','〜から出発する','〜に集中する','〜を楽しむ'],explain:"近づかない、避けるという意味。`I try to stay away from junk food.` 物にも場所にも人にも使える。",lesson:'⑩7/23'},
+  {id:'v1003',pat:'__vocab__',month:'2607',type:'vocab',q:'"spoil" の意味として間違っているのは？',a:'〜を整理する',choices:['〜を整理する','甘やかす','台無しにする','食べ物が腐る'],explain:"spoil は「台無しにする」「甘やかす」「（食べ物が）傷む」の意味を持つ。「整理する」という意味はない。ネタバレの spoiler も同じ語から来ている。",lesson:'⑩7/23'},
+  {id:'v1004',pat:'times',month:'2607',type:'vocab',q:'"once or twice" の意味は？',a:'1〜2回',choices:['1〜2回','2〜3回','たまに','ほぼ毎回'],explain:"1回か2回か、はっきりしない頻度を表す。`I eat out once or twice a week.` 頻度を聞かれたときの定番の答え方。",lesson:'⑩7/23'},
+  {id:'v1005',pat:'howoften',month:'2607',type:'vocab',q:'"How often" は何を聞く表現？',a:'頻度',choices:['頻度','数量','時間の長さ','場所'],explain:"頻度を尋ねる疑問詞。`How often do you eat out?` 答えるときは twice a week などで返す。",lesson:'⑩7/23'},
+  {id:'f1001',pat:'sometimes',month:'2607',type:'fill',q:'I some___ go there on weekends.',blank:'sometimes',choices:['sometimes','sometime','sometime\'s','sometim'],hint:'ときどき',lesson:'⑩7/23'},
+  {id:'f1002',pat:'wanna',month:'2607',type:'fill',q:'I try to stay ___ from junk food.',blank:'away',choices:['away','out','off','far'],hint:'avoid の意味',lesson:'⑩7/23'},
+  {id:'f1003',pat:'spendtime',month:'2607',type:'fill',q:'What do you spend the most time ___ during the week?',blank:'on',choices:['on','in','for','at'],hint:'spend time on ~',lesson:'⑩7/23'},
+  {id:'f1004',pat:'spendtime',month:'2607',type:'fill',q:'I ___ time reading books.',blank:'spend',choices:['spend','use','take','make'],hint:'時間を使う',lesson:'⑩7/23'},
+  {id:'f1005',pat:'routine',month:'2607',type:'fill',q:'I wanna take a shower first when I get ___.',blank:'home',choices:['home','house','back','there'],lesson:'⑩7/23'},
+  {id:'g1001',pat:'sometimes',month:'2607',type:'grammar',q:'どちらが正しい？（ときどき週末に行く）',optA:'I sometime go there on weekends.',optB:'I sometimes go there on weekends.',a:'B',explain:'"sometime"=いつか（未来）/ "sometimes"=ときどき（頻度）。頻度を表すには必ず"sometimes"。',lesson:'⑩7/23'},
+  {id:'g1002',pat:'indirect',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'I\'m interested in what is she gonna say.',optB:'I\'m interested in what she\'s gonna say.',a:'B',explain:'間接疑問文（embedded question）の語順は「疑問詞＋主語＋動詞」。疑問文の倒置は不要。',lesson:'⑩7/23'},
+  {id:'g1003',pat:'spendtime',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'What do you spend the most time during the week?',optB:'What do you spend the most time on during the week?',a:'B',explain:'"spend time on ~"の"on"が必要。"spend time on work"など、何に時間を使うかを示す前置詞。',lesson:'⑩7/23'},
+  {id:'t1001',pat:'sometimes',month:'2607',type:'translate',q:'「ときどき週末に行きます」',a:'I sometimes go there on weekends.',hint:'sometimes',lesson:'⑩7/23'},
+  {id:'t1002',pat:'times',month:'2607',type:'translate',q:'「週に1〜2回です」',a:'Once or twice a week.',hint:'once or twice',lesson:'⑩7/23'},
+  {id:'t1003',pat:'wanna',month:'2607',type:'translate',q:'「ジャンクフードを避けるようにしています」',a:'I try to stay away from junk food.',hint:'stay away from',lesson:'⑩7/23'},
+  {id:'t1004',pat:'indirect',month:'2607',type:'translate',q:'「彼女が何を言うか気になる」',a:"I'm interested in what she's gonna say.",hint:'間接疑問文の語順',lesson:'⑩7/23'},
+  {id:'t1005',pat:'routine',month:'2607',type:'translate',q:'「家に帰ったらまずシャワーを浴びたい」',a:'I wanna take a shower first when I get home.',hint:'when I get home',lesson:'⑩7/23'},
+  {id:'fr1001',pat:'indirect',month:'2607',type:'free',q:'"I\'m interested in what ..." を使った文を作ろう',a:"I'm interested in what he thinks. / I'm interested in what she's gonna say. など",hint:'what / why / how + 主語 + 動詞',lesson:'⑩7/23'},
+  {id:'fr1002',pat:'wanna',month:'2607',type:'free',q:'"stay away from" を使った文を2つ作ろう（場所・物）',a:'Stay away from that area. / I try to stay away from junk food. など',lesson:'⑩7/23'},
+
+  // ===== 2607（7月）⑪グループレッスン 7/23 =====
+  {id:'v1101',pat:'particular',month:'2607',type:'vocab',q:'"in particular" の特徴として正しいのは？',a:'疑問文との相性が良い・特定のものを指す',choices:['疑問文との相性が良い・特定のものを指す','断言・強調に使う','口語的すぎる','否定文にしか使えない'],explain:"「特に・とりわけ」の意味で、選択肢の中から特定のものを指す。`Is there anything in particular you want to eat?` 疑問文と相性が良い。",lesson:'⑪7/23'},
+  {id:'v1102',pat:'wordpair',month:'2607',type:'vocab',q:'"especially" の特徴として正しいのは？',a:'強め・決まっていることを断言する',choices:['強め・決まっていることを断言する','疑問文に使いやすい','弱めの強調','場所を限定する'],explain:"「特に」を強めに断言するときの語。`I especially love Osaka food.` 好きなものが決まっているときに使い、in particular より主張が強い。",lesson:'⑪7/23'},
+  {id:'v1103',pat:'__vocab__',month:'2607',type:'vocab',q:'"principal" の意味は？',a:'校長',choices:['校長','主役','原則','元本'],explain:"学校の校長のこと。`I talked to the principal.` つづりの似た principle（原則）とは別の語なので注意。",lesson:'⑪7/23'},
+  {id:'v1104',pat:'__vocab__',month:'2607',type:'vocab',q:'"bow" を動詞として使うと？',a:'お辞儀する',choices:['お辞儀する','手を振る','敬礼する','握手する'],explain:"頭を下げてお辞儀すること。`I always bow when I say thank you.` 名詞では「弓」の意味もある。",lesson:'⑪7/23'},
+  {id:'v1105',pat:'considered',month:'2607',type:'vocab',q:'"It\'s considered to be rude." の意味は？',a:'失礼とみなされる',choices:['失礼とみなされる','失礼だと感じる','失礼するつもりだ','失礼だった'],explain:"周囲からそう受け取られる、という言い方。`It's considered to be rude.` 自分の意見ではなく一般的な受け止め方を伝えるときに便利。",lesson:'⑪7/23'},
+  {id:'f1101',pat:'gerundnoun',month:'2607',type:'fill',q:'To ___ on time is very important.',blank:'be',choices:['be','keep','stay','get'],hint:'時間を守る',lesson:'⑪7/23'},
+  {id:'f1102',pat:'considered',month:'2607',type:'fill',q:'I always ___ when I say thank you.',blank:'bow',choices:['bow','wave','nod','salute'],hint:'お辞儀する',lesson:'⑪7/23'},
+  {id:'f1103',pat:'considered',month:'2607',type:'fill',q:'It\'s considered ___ be rude if you come too early.',blank:'to',choices:['to','of','as','for'],lesson:'⑪7/23'},
+  {id:'f1104',pat:'particular',month:'2607',type:'fill',q:'Is there anything in ___?',blank:'particular',choices:['particular','especially','specific','detail'],hint:'特に何か',lesson:'⑪7/23'},
+  {id:'f1105',pat:'startlike',month:'2607',type:'fill',q:'Why did you start ___ this anime?',blank:'liking',choices:['liking','like','liked','to liking'],hint:'start + -ing',lesson:'⑪7/23'},
+  {id:'g1101',pat:'startlike',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'I started to like this anime.',optB:'I started liking this anime.',a:'B',explain:'どちらも文法的に正しいが、"start -ing"の方が「自然に始まった」ニュアンスで会話では自然に聞こえる。',lesson:'⑪7/23'},
+  {id:'g1102',pat:'gerundnoun',month:'2607',type:'grammar',q:'どちらが正しい？（時間を守ることが大切）',optA:'To keep on time is very important.',optB:'To be on time is very important.',a:'B',explain:'"be on time"=時間通りに来る。"keep on time"は不自然。"be punctual"も同じ意味で使える。',deep:"【be on time と in time】`on time`＝時間ぴったり・定刻通り。`The train arrived on time.` `in time`＝間に合って（締め切りに遅れずに）。`I arrived in time for the meeting.` 電車が定刻に来たなら on time、会議に遅れずに着いたなら in time。`keep time` は「時間を守る」ではなく「（時計が）正確に動く・リズムを刻む」という別の意味なので、時間厳守を言いたいときは be on time を使う。",lesson:'⑪7/23'},
+  {id:'g1103',pat:'wordpair',month:'2607',type:'grammar',q:'どちらが自然？（特に何か食べたいものある？）',optA:'Is there anything especially you want to eat?',optB:'Is there anything in particular you want to eat?',a:'B',explain:'"in particular"は疑問文との相性が良い。"especially"は「特に〜が好き」のような断言に使う。',lesson:'⑪7/23'},
+  {id:'g1104',pat:'indirect',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'I wonder what does she think.',optB:'I wonder what she thinks.',a:'B',explain:'間接疑問文は「疑問詞＋主語＋動詞」の語順。"what does she"の倒置は不要。',lesson:'⑪7/23'},
+  {id:'t1101',pat:'whystart',month:'2607',type:'translate',q:'「なんでこのアニメが好きになったの？」',a:'Why did you start liking this anime?',hint:'start liking',lesson:'⑪7/23'},
+  {id:'t1102',pat:'gerundnoun',month:'2607',type:'translate',q:'「時間を守ることがとても大切です」',a:'To be on time is very important.',hint:'to be on time',lesson:'⑪7/23'},
+  {id:'t1103',pat:'considered',month:'2607',type:'translate',q:'「お礼を言うときはいつもお辞儀します」',a:'I always bow when I say thank you.',hint:'bow',lesson:'⑪7/23'},
+  {id:'t1104',pat:'considered',month:'2607',type:'translate',q:'「早く来すぎると失礼とみなされます」',a:"If you come too early, it's considered to be rude.",hint:'considered to be',lesson:'⑪7/23'},
+  {id:'t1105',pat:'particular',month:'2607',type:'translate',q:'「特に何か食べたいものありますか？」',a:'Is there anything in particular you want to eat?',hint:'in particular',lesson:'⑪7/23'},
+  {id:'fr1101',pat:'whystart',month:'2607',type:'free',q:'"Why did you start liking ~?" を使って質問文を作ろう',a:'Why did you start liking [趣味/食べ物/スポーツ]?',hint:'start liking + 名詞',lesson:'⑪7/23'},
+  {id:'fr1102',pat:'wordpair',month:'2607',type:'free',q:'"in particular" と "especially" を1文ずつ使って書こう',a:'Is there anything in particular you want? / I especially love Osaka food.',lesson:'⑪7/23'},
+
+  // ===== 2607（7月）⑫マルチトピック 7/25 =====
+  {id:'v1201',pat:'prep',month:'2607',type:'vocab',q:'"recreationally" の意味は？',a:'趣味で・レジャーとして',choices:['趣味で・レジャーとして','プロとして','真剣に','たまに'],explain:"本気やプロとしてではなく、楽しみでやっているニュアンス。`I play table tennis recreationally.` 対になる語は competitively。",lesson:'⑫7/25'},
+  {id:'v1202',pat:'__vocab__',month:'2607',type:'vocab',q:'"layover" の意味は？',a:'乗り継ぎ待ち',choices:['乗り継ぎ待ち','遅延','欠航','搭乗手続き'],explain:"空港で次の便を待つ「時間」のこと。`I have a three-hour layover in Hong Kong.` イギリス英語では stopover とも言う。",lesson:'⑫7/25'},
+  {id:'v1203',pat:'__vocab__',month:'2607',type:'vocab',q:'"high skill ceiling" の意味は？',a:'極めるのが難しい（上達の余地が大きい）',choices:['極めるのが難しい（上達の余地が大きい）','始めやすい','天井が高い','技術が不要'],explain:"上達の余地が大きく、極めるのが難しいこと。`Table tennis has a high skill ceiling.` 始めやすさを表す low entry と対で使われる。",lesson:'⑫7/25'},
+  {id:'v1204',pat:'__vocab__',month:'2607',type:'vocab',q:'"purebred" の意味は？',a:'純血種',choices:['純血種','雑種','子犬','大型犬'],explain:"血統書付きの純血種のこと。`Is your dog purebred?` 雑種は mixed dog。",lesson:'⑫7/25'},
+  {id:'v1205',pat:'__vocab__',month:'2607',type:'vocab',q:'"shaved ice" の意味は？',a:'かき氷',choices:['かき氷','アイスクリーム','氷水','削り節'],explain:"日本の夏の定番、かき氷。`I like eating shaved ice in summer.` 削った氷、という文字通りの表現。",lesson:'⑫7/25'},
+  {id:'f1201',pat:'prep',month:'2607',type:'fill',q:'I play table tennis ___.',blank:'recreationally',choices:['recreationally','professional','serious','recreation'],hint:'趣味で',lesson:'⑫7/25'},
+  {id:'f1202',pat:'prep',month:'2607',type:'fill',q:'I have a three-hour ___ in Hong Kong.',blank:'layover',choices:['layover','delay','flight','airport'],hint:'乗り継ぎ待ち',lesson:'⑫7/25'},
+  {id:'f1203',pat:'beadj',month:'2607',type:'fill',q:"I'm ___ motivation these days.",blank:'losing',choices:['losing','lost','lose','loss'],hint:'やる気が落ちている（進行中）',lesson:'⑫7/25'},
+  {id:'f1204',pat:'easytomaster',month:'2607',type:'fill',q:"It's easy to ___, but difficult to master.",blank:'learn',choices:['learn','learning','learned','learns'],hint:'easy to + 動詞原形',lesson:'⑫7/25'},
+  {id:'f1205',pat:'article',month:'2607',type:'fill',q:"I'd like a house ___ a forest.",blank:'near',choices:['near','on','in','of'],hint:'森の近く',lesson:'⑫7/25'},
+  {id:'g1201',pat:'easytomaster',month:'2607',type:'grammar',q:'どちらが正しい？（覚えやすいが奥が深い）',optA:"It's easy to learning but difficult to mastering.",optB:"It's easy to learn but difficult to master.",a:'B',explain:'"easy/difficult to + 動詞の原形" が正しい。to の後を動名詞(-ing)にはしない。',lesson:'⑫7/25'},
+  {id:'g1202',pat:'beadj',month:'2607',type:'grammar',q:'どちらが正しい？（やる気が落ちている）',optA:"I'm losing my motivate.",optB:"I'm losing motivation.",a:'B',explain:'"motivation" が名詞。"motivate" は動詞なので lose の目的語にできない。進行形 losing で「今まさに落ちてきている」継続を表す。',lesson:'⑫7/25'},
+  {id:'g1203',pat:'article',month:'2607',type:'grammar',q:'どちらが正しい？（乗り継ぎ待ちとは空港での待ち時間だ）',optA:'A layover is wait at airport between flight.',optB:'A layover is waiting at an airport between flights.',a:'B',explain:'説明の主語には動名詞 waiting。可算名詞 airport には an、複数の便は flights。',lesson:'⑫7/25'},
+  {id:'g1204',pat:'article',month:'2607',type:'grammar',q:'どちらが正しい？（森の近くの家）',optA:'a house near forest',optB:'a house near the forest',a:'B',explain:'forest は可算名詞。特定の森を指すので the が必要。無冠詞では不自然。',lesson:'⑫7/25'},
+  {id:'t1201',pat:'prep',month:'2607',type:'translate',q:'「私は趣味で卓球をします」',a:'I play table tennis recreationally.',hint:'recreationally',lesson:'⑫7/25'},
+  {id:'t1202',pat:'easytomaster',month:'2607',type:'translate',q:'「覚えやすいが奥が深い」',a:"It's easy to learn, but difficult to master.",hint:'easy to ~, difficult to ~',lesson:'⑫7/25'},
+  {id:'t1203',pat:'prep',month:'2607',type:'translate',q:'「香港で3時間の乗り継ぎがあります」',a:'I have a three-hour layover in Hong Kong.',hint:'layover',lesson:'⑫7/25'},
+  {id:'t1204',pat:'beadj',month:'2607',type:'translate',q:'「最近やる気が落ちています」',a:"I'm losing motivation.",hint:'losing motivation',lesson:'⑫7/25'},
+  {id:'t1205',pat:'article',month:'2607',type:'translate',q:'「森の近くの美しい庭がある家に住みたい」',a:"I'd like a house near a forest with a beautiful garden.",hint:'near a forest / with',lesson:'⑫7/25'},
+  {id:'fr1201',pat:'__vocab__',month:'2607',type:'free',q:'日本の夏の風物詩を英語で3つ書こう',a:'shaved ice / summer festival / fireworks / swimming in the sea など',hint:'夏の単語',lesson:'⑫7/25'},
+  {id:'fr1202',pat:'easytomaster',month:'2607',type:'free',q:'"easy to ~, difficult to ~" を使った文を作ろう',a:"It's easy to learn, but difficult to master. など",hint:'easy to + 原形',lesson:'⑫7/25'},
+
+  // ===== 2607（7月）⑬Efe 7/30 質問力アップ =====
+  {id:'v1301',pat:'__vocab__',month:'2607',type:'vocab',q:'"litter" の意味は（動詞）？',a:'ポイ捨てする',choices:['ポイ捨てする','拾う','掃除する','分別する'],explain:"ゴミをポイ捨てすること。`Don't litter.` 名詞では散らかったゴミそのものを指す。",lesson:'⑬7/30'},
+  {id:'v1302',pat:'turndown',month:'2607',type:'vocab',q:'"turn down" の意味は？',a:'断る',choices:['断る','引き受ける','振り向く','曲がる'],explain:"誘いや申し出を断る句動詞。`I turned him down many times.` 代名詞は間に挟んで turned him down、turned down him とは言わない。",lesson:'⑬7/30'},
+  {id:'v1303',pat:'goalplan',month:'2607',type:'vocab',q:'"in the first place" の意味は？',a:'そもそも',choices:['そもそも','最初に到着して','一位で','その場で'],explain:"「そもそも・最初から」と話を根本に戻すときの表現。`Why did he invite me in the first place?` 文末に置いて使う。",lesson:'⑬7/30'},
+  {id:'v1304',pat:'within',month:'2607',type:'vocab',q:'"within" の意味は？',a:'〜以内',choices:['〜以内','〜なしで','〜の外で','〜とともに'],explain:"期限や範囲の内側を表す。`I wanna get married within 5 years.` in が「5年後に」なのに対し、within は「5年経つまでに」を意味する。",lesson:'⑬7/30'},
+  {id:'v1305',pat:'__vocab__',month:'2607',type:'vocab',q:'"spare time" の意味は？',a:'暇な時間・自由時間',choices:['暇な時間・自由時間','残業時間','予備の部品','節約'],explain:"自由に使える時間のこと。`What do you do in your spare time?` free time とほぼ同じ意味で使える。",lesson:'⑬7/30'},
+  {id:'f1301',pat:'within',month:'2607',type:'fill',q:'I wanna get married ___ 5 years.',blank:'within',choices:['within','without','with','win'],hint:'5年以内に',lesson:'⑬7/30'},
+  {id:'f1302',pat:'article',month:'2607',type:'fill',q:'I worked ___ a Japanese company.',blank:'for',choices:['for','at','in','with'],hint:'work for ～',lesson:'⑬7/30'},
+  {id:'f1303',pat:'turndown',month:'2607',type:'fill',q:'I turned him ___ many times.',blank:'down',choices:['down','up','off','over'],hint:'断った',lesson:'⑬7/30'},
+  {id:'f1304',pat:'goalplan',month:'2607',type:'fill',q:'Why did he invite me in the first ___?',blank:'place',choices:['place','time','line','point'],hint:'そもそも',lesson:'⑬7/30'},
+  {id:'f1305',pat:'article',month:'2607',type:'fill',q:'There was ___ earthquake.',blank:'an',choices:['an','a','the','—'],hint:'可算名詞の冠詞',deep:"【a と an と the の使い分け】数えられる名詞が単数のときは必ず冠詞が必要で、初めて話題に出すなら a/an、すでに特定されているなら the を使う。a か an かは後ろの語の「発音」で決まり、母音の音で始まれば an（an earthquake, an hour）、子音の音なら a（a university ※ユニと読むため）。職業を言うときも `I was a truck driver.` と冠詞が必要で、これは日本語にない感覚なので抜けやすい。ただし複数形や不可算名詞（water, information）には a/an は付かない。",lesson:'⑬7/30'},
+  {id:'g1301',pat:'recommend',month:'2607',type:'grammar',q:'どちらが正しい？（阿波踊りに行くのをおすすめします）',optA:'I recommend to go to Awa dance.',optB:'I recommend going to Awa dance.',a:'B',explain:'"recommend" の後は動名詞(-ing)。"recommend to do" は誤り。',deep:"【recommend の後ろの形】recommend は動名詞を取る動詞で `I recommend going.` が正しく、`recommend to go` とは言えない。人に勧める場合は `I recommend that you go.` と that節を使うか、`I recommend Awa dance to you.` と目的語を置く。同じく動名詞だけを取る動詞に enjoy / finish / avoid / mind / suggest / consider があり、これらはまとめて覚えると効率がよい。逆に不定詞だけを取るのは want / hope / decide / promise。start や like のようにどちらも取れる動詞もある。",lesson:'⑬7/30'},
+  {id:'g1302',pat:'candothe',month:'2607',type:'grammar',q:'どちらが正しい？（阿波踊りできますか？）',optA:'Can you dance the awa dance?',optB:'Can you do the awa dance?',a:'B',explain:'"the awa dance" のような伝統芸能は動詞 do で受ける。dance を動詞にすると重複して不自然。',lesson:'⑬7/30'},
+  {id:'g1303',pat:'article',month:'2607',type:'grammar',q:'どちらが正しい？（日本の会社で働いていた）',optA:'I worked Japanese company.',optB:'I worked for a Japanese company.',a:'B',explain:'「会社に勤める」は "work for ～"。可算名詞 company には冠詞 a も必要。',lesson:'⑬7/30'},
+  {id:'g1304',pat:'howlong',month:'2607',type:'grammar',q:'どちらが正しい？（どれくらい日本に住んでいますか）',optA:'How long do you stay in Japan?',optB:'How long have you been living in Japan?',a:'B',explain:'今も継続中の「住んでいる」は現在完了進行形。現在形 do you stay だと「(今後)どれくらい滞在する予定か」の意味になる。',deep:"【現在完了進行形が必要な理由】`How long have you been living in Japan?` は過去に始まって今も続いていることを尋ねる形。現在形の `How long do you stay?` だと「これからどのくらい滞在する予定か」と未来の話になり、来日直後の人に聞く質問になってしまう。また `How long have you lived in Japan?` と進行形にしない形も正しく、こちらは状態を淡々と述べる響きになる。live や work のように継続性のある動詞は、have been ~ing でも have + 過去分詞でも意味がほぼ変わらないのが特徴。一方 `I have read the book.` のような動作動詞では完了か継続かで意味が変わる。",lesson:'⑬7/30'},
+  {id:'t1301',pat:'within',month:'2607',type:'translate',q:'「5年以内に結婚したい」',a:'I want to get married within 5 years.',hint:'within',lesson:'⑬7/30'},
+  {id:'t1302',pat:'recommend',month:'2607',type:'translate',q:'「阿波踊りに行くのをおすすめします」',a:'I recommend going to Awa dance.',hint:'recommend + 動名詞',lesson:'⑬7/30'},
+  {id:'t1303',pat:'howlong',month:'2607',type:'translate',q:'「日本にどれくらい住んでいますか？」',a:'How long have you been living in Japan?',hint:'現在完了進行形',lesson:'⑬7/30'},
+  {id:'t1304',pat:'turndown',month:'2607',type:'translate',q:'「彼を何度も断りました」',a:'I turned him down many times.',hint:'turn down',lesson:'⑬7/30'},
+  {id:'t1305',pat:'article',month:'2607',type:'translate',q:'「日本の会社で働いていました」',a:'I worked for a Japanese company.',hint:'work for a ～',lesson:'⑬7/30'},
+  {id:'fr1301',pat:'goalplan',month:'2607',type:'free',q:'"What\'s your goal in 5 years?" に自分の言葉で答えよう',a:'I wanna [目標] within 5 years. など',hint:'within 5 years',lesson:'⑬7/30'},
+  {id:'fr1302',pat:'article',month:'2607',type:'free',q:'職業を言う文を冠詞つきで2つ作ろう',a:'I was a truck driver. / I am a trainer. など（職業には a/an が必要）',hint:'a + 職業',lesson:'⑬7/30'},
+
+  // ===== 2608（8月）⑭Brendan 8/4 Yes/No Questions Game =====
+  {id:'v1401',pat:'__vocab__',month:'2608',type:'vocab',q:'"stationary" の意味は？',a:'静止している・動かない',choices:['静止している・動かない','持ち運べる','文房具を売る','高性能な'],explain:"動かずその場にとどまっている状態。`Is it stationary?` 同じ発音の stationery（文房具）とはつづりが違うので注意。",lesson:'⑭8/4'},
+  {id:'v1402',pat:'__vocab__',month:'2608',type:'vocab',q:'"portable" の意味は？',a:'持ち運べる',choices:['持ち運べる','壊れやすい','充電式の','使い捨ての'],explain:"手で持って移動できるということ。`Is it portable?` 反対の意味を表すのが stationary。",lesson:'⑭8/4'},
+  {id:'v1403',pat:'__vocab__',month:'2608',type:'vocab',q:'"dough" の意味は？',a:'（麺・パンの）生地',choices:['（麺・パンの）生地','小麦粉','スープ','具材'],explain:"小麦粉と水を混ねた生地のこと。`It's made of dough.` パン・ピザ・麺の材料を表すときに使い、発音は「ドウ」。",lesson:'⑭8/4'},
+  {id:'v1404',pat:'__vocab__',month:'2608',type:'vocab',q:'"iconic" の意味は？',a:'象徴的な・特徴的な',choices:['象徴的な・特徴的な','古典的な','電子的な','経済的な'],explain:"ひと目でそれとわかる特徴を持っていること。`Does it have an iconic shape?` 有名で象徴となっているものに使う。",lesson:'⑭8/4'},
+  {id:'v1405',pat:'__vocab__',month:'2608',type:'vocab',q:'"melt" の意味は？',a:'溶ける',choices:['溶ける','燃える','凍る','割れる'],explain:"熱で固体が液体になること。`Does it melt?` アイスやチョコの話でよく出てくる。",lesson:'⑭8/4'},
+  {id:'f1401',pat:'yesno',month:'2608',type:'fill',q:'Is it ___ of paper?',blank:'made',choices:['made','make','making','made up'],hint:'〜でできている',lesson:'⑭8/4'},
+  {id:'f1402',pat:'yesno',month:'2608',type:'fill',q:'___ you wear it on your hand?',blank:'Do',choices:['Do','Are','Is','Does'],hint:'一般動詞の疑問文',lesson:'⑭8/4'},
+  {id:'f1403',pat:'yesno',month:'2608',type:'fill',q:'Can it be ___?',blank:'charged',choices:['charged','charge','charging','charger'],hint:'充電できる？（受け身）',lesson:'⑭8/4'},
+  {id:'f1404',pat:'yesno',month:'2608',type:'fill',q:'Is it smaller ___ a phone?',blank:'than',choices:['than','then','from','as'],hint:'比較して絞り込む',lesson:'⑭8/4'},
+  {id:'f1405',pat:'__vocab__',month:'2608',type:'fill',q:'Is it ___? — Yes, you can carry it.',blank:'portable',choices:['portable','stationary','electronic','iconic'],hint:'持ち運べる',lesson:'⑭8/4'},
+  {id:'g1401',pat:'yesno',month:'2608',type:'grammar',q:'どちらが正しい？（ガラスでできてる？）',optA:'Is it glass?',optB:'Is it made of glass?',a:'B',explain:"素材を尋ねるときは `made of` を使う。Aの `Is it glass?` だと「それはガラスそのものですか」という意味になり、ガラス製の別の物を指しているときに噛み合わない。`Is it made of paper / wood / dough?` の形で覚える。",deep:"【made of と made from の違い】`made of`＝材料が見た目で分かるまま残っている場合（木の机、紙のお金）。`made from`＝原料が加工されて元の形が分からない場合（ぶどうからワイン、牛乳からチーズ）。`This desk is made of wood.` / `Wine is made from grapes.` と使い分ける。さらに `made in`＝製造された国（made in Japan）、`made with`＝主な材料や具材（made with fresh tomatoes）もあり、前置詞ひとつで意味が変わる。Yes/Noゲームで素材を聞くときは made of が基本になる。",lesson:'⑭8/4'},
+  {id:'g1402',pat:'yesno',month:'2608',type:'grammar',q:'どちらが正しい？（充電できますか）',optA:'Can it charge?',optB:'Can it be charged?',a:'B',explain:"物が充電される側なので受け身の `be charged` にする。Aだと「それが（何かを）充電できる」という意味になってしまう。物が主語で「〜されうる」と言いたいときは can be + 過去分詞。",lesson:'⑭8/4'},
+  {id:'g1403',pat:'yesno',month:'2608',type:'grammar',q:'どちらが正しい？（食べられますか）',optA:'Can you eat it?',optB:'Do you can eat it?',a:'A',explain:"can は助動詞なので、疑問文では do を使わず can を文頭に出す。Bのように `Do you can` と重ねるのは誤り。`Can you eat it? / Can you wear it? / Can you ride it?` は絞り込み質問の定番。",lesson:'⑭8/4'},
+  {id:'t1401',pat:'yesno',month:'2608',type:'translate',q:'「それは紙でできていますか？」',a:'Is it made of paper?',hint:'made of',lesson:'⑭8/4'},
+  {id:'t1402',pat:'yesno',month:'2608',type:'translate',q:'「それは持ち運べますか？」',a:'Is it portable?',hint:'portable',lesson:'⑭8/4'},
+  {id:'t1403',pat:'yesno',month:'2608',type:'translate',q:'「それを手に身につけますか？」',a:'Do you wear it on your hand?',hint:'wear it on',lesson:'⑭8/4'},
+  {id:'t1404',pat:'yesno',month:'2608',type:'translate',q:'「それは溶けますか？」',a:'Does it melt?',hint:'melt',lesson:'⑭8/4'},
+  {id:'fr1401',pat:'yesno',month:'2608',type:'free',q:'"made of" を使った質問を3つ作ろう',a:'Is it made of paper? / Is it made of glass? / Is it made of dough?',hint:'Is it made of ~?',lesson:'⑭8/4'},
+  {id:'fr1402',pat:'yesno',month:'2608',type:'free',q:'カテゴリを広い→狭い順に絞る質問を3つ書こう',a:'Is it alive? → Is it an animal? → Can you eat it? など',hint:'広い質問から順に',lesson:'⑭8/4'},
+
+  // ===== 2608（8月）⑮8/6 Too & Either / Neither（同意） =====
+  {id:'v1501',pat:'agree',month:'2608',type:'vocab',q:'"So do I." の意味は？',a:'私もそうです（肯定への同意）',choices:['私もそうです（肯定への同意）','私は違います','私もしません','どちらでもいい'],explain:"相手の肯定文に「私も」と同意する形。`I like natto. → So do I.` カジュアルには Me too. でも同じ意味になる。",lesson:'⑮8/6'},
+  {id:'v1502',pat:'agree',month:'2608',type:'vocab',q:'"Neither do I." の意味は？',a:'私も〜しません（否定への同意）',choices:['私も〜しません（否定への同意）','私はします','私もします','どちらも好き'],explain:"相手の否定文に「私も〜ない」と同意する形。`I don't like it. → Neither do I.` カジュアルには Me neither.。",lesson:'⑮8/6'},
+  {id:'v1503',pat:'__vocab__',month:'2608',type:'vocab',q:'"stayed up late" の意味は？',a:'夜更かしした',choices:['夜更かしした','寝坊した','早起きした','徹夜で働いた'],explain:"遅くまで起きていたということ。`I stayed up late last night.` 早起きは got up early。",lesson:'⑮8/6'},
+  {id:'v1504',pat:'__vocab__',month:'2608',type:'vocab',q:'"sparkling water" の意味は？',a:'炭酸水',choices:['炭酸水','水道水','ミネラルウォーター','お湯'],explain:"泡の出る炭酸入りの水。`Do you drink sparkling water?` 炭酸なしの普通の水は still water。",lesson:'⑮8/6'},
+  {id:'v1505',pat:'__vocab__',month:'2608',type:'vocab',q:'"desert island" の意味は？',a:'無人島',choices:['無人島','砂漠','リゾート地','火山島'],explain:"人の住んでいない島のこと。`If you were on a desert island, what would you bring?` は定番の会話ネタ。dessert（デザート）とはつづりが違う。",lesson:'⑮8/6'},
+  {id:'f1501',pat:'agree',month:'2608',type:'fill',q:'I can swim. — So ___ I.',blank:'can',choices:['can','do','am','did'],hint:'元の文と同じ助動詞を使う',lesson:'⑮8/6'},
+  {id:'f1502',pat:'agree',month:'2608',type:'fill',q:"I don't like raw onions. — ___ do I.",blank:'Neither',choices:['Neither','So','Either','Too'],hint:'否定への同意',lesson:'⑮8/6'},
+  {id:'f1503',pat:'agree',month:'2608',type:'fill',q:'I was tired. — So ___ I.',blank:'was',choices:['was','did','do','am'],hint:'be動詞の過去形に合わせる',lesson:'⑮8/6'},
+  {id:'f1504',pat:'agree',month:'2608',type:'fill',q:"I can't whistle. — I can't ___.",blank:'either',choices:['either','too','neither','so'],hint:'否定文の文末につける',lesson:'⑮8/6'},
+  {id:'f1505',pat:'agree',month:'2608',type:'fill',q:'I stayed up late. — So ___ I.',blank:'did',choices:['did','was','do','have'],hint:'一般動詞の過去形に合わせる',lesson:'⑮8/6'},
+  {id:'g1501',pat:'agree',month:'2608',type:'grammar',q:'どちらが正しい？（私も泳げます）',optA:'So can I.',optB:'So I can.',a:'A',explain:"`So + 助動詞 + 主語` の語順で「私も」を表す。Bのように主語を先に置くと「その通り、私はできる」という別の意味の強調表現になってしまう。So do I / So can I / So was I のように必ず倒置する。",lesson:'⑮8/6'},
+  {id:'g1502',pat:'agree',month:'2608',type:'grammar',q:'どちらが正しい？（私も好きじゃない）',optA:"Neither don't I.",optB:'Neither do I.',a:'B',explain:"neither 自体に否定の意味が含まれているので、don't を重ねると二重否定になり誤り。`Neither do I.` が正しい形で、これで「私も〜ない」を表す。",deep:"【So do I / Neither do I の作り方】相手の発言に「私も」と返す形で、肯定なら So、否定なら Neither で始める。ポイントは3つ。①必ず倒置する（So do I であって So I do ではない）。②元の文の助動詞に合わせる（I like→So do I / I can→So can I / I was→So was I / I did→So did I）。③neither 自体が否定なので don't を重ねない。文末に置く形もあり、肯定は `I do too.`、否定は `I don't either.` となる。カジュアルには Me too / Me neither で済ませられる。",lesson:'⑮8/6'},
+  {id:'g1503',pat:'agree',month:'2608',type:'grammar',q:'どちらが正しい？（私もそうでした）',optA:'So did I.',optB:'So do I.',a:'A',explain:"同意するときは元の文の時制に合わせる。相手が `I stayed up late.` と過去形で言ったなら So did I. となる。現在の話なら So do I.。",lesson:'⑮8/6'},
+  {id:'g1504',pat:'agree',month:'2608',type:'grammar',q:'どちらが正しい？（私も〜ない、文末で）',optA:"I don't either.",optB:"I don't neither.",a:'A',explain:"文末に置いて「私も〜ない」と言うときは either を使う。neither は文頭で `Neither do I.` の形で使うので、位置によって語が変わる。",lesson:'⑮8/6'},
+  {id:'t1501',pat:'agree',month:'2608',type:'translate',q:'「私もです」（相手が I like ~ と言ったとき）',a:'So do I.',hint:'So + 助動詞 + I',lesson:'⑮8/6'},
+  {id:'t1502',pat:'agree',month:'2608',type:'translate',q:'「私も〜しません」（相手が I don\'t ~ と言ったとき）',a:'Neither do I.',hint:'Neither + 助動詞 + I',lesson:'⑮8/6'},
+  {id:'t1503',pat:'agree',month:'2608',type:'translate',q:'「私も泳げます」',a:'So can I.',hint:'can に合わせる',lesson:'⑮8/6'},
+  {id:'t1504',pat:'agree',month:'2608',type:'translate',q:'「え、そうなん？私はしないよ」（相手の肯定に不同意）',a:"Really? I don't.",hint:'Really? で受ける',lesson:'⑮8/6'},
+  {id:'fr1501',pat:'agree',month:'2608',type:'free',q:'"So ~ I" の形を助動詞を変えて3つ書こう',a:'So do I. / So can I. / So was I. / So did I. など',hint:'元の文の助動詞に合わせる',lesson:'⑮8/6'},
+  {id:'fr1502',pat:'agree',month:'2608',type:'free',q:'"Neither do I" と "Me neither" の使い分けを書こう',a:'Neither do I.（ややきちんとした形） / Me neither.（カジュアルな言い方）どちらも「私も〜ない」',hint:'フォーマル度の違い',lesson:'⑮8/6'},
+
+  // ===== 2608（8月）⑯8月 Either / Neither（選択編） =====
+  {id:'v1601',pat:'eitheror',month:'2608',type:'vocab',q:'"either A or B" の意味は？',a:'AかBのどちらか',choices:['AかBのどちらか','AもBも両方','AもBもどちらでもない','AよりBが良い'],explain:"2つの選択肢のうちどちらか、を表す。`We can either go to Hiroshima or Tokyo.` either は必ず or とペアで使う。",lesson:'⑯8月'},
+  {id:'v1602',pat:'eitheror',month:'2608',type:'vocab',q:'"neither A nor B" の意味は？',a:'AもBもどちらも〜ない',choices:['AもBもどちらも〜ない','AかBのどちらか','AとB両方とも','AよりBの方が'],explain:"2つとも当てはまらないときに使う。`Neither Sushiro nor Sukiya is available.` neither は or ではなく nor とペアになる。",lesson:'⑯8月'},
+  {id:'v1603',pat:'__vocab__',month:'2608',type:'vocab',q:'"available" の意味は？',a:'利用可能な・空いている',choices:['利用可能な','高価な','人気の','閉店した'],explain:"使える、手に入る、空いているという意味。`Neither option is available.` 店や部屋、人の予定にも使える便利な形容詞。",lesson:'⑯8月'},
+  {id:'v1604',pat:'eitheror',month:'2608',type:'vocab',q:'"Either one is ok." の意味は？',a:'どっちでもいい',choices:['どっちでもいい','どっちもダメ','片方だけ良い','両方欲しい'],explain:"選択肢を出されたときの鉄板の返し。`Do you want the red one or the blue one? → Either one is ok.` ok の代わりに fine や good でもよい。",lesson:'⑯8月'},
+  {id:'f1601',pat:'eitheror',month:'2608',type:'fill',q:'We can ___ go to Hiroshima or Tokyo.',blank:'either',choices:['either','neither','both','nor'],hint:'or とペアになる語',lesson:'⑯8月'},
+  {id:'f1602',pat:'eitheror',month:'2608',type:'fill',q:'Neither Sushiro ___ Sukiya is available.',blank:'nor',choices:['nor','or','and','but'],hint:'neither とペアになる語',lesson:'⑯8月'},
+  {id:'f1603',pat:'eitheror',month:'2608',type:'fill',q:'___ one is ok.',blank:'Either',choices:['Either','Neither','Both','Any'],hint:'どっちでもいい',lesson:'⑯8月'},
+  {id:'f1604',pat:'eitheror',month:'2608',type:'fill',q:'Neither option ___ available.',blank:'is',choices:['is','are','be','were'],hint:'neither は単数扱い',lesson:'⑯8月'},
+  {id:'f1605',pat:'everexp',month:'2608',type:'fill',q:'Have you ___ to North Korea?',blank:'been',choices:['been','gone','go','went'],hint:'〜に行ったことがある',lesson:'⑯8月'},
+  {id:'g1601',pat:'eitheror',month:'2608',type:'grammar',q:'どちらが正しい？（すき家もスシローも空いてない）',optA:'Neither Sukiya or Sushiro is available.',optB:'Neither Sukiya nor Sushiro is available.',a:'B',explain:"neither とペアになるのは or ではなく nor。`either A or B` / `neither A nor B` と組み合わせが決まっているので、セットで覚える。",deep:"【either/neither のペアと単複】`either A or B`（AかBのどちらか）、`neither A nor B`（AもBも〜ない）と組み合わせが固定されている。動詞の数は原則として近い方の主語に合わせるため `Neither Sushiro nor Sukiya is available.` と単数の is になる。また neither はそれ自体が否定語なので not と重ねてはいけない（×not neither）。肯定文で「どちらも」と言いたいときは both A and B を使う。会話では `Either one is ok.`（どっちでもいい）が頻出フレーズ。",lesson:'⑯8月'},
+  {id:'g1602',pat:'eitheror',month:'2608',type:'grammar',q:'どちらが正しい？（広島か東京どちらかに行ける）',optA:'We can either go to Hiroshima or Tokyo.',optB:'We can neither go to Hiroshima or Tokyo.',a:'A',explain:"「どちらかに行ける」という肯定の選択なので either を使う。Bの neither は「どちらにも行けない」という否定の意味になり、文意が逆になる。",deep:"【either の3つの使い方】①`either A or B`＝AかBのどちらか。②`Either one is ok.`＝どちらでもいい。③否定文の文末で `I don't either.`＝私も〜ない。同じ either でも役割が違うので、文中の位置で判断する。発音は「イーザー」「アイザー」どちらも正しく、アメリカでは前者、イギリスでは後者が優勢。neither も同様に「ニーザー」「ナイザー」の両方が使われる。",lesson:'⑯8月'},
+  {id:'g1603',pat:'eitheror',month:'2608',type:'grammar',q:'どちらが正しい？（どちらの選択肢も空いていない）',optA:'Neither option are available.',optB:'Neither option is available.',a:'B',explain:"neither は「2つのうちどちらも」という意味だが、文法上は単数扱いなので動詞は is になる。option も単数形のままにする。",lesson:'⑯8月'},
+  {id:'t1601',pat:'eitheror',month:'2608',type:'translate',q:'「すき家かスシロー、どちらかに食べに行けます」',a:'We can either go eat Sukiya or Sushiro.',hint:'either ~ or',lesson:'⑯8月'},
+  {id:'t1602',pat:'eitheror',month:'2608',type:'translate',q:'「すき家もスシローもどちらも空いていません」',a:'Neither Sushiro nor Sukiya is available.',hint:'neither ~ nor',lesson:'⑯8月'},
+  {id:'t1603',pat:'eitheror',month:'2608',type:'translate',q:'「どっちでもいいよ」',a:'Either one is ok.',hint:'Either one',lesson:'⑯8月'},
+  {id:'t1604',pat:'everexp',month:'2608',type:'translate',q:'「北朝鮮に行ったことありますか？」',a:'Have you been to North Korea?',hint:'have been to',lesson:'⑯8月'},
+  {id:'fr1601',pat:'eitheror',month:'2608',type:'free',q:'"either A or B" を使った文を2つ作ろう',a:'We can either go to Osaka or Kyoto. / You can either call me or send an email. など',hint:'either ~ or ~',lesson:'⑯8月'},
+  {id:'fr1602',pat:'eitheror',month:'2608',type:'free',q:'"Me neither" と "neither A nor B" の違いを書こう',a:'Me neither.＝私も〜ない（同意） / Neither A nor B＝AもBもどちらも〜ない（選択の否定）',hint:'同意か、選択の否定か',lesson:'⑯8月'},
+
+  // ===== 2608（8月）⑰Ryan 8月 Free Conversation 質問パターン =====
+  {id:'v1701',pat:'__vocab__',month:'2608',type:'vocab',q:'"still water" の意味は？',a:'炭酸なしの普通の水',choices:['炭酸なしの普通の水','静かな湖','お湯','氷水'],explain:"炭酸の入っていない水のこと。`Do you drink still or sparkling water?` レストランで必ず聞かれる質問。",lesson:'⑰8月'},
+  {id:'v1702',pat:'__vocab__',month:'2608',type:'vocab',q:'"room temperature" の意味は？',a:'常温',choices:['常温','室内の暖房','ぬるま湯','冷蔵'],explain:"冷やしても温めてもいない、部屋と同じ温度のこと。`I like room temperature drinks.` 冷たいものは chilled。",lesson:'⑰8月'},
+  {id:'v1703',pat:'__vocab__',month:'2608',type:'vocab',q:'"I jammed my finger" の意味は？',a:'指を突き指した',choices:['指を突き指した','指を切った','指を火傷した','指輪をはめた'],explain:"指を強くぶつけたり挟んだりすること。`I jammed my finger in the door.`（ドアで指を挟んだ）のようにも使う日常的な動詞。",lesson:'⑰8月'},
+  {id:'v1704',pat:'__vocab__',month:'2608',type:'vocab',q:'"florist" の意味は？',a:'花屋',choices:['花屋','店員','庭師','パン屋'],explain:"花を売る人、または花屋の店。`I wanted to be a florist when I was a kid.` 店員全般は clerk。",lesson:'⑰8月'},
+  {id:'v1705',pat:'childq',month:'2608',type:'vocab',q:'"as a child" の意味は？',a:'子供の頃',choices:['子供の頃','子供として扱う','子供っぽく','子供と一緒に'],explain:"`when you were a kid` と同じ意味で、より短く言える。`What was your favorite snack as a child?` 過去の話をするときの定番表現。",lesson:'⑰8月'},
+  {id:'f1701',pat:'weekendq',month:'2608',type:'fill',q:'How ___ your weekend?',blank:'was',choices:['was','is','did','were'],hint:'週末どうだった？',lesson:'⑰8月'},
+  {id:'f1702',pat:'weekendq',month:'2608',type:'fill',q:'What are you going ___ do this weekend?',blank:'to',choices:['to','for','on','at'],hint:'be going to',lesson:'⑰8月'},
+  {id:'f1703',pat:'childq',month:'2608',type:'fill',q:'What did you want to ___ when you were a kid?',blank:'be',choices:['be','do','have','make'],hint:'なりたかった職業',lesson:'⑰8月'},
+  {id:'f1704',pat:'childq',month:'2608',type:'fill',q:'What did you use to like ___ with your parents?',blank:'doing',choices:['doing','do','did','to do'],hint:'like + 動名詞',lesson:'⑰8月'},
+  {id:'f1705',pat:'weekendq',month:'2608',type:'fill',q:'Which do you like ___, chilled or room temperature?',blank:'more',choices:['more','most','much','many'],hint:'2択で好みを聞く',lesson:'⑰8月'},
+  {id:'g1701',pat:'weekendq',month:'2608',type:'grammar',q:'どちらが正しい？（週末どうだった？）',optA:'How was your weekend?',optB:'How did your weekend?',a:'A',explain:"weekend が主語で「どうだったか」を尋ねるので be動詞の過去形 was を使う。Bのように did を使うなら `How did you spend your weekend?` のように動詞が必要になる。",lesson:'⑰8月'},
+  {id:'g1702',pat:'weekendq',month:'2608',type:'grammar',q:'どちらが正しい？（今週末何する予定？）',optA:'What are you going to do this weekend?',optB:'What do you going to do this weekend?',a:'A',explain:"`be going to` は be動詞とセットなので are が必要。Bのように do を使うと be動詞が抜けて文が成立しない。すでに決まっている予定を言うときの定番構文。",lesson:'⑰8月'},
+  {id:'g1703',pat:'childq',month:'2608',type:'grammar',q:'どちらが正しい？（昔よく何をするのが好きだった？）',optA:'What did you used to like doing?',optB:'What did you use to like doing?',a:'B',explain:"did がすでに過去を表しているので、後ろの動詞は原形 use に戻る。肯定文なら `I used to like ~` と d が付くが、疑問文・否定文では use to になる。",deep:"【used to と use to の切り替え】肯定文では `I used to play tennis.` と d が付くが、疑問文や否定文で did が入ると `Did you use to play tennis?` `I didn't use to like it.` のように use に戻る。これは did がすでに過去を示しているため、後ろの動詞が原形になるという一般ルールと同じ理屈で、`Did you went?`（×）が `Did you go?`（○）になるのと同じ現象。発音上は used to も use to もほぼ同じに聞こえるため、書くときにだけ意識すればよい。",lesson:'⑰8月'},
+  {id:'t1701',pat:'weekendq',month:'2608',type:'translate',q:'「週末どうだった？」',a:'How was your weekend?',hint:'How was',lesson:'⑰8月'},
+  {id:'t1702',pat:'weekendq',month:'2608',type:'translate',q:'「今週末は何をする予定ですか？」',a:'What are you going to do this weekend?',hint:'be going to',lesson:'⑰8月'},
+  {id:'t1703',pat:'childq',month:'2608',type:'translate',q:'「子供の頃なりたかった職業は何ですか？」',a:'What did you want to be when you were a kid?',hint:'want to be',lesson:'⑰8月'},
+  {id:'t1704',pat:'childq',month:'2608',type:'translate',q:'「子供の頃好きだったお菓子は何ですか？」',a:'What was your favorite snack as a child?',hint:'as a child',lesson:'⑰8月'},
+  {id:'t1705',pat:'weekendq',month:'2608',type:'translate',q:'「普通の水と炭酸水、どっちを飲みますか？」',a:'Do you usually drink still water or sparkling water?',hint:'still / sparkling',lesson:'⑰8月'},
+  {id:'fr1701',pat:'weekendq',month:'2608',type:'free',q:'週末について聞く質問を2つ書こう（過去と未来）',a:'How was your weekend? / What are you going to do this weekend?',hint:'was と going to',lesson:'⑰8月'},
+  {id:'fr1702',pat:'childq',month:'2608',type:'free',q:'子供の頃について聞く質問を3つ作ろう',a:'What did you want to be when you were a kid? / What was your favorite snack as a child? / What did you use to like doing with your parents?',hint:'as a child / when you were a kid',lesson:'⑰8月'},
+
+  // ===== 2608（8月）⑱CONVERSATIONAL ENGLISH ハマってること =====
+  {id:'v1801',pat:'beinto',month:'2608',type:'vocab',q:'"be into ~" の意味は？',a:'〜にハマっている',choices:['〜にハマっている','〜の中に入る','〜が苦手だ','〜を始める'],explain:"趣味や関心ごとに夢中になっていること。`I'm really into reading mystery novels.` really を足すと熱量が上がる。",lesson:'⑱8月'},
+  {id:'v1802',pat:'beinto',month:'2608',type:'vocab',q:'"can\'t get enough of ~" の意味は？',a:'〜が飽きない・好きすぎる',choices:['〜が飽きない・好きすぎる','〜が足りない','〜が嫌いだ','〜を我慢する'],explain:"直訳は「十分に得られない」で、いくらあっても足りないほど好きということ。`I can't get enough of mazesoba.` be into よりも熱量が高い。",lesson:'⑱8月'},
+  {id:'v1803',pat:'__vocab__',month:'2608',type:'vocab',q:'"sewing machine" の意味は？',a:'ミシン',choices:['ミシン','洗濯機','編み機','印刷機'],explain:"布を縫う機械のこと。`She makes things with her sewing machine.` 日本語の「ミシン」は machine が訛った言葉。",lesson:'⑱8月'},
+  {id:'v1804',pat:'__vocab__',month:'2608',type:'vocab',q:'"root beer" とは？',a:'アメリカの薬草系の炭酸飲料',choices:['アメリカの薬草系の炭酸飲料','根菜のスープ','ビールの一種','麦茶'],explain:"サルサパリラなどのハーブが原料の炭酸飲料で、アルコールは入っていない。`It smells like medicinal plants.` と評されるほど独特な香りがする。",lesson:'⑱8月'},
+  {id:'v1805',pat:'__vocab__',month:'2608',type:'vocab',q:'"medicinal plants" の意味は？',a:'薬草',choices:['薬草','観葉植物','食用植物','毒草'],explain:"薬の効果がある植物のこと。`It smells like medicinal plants.` medicine（薬）から派生した形容詞。",lesson:'⑱8月'},
+  {id:'f1801',pat:'beinto',month:'2608',type:'fill',q:"I'm really ___ reading mystery novels.",blank:'into',choices:['into','in','on','at'],hint:'ハマっている',lesson:'⑱8月'},
+  {id:'f1802',pat:'beinto',month:'2608',type:'fill',q:"I can't get enough ___ mazesoba.",blank:'of',choices:['of','for','to','with'],hint:'飽きない',lesson:'⑱8月'},
+  {id:'f1803',pat:'beinto',month:'2608',type:'fill',q:"I'm into ___ things with my sewing machine.",blank:'making',choices:['making','make','made','to make'],hint:'into + 動名詞',lesson:'⑱8月'},
+  {id:'f1804',pat:'beinto',month:'2608',type:'fill',q:"I'm afraid of ___.",blank:'losing',choices:['losing','lose','lost','to lose'],hint:'afraid of + 動名詞',lesson:'⑱8月'},
+  {id:'f1805',pat:'beinto',month:'2608',type:'fill',q:"What are you into ___ days?",blank:'these',choices:['these','this','those','that'],hint:'最近',lesson:'⑱8月'},
+  {id:'g1801',pat:'beinto',month:'2608',type:'grammar',q:'どちらが正しい？（シール集めにハマってる）',optA:"I'm really into collect stickers.",optB:"I'm really into collecting stickers.",a:'B',explain:"into は前置詞なので、後ろに動詞が来るときは動名詞(-ing)にする。Aのように原形は置けない。`into + 名詞` か `into + 動名詞` のどちらかになる。",deep:"【前置詞の後ろは必ず動名詞】into / of / at / about などの前置詞の後に動詞を続けるときは、必ず -ing 形にする。`I'm into collecting stickers.` `I'm afraid of losing.` `I'm good at cooking.` すべて同じルール。注意が必要なのは `look forward to` `be used to` で、この to は不定詞の to ではなく前置詞なので `I look forward to seeing you.` と -ing になる。to を見ると原形を続けたくなるが、to の前に動詞以外の語（forward、used）が付いている場合は前置詞と判断する。",lesson:'⑱8月'},
+  {id:'g1802',pat:'beinto',month:'2608',type:'grammar',q:'どちらが正しい？（ポーカーが飽きない）',optA:"I can't get enough of playing poker.",optB:"I can't get enough playing poker.",a:'A',explain:"`get enough of ~` と of が必要で、その後ろは名詞か動名詞。Bのように of を落とすと文が成立しない。`I can't get enough of this song.` の形で覚える。",lesson:'⑱8月'},
+  {id:'g1803',pat:'beinto',month:'2608',type:'grammar',q:'どちらが正しい？（負けるのが怖い）',optA:"I'm afraid of lose.",optB:"I'm afraid of losing.",a:'B',explain:"afraid of の of も前置詞なので、後ろの動詞は動名詞にする。into や get enough of と同じ形で、前置詞の後ろは必ず -ing になると覚えておくと応用が利く。",lesson:'⑱8月'},
+  {id:'t1801',pat:'beinto',month:'2608',type:'translate',q:'「最近ミステリー小説を読むのにハマってる」',a:"I'm really into reading mystery novels.",hint:'be into + 動名詞',lesson:'⑱8月'},
+  {id:'t1802',pat:'beinto',month:'2608',type:'translate',q:'「まぜそばが飽きない」',a:"I can't get enough of mazesoba.",hint:"can't get enough of",lesson:'⑱8月'},
+  {id:'t1803',pat:'beinto',month:'2608',type:'translate',q:'「最近何にハマってる？」',a:'What are you into these days?',hint:'What are you into',lesson:'⑱8月'},
+  {id:'t1804',pat:'beinto',month:'2608',type:'translate',q:'「負けるのが怖いです」',a:"I'm afraid of losing.",hint:'afraid of + 動名詞',lesson:'⑱8月'},
+  {id:'fr1801',pat:'beinto',month:'2608',type:'free',q:'"be into ~" を使って自分の趣味を2つ書こう',a:"I'm into playing poker. / I'm really into studying English. など",hint:'into + 名詞/動名詞',lesson:'⑱8月'},
+  {id:'fr1802',pat:'beinto',month:'2608',type:'free',q:'"be into" と "can\'t get enough of" の熱量の違いを書こう',a:"I'm into ~（最近ハマってる・ライト） / I can't get enough of ~（飽きない・病みつき・より強い）",hint:'強さの違い',lesson:'⑱8月'},
+];
+
+const CATS_DEF = [
+  {key:'freq', ico:'🔁', name:'頻度・習慣を言う'},
+  {key:'time', ico:'⏰', name:'時間・経験を言う'},
+  {key:'want', ico:'💭', name:'したい・したくないを言う'},
+  {key:'feel', ico:'👍', name:'好き嫌い・感想を言う'},
+  {key:'ask',  ico:'❓', name:'質問する'},
+  {key:'req',  ico:'🙏', name:'頼む・断る・すすめる'},
+  {key:'comp', ico:'📏', name:'くらべる'},
+  {key:'desc', ico:'🗣️', name:'状態・ようすを説明する'},
+];
+
+const PATS_DEF = [
+  // ---- 🔁 頻度・習慣を言う ----
+  {cat:'freq', key:'howoften', t:'How often do you ~?', ex:'どれくらいの頻度で？と聞く'},
+  {cat:'freq', key:'times',    t:'twice a week / once a month', ex:'週2回、月1回'},
+  {cat:'freq', key:'usedto',   t:'used to + 動詞の原形', ex:'昔は〜していた（今はしてない）'},
+  {cat:'freq', key:'almost',   t:'almost every day', ex:'ほぼ毎日／almostの位置'},
+  {cat:'freq', key:'routine',  t:'I get up / I leave home', ex:'毎日の習慣は現在形で言う'},
+  {cat:'freq', key:'sometimes',t:'sometimes / sometime', ex:'ときどき／いつか の使い分け'},
+
+  // ---- ⏰ 時間・経験を言う ----
+  {cat:'time', key:'lasttime', t:'When was the last time you ~?', ex:'最後に〜したのはいつ？'},
+  {cat:'time', key:'everexp',  t:'Have you ever ~?', ex:'〜したことある？'},
+  {cat:'time', key:'howlong',  t:'How long have you been ~ing?', ex:'どれくらい〜してる？（継続中）'},
+  {cat:'time', key:'within',   t:'within 5 years / back then', ex:'〜以内に／当時は'},
+  {cat:'time', key:'pasttense',t:'went / held / drank（不規則な過去形）', ex:'過去の出来事を言う'},
+
+  // ---- 💭 したい・したくないを言う ----
+  {cat:'want', key:'feellike', t:'feel like + 動名詞', ex:'〜したい気分だ'},
+  {cat:'want', key:'tooto',    t:'too ~ to ...', ex:'〜すぎて…できない'},
+  {cat:'want', key:'tiredof',  t:"I'm getting tired of ~", ex:'〜に飽き飽きしている'},
+  {cat:'want', key:'beusedto', t:'be used to + 動名詞', ex:'〜に慣れている'},
+  {cat:'want', key:'wanna',    t:'I wanna ~ / I try to ~', ex:'〜したい、〜するようにしている'},
+
+  // ---- 👍 好き嫌い・感想を言う ----
+  {cat:'feel', key:'edingadj', t:'moved / moving、tired / tiring', ex:'感動した／感動的な の使い分け'},
+  {cat:'feel', key:'favourite',t:'least favourite / go-to', ex:'一番嫌いな／行きつけの'},
+  {cat:'feel', key:'goeswith', t:'It goes well with ~', ex:'〜によく合う'},
+  {cat:'feel', key:'taste',    t:'It tastes bitter', ex:'味・感想を言う'},
+  {cat:'feel', key:'startlike',t:'start liking / started to like', ex:'好きになった、を言う'},
+  {cat:'feel', key:'beinto',   t:"I'm into ~ / can't get enough of ~", ex:'ハマってる、を言う'},
+
+  // ---- ❓ 質問する ----
+  {cat:'ask',  key:'howcome',  t:'How come + 主語 + 動詞', ex:'なんで〜なの？（カジュアル）'},
+  {cat:'ask',  key:'goalplan', t:"What's your goal in 5 years?", ex:'目標・予定を聞く'},
+  {cat:'ask',  key:'whystart', t:'Why did you start ~ing?', ex:'なんで〜し始めたの？'},
+  {cat:'ask',  key:'particular',t:'Is there anything in particular ~?', ex:'特に何かある？'},
+  {cat:'ask',  key:'whatdo',   t:'What do you do?', ex:'仕事・職業を聞く'},
+  {cat:'ask',  key:'ideal',    t:'What is your ideal ~?', ex:'理想の〜を聞く'},
+  {cat:'ask',  key:'indirect', t:'I wonder what she thinks（間接疑問）', ex:'文の中の疑問は語順が戻る'},
+  {cat:'ask',  key:'greeting', t:'How are you? — Good.', ex:'あいさつと返し方'},
+  {cat:'ask',  key:'yesno',    t:'Is it made of ~? / Can you ~?', ex:'Yes/Noで答えられる質問を作る'},
+  {cat:'ask',  key:'weekendq', t:'How was your weekend?', ex:'週末どうだった？と聞く'},
+  {cat:'ask',  key:'childq',   t:'What did you want to be as a child?', ex:'子供の頃のことを聞く'},
+
+  // ---- 🙏 頼む・断る・すすめる ----
+  {cat:'req',  key:'recommend',t:'recommend + 動名詞', ex:'〜するのをすすめる'},
+  {cat:'req',  key:'turndown', t:'turn down / stay away from', ex:'断る／避ける'},
+  {cat:'req',  key:'getdone',  t:'get + 目的語 + 過去分詞', ex:'〜してもらう'},
+  {cat:'req',  key:'candothe', t:'Can you do the ~?', ex:'できる？と聞く'},
+
+  // ---- 📏 くらべる ----
+  {cat:'comp', key:'morethan', t:'more ~ than', ex:'〜より…だ'},
+  {cat:'comp', key:'themost',  t:'the most ~', ex:'一番〜だ'},
+  {cat:'comp', key:'diffrom',  t:'different from', ex:'〜とは違う'},
+  {cat:'comp', key:'easytomaster',t:'easy to ~, difficult to ~', ex:'覚えやすいが奥が深い'},
+  {cat:'comp', key:'agree',    t:'So do I / Neither do I', ex:'私も〜／私も〜ない と同意する'},
+  {cat:'comp', key:'eitheror', t:'either A or B / neither A nor B', ex:'どちらか／どちらも〜ない'},
+  {cat:'comp', key:'wordpair', t:'紛らわしい語の使い分け', ex:'in particular / especially など'},
+  {cat:'comp', key:'nightsdays', t:'two nights, three days', ex:'泊数を先に言う'},
+
+  // ---- 🗣️ 状態・ようすを説明する ----
+  {cat:'desc', key:'beadj',    t:'The house is abandoned', ex:'be動詞＋形容詞で状態を言う'},
+  {cat:'desc', key:'progress', t:'The area is developing', ex:'進行中のことを言う'},
+  {cat:'desc', key:'article',  t:'a truck driver / an earthquake', ex:'冠詞をつける'},
+  {cat:'desc', key:'gerundnoun',t:'My hobby is cooking', ex:'動詞を名詞のように使う'},
+  {cat:'desc', key:'prep',     t:'work for / based on / by bike', ex:'前置詞のセット表現'},
+  {cat:'desc', key:'reasonwhy',t:'The reason why ~ is because ~', ex:'理由を説明する'},
+  {cat:'desc', key:'spendtime',t:'spend time ~ing / on ~', ex:'時間の使い方を言う'},
+  {cat:'desc', key:'ifclause', t:'If you get married, ~', ex:'もし〜ならの言い方'},
+  {cat:'desc', key:'considered',t:"It's considered to be rude", ex:'〜とみなされる'},
+  {cat:'desc', key:'have',     t:'My ideal house has a big kitchen', ex:'has で「〜がある」を言う'},
+];
+const TYPES_DEF = [
+  {key:'fill',     icon:'✏️',name:'穴埋め',    desc:'空欄に正しい語を選ぶ'},
+  {key:'grammar',  icon:'⚖️',name:'文法選択',  desc:'どっちが正しい？'},
+  {key:'translate',icon:'🗾',name:'日→英翻訳', desc:'日本語を英語で入力'},
+  {key:'free',     icon:'💬',name:'自由記述',  desc:'フレーズをゼロから書く'},
+  {key:'vocab',    icon:'📖',name:'単語の意味', desc:'日↔英 4択'},
+];
+const TL = {vocab:'単語',fill:'穴埋め',grammar:'文法',translate:'翻訳',free:'自由'};
+const CNT_DEF = [5,10,20,'all'];
+
+let S = {
+  selPats:[], selTypes:['fill','grammar','translate','free','vocab'],
+  selCnt:10, useVocab:false, useFav:false, useWeak:false, openCat:null,
+  session:[], idx:0, results:[],
+  history:{}, favs:[],
+};
+
+function load(){
+  try{
+    const s=localStorage.getItem('school_v2');
+    if(s){ const p=JSON.parse(s); S.history=p.history||{}; S.favs=p.favs||[]; }
+  }catch(e){}
+}
+function save(){
+  try{ localStorage.setItem('school_v2',JSON.stringify({history:S.history,favs:S.favs})); }catch(e){}
+}
+
+window.onload=()=>{ load(); renderHome(); updateStats(); renderChatSetup(); };
+
+/* ---------- 集計ヘルパー ---------- */
+function patCount(patKey){
+  return QB.filter(q=>q.pat===patKey && S.selTypes.includes(q.type)).length;
+}
+function catCount(catKey){
+  const keys=PATS_DEF.filter(p=>p.cat===catKey).map(p=>p.key);
+  return QB.filter(q=>keys.includes(q.pat) && S.selTypes.includes(q.type)).length;
+}
+function vocabCount(){
+  return QB.filter(q=>q.pat==='__vocab__' && S.selTypes.includes(q.type)).length;
+}
+function favCount(){
+  return QB.filter(q=>S.favs.includes(q.id) && S.selTypes.includes(q.type)).length;
+}
+function getWeakIds(){ return Object.entries(S.history).filter(([,h])=>h.w>h.c).map(([id])=>id); }
+function weakCount(){
+  const w=getWeakIds();
+  return QB.filter(q=>w.includes(q.id) && S.selTypes.includes(q.type)).length;
+}
+
+/* ---------- ホーム描画 ---------- */
+function renderHome(){
+  const fc=document.getElementById('fmt-chips');
+  fc.innerHTML=TYPES_DEF.map(t=>
+    `<button class="chip ${S.selTypes.includes(t.key)?'on':''}" onclick="toggleType('${t.key}')">${t.icon} ${t.name}</button>`
+  ).join('');
+
+  const cc=document.getElementById('cnt-chips');
+  cc.innerHTML=CNT_DEF.map(c=>
+    `<button class="chip ${S.selCnt===c?'on':''}" onclick="setCnt('${c}')">${c==='all'?'全部':c+'問'}</button>`
+  ).join('');
+
+  document.getElementById('cat-list').innerHTML=CATS_DEF.map(c=>{
+    const pats=PATS_DEF.filter(p=>p.cat===c.key);
+    const selN=pats.filter(p=>S.selPats.includes(p.key)).length;
+    const open=S.openCat===c.key;
+    return `<div class="cat ${open?'open':''}">
+      <div class="cat-head" onclick="toggleCat('${c.key}')">
+        <div class="cat-ico">${c.ico}</div>
+        <div class="cat-name">${c.name}</div>
+        ${selN?`<div class="cat-sel">${selN}個選択中</div>`:`<div class="cat-cnt">${catCount(c.key)}問</div>`}
+        <div class="cat-arrow">▶</div>
+      </div>
+      <div class="cat-body">
+        <div class="cat-all" onclick="toggleCatAll('${c.key}')">${selN===pats.length?'✕ ぜんぶ外す':'✓ このカテゴリぜんぶ選ぶ'}</div>
+        ${pats.map(p=>{
+          const on=S.selPats.includes(p.key);
+          return `<div class="pat ${on?'on':''}" onclick="togglePat('${p.key}')">
+            <div class="pat-box">${on?'✓':''}</div>
+            <div style="flex:1"><div class="pat-txt">${esc(p.t)}</div><div class="pat-ex">${esc(p.ex)}</div></div>
+            <div class="pat-cnt">${patCount(p.key)}問</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  setSide('vocab-box','vocab-chk','vocab-cnt',S.useVocab,vocabCount());
+  setSide('fav-box','fav-chk','fav-cnt',S.useFav,favCount());
+  const wc=weakCount();
+  document.getElementById('weak-box-wrap').style.display=wc>0?'block':'none';
+  setSide('weak-box','weak-chk','weak-cnt',S.useWeak,wc);
+
+  updateSummary();
+}
+function esc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function setSide(boxId,chkId,cntId,on,cnt){
+  const box=document.getElementById(boxId);
+  box.className=box.className.replace(/\s*on\b/,'')+(on?' on':'');
+  document.getElementById(chkId).textContent=on?'✓':'';
+  document.getElementById(cntId).textContent=cnt+'問';
+}
+
+function updateSummary(){
+  const pool=getPool();
+  const tot=pool.length;
+  const out=S.selCnt==='all'?tot:Math.min(tot,S.selCnt);
+  const names=[];
+  S.selPats.forEach(k=>{ const p=PATS_DEF.find(x=>x.key===k); if(p)names.push(p.t); });
+  if(S.useVocab)names.push('単語チェック');
+  if(S.useFav)names.push('お気に入り');
+  if(S.useWeak)names.push('苦手だけ');
+  document.getElementById('sel-summary').innerHTML = tot===0
+    ? (names.length?'選んだ条件に当てはまる問題がないで。出題形式を増やしてみて':'まだ何も選んでへんで')
+    : `該当 ${tot}問 → 今回出題 <b>${out}問</b><br><span style="font-size:11.5px;opacity:.7">${esc(names.join(' / '))}</span>`;
+  document.getElementById('start-btn').disabled = tot===0;
+}
+
+/* ---------- 選択操作 ---------- */
+function toggleType(k){
+  if(S.selTypes.includes(k)){
+    if(S.selTypes.length===1){showToast('最低1つ選んでや');return;}
+    S.selTypes=S.selTypes.filter(x=>x!==k);
+  } else S.selTypes.push(k);
+  renderHome();
+}
+function setCnt(c){ S.selCnt = c==='all'?'all':parseInt(c,10); renderHome(); }
+function toggleCat(k){ S.openCat = S.openCat===k?null:k; renderHome(); }
+function togglePat(k){
+  S.selPats = S.selPats.includes(k) ? S.selPats.filter(x=>x!==k) : [...S.selPats,k];
+  renderHome();
+}
+function toggleCatAll(catKey){
+  const keys=PATS_DEF.filter(p=>p.cat===catKey).map(p=>p.key);
+  const allOn=keys.every(k=>S.selPats.includes(k));
+  S.selPats = allOn ? S.selPats.filter(k=>!keys.includes(k))
+                    : [...new Set([...S.selPats,...keys])];
+  renderHome();
+}
+function toggleVocab(){ S.useVocab=!S.useVocab; renderHome(); }
+function toggleFav(){ S.useFav=!S.useFav; renderHome(); }
+function toggleWeak(){ S.useWeak=!S.useWeak; renderHome(); }
+
+/* ---------- ★お気に入り ---------- */
+function isFav(id){ return S.favs.includes(id); }
+function toggleStar(){
+  const q=S.session[S.idx]; if(!q)return;
+  if(isFav(q.id)) S.favs=S.favs.filter(x=>x!==q.id);
+  else S.favs.push(q.id);
+  save(); paintStar();
+  showToast(isFav(q.id)?'⭐ お気に入りに追加':'☆ お気に入りから外した');
+}
+function paintStar(){
+  const q=S.session[S.idx]; const el=document.getElementById('q-star');
+  if(!q||!el)return;
+  const on=isFav(q.id);
+  el.textContent=on?'★':'☆';
+  el.className='q-star'+(on?' on':'');
+}
+function toggleFavFromResult(id,el){
+  if(isFav(id)) S.favs=S.favs.filter(x=>x!==id); else S.favs.push(id);
+  save();
+  const on=isFav(id);
+  el.textContent=on?'★':'☆';
+  el.className='rr-star'+(on?' on':'');
+}
+
+function updateStats(){
+  let total=0,correct=0,weak=0;
+  Object.values(S.history).forEach(h=>{ total+=h.c+h.w; correct+=h.c; if(h.w>h.c)weak++; });
+  document.getElementById('stat-total').textContent=total;
+  document.getElementById('stat-correct').textContent=correct;
+  document.getElementById('stat-weak').textContent=weak;
+  document.getElementById('stat-rate').textContent=total>0?Math.round(correct/total*100)+'%':'-';
+}
+
+function getPool(){
+  const weak=S.useWeak?getWeakIds():[];
+  const seen=new Set();
+  return QB.filter(q=>{
+    if(!S.selTypes.includes(q.type)) return false;
+    let hit=false;
+    if(S.selPats.includes(q.pat)) hit=true;
+    if(S.useVocab && q.pat==='__vocab__') hit=true;
+    if(S.useFav && S.favs.includes(q.id)) hit=true;
+    if(S.useWeak && weak.includes(q.id)) hit=true;
+    if(!hit) return false;
+    if(seen.has(q.id)) return false;
+    seen.add(q.id); return true;
+  });
+}
+
+function startSession(){
+  const pool=getPool();
+  if(pool.length===0){showToast('該当する問題がないで');return;}
+  const n=S.selCnt==='all'?pool.length:Math.min(S.selCnt,pool.length);
+  S.session=shuffle([...pool]).slice(0,n);
+  S.idx=0; S.results=[];
+  showScreen('quiz'); renderQ();
+}
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function renderQ(){
+  const total=S.session.length, idx=S.idx;
+  if(idx>=total){showResultScreen();return;}
+  const q=S.session[idx];
+
+  document.getElementById('q-session-label').textContent='📝 授業復習セッション';
+  document.getElementById('q-prog-text').textContent=`${idx+1}/${total}`;
+  document.getElementById('q-prog-bar').style.width=Math.round(idx/total*100)+'%';
+  document.getElementById('q-num').textContent=`Q${idx+1}`;
+  document.getElementById('q-type-badge').textContent=TL[q.type];
+  document.getElementById('q-lesson').textContent=q.lesson||'';
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-hint').textContent=q.hint?'💡 '+q.hint:'';
+  paintStar();
+
+  const fb=document.getElementById('q-feedback');
+  fb.className='feedback';
+  document.getElementById('fb-explain').style.display='none';
+  document.getElementById('fb-self-judge').innerHTML='';
+  document.getElementById('fb-deep-wrap').style.display='none';
+  document.getElementById('fb-deep').style.display='none';
+  document.getElementById('q-next-btn').style.display='none';
+
+  const body=document.getElementById('q-body'); body.innerHTML='';
+
+  if(q.type==='vocab'||q.type==='fill'){
+    const sc=shuffle([...q.choices]);
+    const ul=document.createElement('div'); ul.className='choice-list';
+    sc.forEach((c,i)=>{
+      const correct=q.type==='vocab'?(c===q.a):(c===q.blank);
+      const btn=document.createElement('button'); btn.className='choice-btn';
+      btn.innerHTML=`<div class="cletter">${String.fromCharCode(65+i)}</div>${c}`;
+      btn.onclick=()=>answerChoice(btn,correct,q.type==='vocab'?q.a:q.blank,ul,q);
+      ul.appendChild(btn);
+    });
+    body.appendChild(ul);
+
+  }else if(q.type==='grammar'){
+    const ul=document.createElement('div'); ul.className='choice-list';
+    ['A','B'].forEach((letter,i)=>{
+      const btn=document.createElement('button'); btn.className='choice-btn';
+      btn.innerHTML=`<div class="cletter">${letter}</div>${q['opt'+letter]}`;
+      btn.onclick=()=>answerGrammar(letter,btn,ul,q);
+      ul.appendChild(btn);
+    });
+    body.appendChild(ul);
+
+  }else{
+    const ta=document.createElement('textarea'); ta.className='answer-inp'; ta.placeholder='英語で入力してください...'; ta.id='free-inp';
+    const row=document.createElement('div'); row.className='btn-row';
+    const sbtn=document.createElement('button'); sbtn.className='btn btn-primary'; sbtn.style.flex='1'; sbtn.style.justifyContent='center'; sbtn.textContent='✅ 送信';
+    sbtn.onclick=()=>submitFree(q,ta,row);
+    row.appendChild(sbtn); body.appendChild(ta); body.appendChild(row);
+    ta.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); if(!ta.disabled) submitFree(q,ta,row); }
+    });
+    setTimeout(()=>ta.focus(),100);
+  }
+}
+
+function answerChoice(btn,isCorrect,correctAns,ul,q){
+  ul.querySelectorAll('.choice-btn').forEach(b=>{ b.disabled=true; const txt=b.textContent.slice(1).trim(); if(txt===correctAns)b.classList.add('ok'); else if(b===btn&&!isCorrect)b.classList.add('ng'); });
+  recordResult(q,isCorrect);
+  showFeedback(isCorrect,'正解: '+correctAns,q.explain||null);
+}
+
+function answerGrammar(letter,btn,ul,q){
+  const isCorrect=letter===q.a;
+  ul.querySelectorAll('.choice-btn').forEach((b,i)=>{ b.disabled=true; const l=i===0?'A':'B'; if(l===q.a)b.classList.add('ok'); else if(b===btn&&!isCorrect)b.classList.add('ng'); });
+  recordResult(q,isCorrect);
+  showFeedback(isCorrect,`正解: ${q.a} — ${q['opt'+q.a]}`,q.explain);
+}
+
+function levenshtein(a,b){
+  const m=a.length,n=b.length;
+  const dp=Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
+  for(let j=0;j<=n;j++)dp[0][j]=j;
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
+    dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function normalizeAns(s){
+  return s.toLowerCase()
+    .replace(/[''`]/g,"'")
+    .replace(/[.,!?]/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function fuzzyMatch(userAns, correctAns){
+  const u=normalizeAns(userAns);
+  const variants=correctAns.split('/').map(v=>normalizeAns(v));
+  for(const v of variants){
+    if(u===v) return {match:true,typo:false};
+    const uw=u.split(' '), vw=v.split(' ');
+    if(uw.length===vw.length){
+      let typoCount=0,totalDist=0;
+      let ok=true;
+      for(let i=0;i<vw.length;i++){
+        const dist=levenshtein(uw[i],vw[i]);
+        totalDist+=dist;
+        if(vw[i].length<=3&&dist>0){ok=false;break;}
+        if(dist>2){ok=false;break;}
+        if(dist>0)typoCount++;
+      }
+      if(ok&&totalDist<=2) return {match:true,typo:typoCount>0};
+    }
+  }
+  return {match:false,typo:false};
+}
+
+function submitFree(q,ta,row){
+  if(!ta.value.trim()){showToast('何か書いてみてや！');return;}
+  ta.disabled=true; row.innerHTML='';
+  const fb=document.getElementById('q-feedback');
+
+  if(q.type==='translate'){
+    const result=fuzzyMatch(ta.value, q.a);
+    const isCorrect=result.match;
+    recordResult(q,isCorrect);
+    fb.className='feedback show '+(isCorrect?'ok':'ng');
+    const typoNote=result.typo?' (スペルミスはスルー！)':'';
+    document.getElementById('fb-title').textContent=isCorrect?'✓ 正解！'+typoNote:'✗ 残念...';
+    document.getElementById('fb-correct').textContent='模範解答: '+q.a;
+    document.getElementById('fb-explain').style.display='none';
+    document.getElementById('fb-self-judge').innerHTML='';
+    setupDeep();
+    document.getElementById('q-next-btn').style.display='block';
+  } else {
+    document.getElementById('fb-self-judge').innerHTML='';
+    fb.className='feedback neutral show';
+    document.getElementById('fb-title').textContent='📋 模範解答';
+    document.getElementById('fb-correct').textContent=q.a;
+    document.getElementById('fb-explain').style.display='none';
+    setupDeep();
+    const sj=document.getElementById('fb-self-judge');
+    sj.innerHTML=`<div class="self-judge"><button class="btn btn-green" onclick="selfJudge(true,'${q.id}')">✓ 合ってた</button><button class="btn btn-red" onclick="selfJudge(false,'${q.id}')">✗ 違った</button></div>`;
+  }
+}
+
+function selfJudge(correct){
+  const q=S.session[S.idx];
+  document.getElementById('fb-self-judge').innerHTML='';
+  recordResult(q,correct);
+  const fb=document.getElementById('q-feedback');
+  fb.className='feedback show '+(correct?'ok':'ng');
+  document.getElementById('fb-title').textContent=correct?'✓ 自己採点: 正解！':'✗ 自己採点: 不正解';
+  document.getElementById('q-next-btn').style.display='block';
+  enableEnterNext();
+}
+
+function setupDeep(){
+  const q=S.session[S.idx];
+  const wrap=document.getElementById('fb-deep-wrap');
+  const box=document.getElementById('fb-deep');
+  const btn=document.getElementById('fb-deep-btn');
+  box.style.display='none'; box.innerHTML='';
+  btn.textContent='🔍 もっと詳しく';
+  wrap.style.display=(q&&q.deep)?'block':'none';
+}
+function toggleDeep(){
+  const q=S.session[S.idx]; if(!q||!q.deep)return;
+  const box=document.getElementById('fb-deep');
+  const btn=document.getElementById('fb-deep-btn');
+  if(box.style.display==='none'){
+    box.innerHTML=fmtExplain(q.deep);
+    box.style.display='block';
+    btn.textContent='🔼 閉じる';
+  } else { box.style.display='none'; btn.textContent='🔍 もっと詳しく'; }
+}
+function fmtExplain(t){
+  return esc(t).replace(/`([^`]+)`/g,'<code class="ex-code">$1</code>');
+}
+function showFeedback(correct,answer,explain){
+  const fb=document.getElementById('q-feedback');
+  fb.className='feedback show '+(correct?'ok':'ng');
+  document.getElementById('fb-title').textContent=correct?'✓ 正解！ナイス！':'✗ 残念...';
+  document.getElementById('fb-correct').textContent=answer;
+  if(explain){ const fe=document.getElementById('fb-explain'); fe.style.display='block'; fe.innerHTML='📌 '+fmtExplain(explain); }
+  setupDeep();
+  const nb=document.getElementById('q-next-btn'); nb.style.display='block';
+  enableEnterNext();
+}
+let _enterNextHandler=null;
+function enableEnterNext(){
+  if(_enterNextHandler) document.removeEventListener('keydown',_enterNextHandler);
+  _enterNextHandler=(e)=>{
+    if(e.key==='Enter'){
+      const nb=document.getElementById('q-next-btn');
+      if(nb&&nb.style.display!=='none'){ e.preventDefault(); nextQuestion(); }
+    }
+  };
+  document.addEventListener('keydown',_enterNextHandler);
+}
+
+function recordResult(q,correct){
+  if(!S.history[q.id])S.history[q.id]={c:0,w:0};
+  if(correct)S.history[q.id].c++; else S.history[q.id].w++;
+  S.results.push({q,correct}); save();
+}
+
+function nextQuestion(){
+  if(_enterNextHandler){ document.removeEventListener('keydown',_enterNextHandler); _enterNextHandler=null; }
+  S.idx++; renderQ();
+}
+
+function showResultScreen(){
+  showScreen('result');
+  const total=S.results.length, correct=S.results.filter(r=>r.correct).length;
+  const pct=total>0?Math.round(correct/total*100):0;
+  const G=pct>=90?{e:'🏆',t:'PERFECT!',bg:'#E8F5E9',c:'#2E7D32'}:pct>=70?{e:'🎉',t:'GREAT!',bg:'#FFF3E0',c:'#E65100'}:pct>=50?{e:'💪',t:'GOOD!',bg:'#E3F2FD',c:'#1565C0'}:{e:'😅',t:'KEEP GOING!',bg:'#FFEBEE',c:'#C62828'};
+  document.getElementById('r-emoji').textContent=G.e;
+  document.getElementById('r-score').textContent=pct+'%';
+  document.getElementById('r-sub').textContent=`${total}問中${correct}問正解`;
+  const gb=document.getElementById('r-grade'); gb.textContent=G.t; gb.style.background=G.bg; gb.style.color=G.c;
+
+  const list=document.getElementById('r-list'); list.innerHTML='';
+  S.results.forEach(r=>{
+    const row=document.createElement('div'); row.className='result-row';
+    const ca=r.q.type==='grammar'?`${r.q.a}: ${r.q['opt'+r.q.a]}`:r.q.a;
+    const fav=isFav(r.q.id);
+    row.innerHTML=`<div class="rr-icon">${r.correct?'✅':'❌'}</div><div style="flex:1"><div class="rr-q"><span class="rr-type">${TL[r.q.type]}</span>${r.q.q}</div>${!r.correct?`<div class="rr-correct">正解: ${ca}</div>`:''}</div><div class="rr-star${fav?' on':''}" onclick="toggleFavFromResult('${r.q.id}',this)">${fav?'★':'☆'}</div>`;
+    list.appendChild(row);
+  });
+  updateStats();
+}
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+name).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  const nb=document.getElementById('nav-'+name); if(nb)nb.classList.add('active');
+}
+function goHome(){ showScreen('home'); updateStats(); renderHome(); }
+function navTo(name){ showScreen(name); if(name==='home'){updateStats();renderHome();} if(name==='chat')renderChatSetup(); }
+
+function exportData(){
+  const blob=new Blob([JSON.stringify({version:2,app:'eikaiwa_school',exportedAt:new Date().toISOString(),history:S.history,favs:S.favs},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`eikaiwa_school_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
+  showToast('📤 エクスポート完了！');
+}
+function importData(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{ try{ const d=JSON.parse(ev.target.result); if(d.history||d.favs){S.history={...S.history,...(d.history||{})};if(d.favs)S.favs=[...new Set([...S.favs,...d.favs])];save();updateStats();renderHome();showToast('📥 インポート完了！');} }catch{showToast('⚠️ ファイルが不正やで');} };
+  reader.readAsText(file); e.target.value='';
+}
+function resetData(){
+  if(!confirm('学習履歴を全部消す？ほんまに？'))return;
+  S.history={}; save(); updateStats(); renderHome(); showToast('🗑️ リセット完了');
+}
+
+
+/* ==================== 英語チャット ==================== */
+const CHAT_MODES=[
+  {k:'qa',   n:'🎯 一問一答', d:'テーマに沿ってAIが質問。1問ずつ答える'},
+  {k:'free', n:'💬 自由会話', d:'話題が自然に広がっていく'},
+];
+const CHAT_MODELS=[
+  {k:'claude-sonnet-4-6', n:'Sonnet 4.6', d:'バランス型・推奨'},
+  {k:'claude-haiku-4-5',  n:'Haiku 4.5',  d:'速くて安い'},
+  {k:'claude-opus-4-8',   n:'Opus 4.8',   d:'最高性能・高価'},
+];
+const CHAT_LEVELS=[
+  {k:'easy', n:'やさしめ'},
+  {k:'mid',  n:'ふつう'},
+  {k:'hard', n:'むずかしめ'},
+];
+const DAILY_TOPICS=[
+  '仕事・キャリア','旅行','食べ物・レストラン','趣味・週末の過ごし方',
+  '映画・ドラマ','スポーツ','家族・友人','子供の頃の思い出',
+  '健康・運動','買い物','天気・季節','将来の目標',
+  'お金・節約','テクノロジー・AI','ギャンブル・ポーカー','大阪・地元の話',
+];
+
+function getApiKey(){ try{ return localStorage.getItem('anthropic_key')||''; }catch(e){ return ''; } }
+function saveApiKey(){
+  const v=document.getElementById('apikey-inp').value.trim();
+  if(!v){ showToast('キーを入力してや'); return; }
+  try{ localStorage.setItem('anthropic_key',v); }catch(e){}
+  showToast('🔑 保存したで'); renderChatSetup();
+}
+function clearApiKey(){
+  try{ localStorage.removeItem('anthropic_key'); }catch(e){}
+  document.getElementById('apikey-inp').value='';
+  showToast('🗑️ 削除した'); renderChatSetup();
+}
+
+async function callClaude(messages,system,maxTokens){
+  const key=getApiKey();
+  if(!key) throw new Error('NOKEY');
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'x-api-key':key,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true',
+      'content-type':'application/json'
+    },
+    body:JSON.stringify({
+      model:C.model||'claude-sonnet-4-6',
+      max_tokens:maxTokens||700,
+      system:system,
+      messages:messages
+    })
+  });
+  if(!res.ok){
+    let msg='HTTP '+res.status;
+    try{ const e=await res.json(); if(e.error&&e.error.message)msg=e.error.message; }catch(_){}
+    throw new Error(msg);
+  }
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+}
+
+async function testApi(){
+  const box=document.getElementById('api-test-result');
+  box.innerHTML='<div class="pat-ex">接続中...</div>';
+  try{
+    const r=await callClaude([{role:'user',content:'Reply with exactly: OK'}],'You are a test endpoint.',20);
+    box.innerHTML='<div class="feedback ok show" style="margin:0"><div class="fb-title">✓ つながったで！</div><div class="pat-ex">応答: '+esc(r.slice(0,40))+'</div></div>';
+  }catch(e){
+    const m=e.message==='NOKEY'?'APIキーが未設定や':e.message;
+    box.innerHTML='<div class="feedback ng show" style="margin:0"><div class="fb-title">✗ つながらへん</div><div class="pat-ex">'+esc(m)+'<br>ネットワーク制限、キーの誤り、残高不足などが考えられる</div></div>';
+  }
+}
+
+/* ---------- セットアップ画面 ---------- */
+function renderChatSetup(){
+  document.getElementById('chat-nokey').style.display=getApiKey()?'none':'block';
+  document.getElementById('apikey-inp').value=getApiKey();
+
+  const mc=document.getElementById('model-chips');
+  if(mc) mc.innerHTML=CHAT_MODELS.map(m=>
+    `<button class="chip ${C.model===m.k?'on':''}" onclick="setChatModel('${m.k}')">${m.n}</button>`).join('');
+
+  document.getElementById('chat-mode-chips').innerHTML=CHAT_MODES.map(m=>
+    `<button class="chip ${C.mode===m.k?'on':''}" onclick="setChatMode('${m.k}')">${m.n}</button>`).join('');
+  document.getElementById('chat-level-chips').innerHTML=CHAT_LEVELS.map(l=>
+    `<button class="chip ${C.level===l.k?'on':''}" onclick="setChatLevel('${l.k}')">${l.n}</button>`).join('');
+  document.getElementById('chat-topic-kind').innerHTML=
+    `<button class="chip ${C.topicKind==='cat'?'on':''}" onclick="setTopicKind('cat')">📚 アプリのカテゴリ</button>`+
+    `<button class="chip ${C.topicKind==='daily'?'on':''}" onclick="setTopicKind('daily')">🗣️ 日常のテーマ</button>`;
+
+  const sel=document.getElementById('chat-topic');
+  if(C.topicKind==='cat'){
+    sel.innerHTML=CATS_DEF.map(c=>`<option value="cat:${c.key}">${c.ico} ${c.name}</option>`).join('')+
+      PATS_DEF.map(p=>`<option value="pat:${p.key}">　└ ${esc(p.t)}</option>`).join('');
+  } else {
+    sel.innerHTML=DAILY_TOPICS.map(t=>`<option value="daily:${t}">${t}</option>`).join('');
+  }
+  if(C.topic)sel.value=C.topic;
+  C.topic=sel.value;
+  sel.onchange=()=>{C.topic=sel.value;};
+}
+function setChatMode(k){ C.mode=k; renderChatSetup(); }
+function setChatModel(k){ C.model=k; try{localStorage.setItem('chat_model',k);}catch(e){} renderChatSetup(); showToast('モデル: '+CHAT_MODELS.find(m=>m.k===k).n); }
+function setChatLevel(k){ C.level=k; renderChatSetup(); }
+function setTopicKind(k){ C.topicKind=k; C.topic=null; renderChatSetup(); }
+
+let C={mode:'qa',level:'mid',topicKind:'daily',topic:null,history:[],busy:false,label:'',model:'claude-sonnet-4-6'};
+try{ const mm=localStorage.getItem('chat_model'); if(mm)C.model=mm; }catch(e){}
+
+/* ---------- 会話開始 ---------- */
+function topicLabel(){
+  const v=C.topic||'';
+  if(v.startsWith('daily:')) return v.slice(6);
+  if(v.startsWith('cat:')){ const c=CATS_DEF.find(x=>x.key===v.slice(4)); return c?c.name:''; }
+  if(v.startsWith('pat:')){ const p=PATS_DEF.find(x=>x.key===v.slice(4)); return p?p.t:''; }
+  return '';
+}
+function topicInstruction(){
+  const v=C.topic||'';
+  if(v.startsWith('daily:')) return 'The conversation topic is: '+v.slice(6)+' (in a Japanese daily-life context).';
+  if(v.startsWith('cat:')){
+    const c=CATS_DEF.find(x=>x.key===v.slice(4));
+    const ps=PATS_DEF.filter(p=>p.cat===(c&&c.key)).map(p=>p.t);
+    return 'Focus on this language function: "'+(c?c.name:'')+'". Naturally create situations where the learner must use these patterns: '+ps.join(' / ');
+  }
+  if(v.startsWith('pat:')){
+    const p=PATS_DEF.find(x=>x.key===v.slice(4));
+    return 'Focus tightly on this grammar pattern: "'+(p?p.t:'')+'" ('+(p?p.ex:'')+'). Design every question so the learner naturally needs this pattern to answer.';
+  }
+  return 'Have a general daily conversation.';
+}
+function buildSystem(){
+  const lv={easy:'Use simple A2-B1 English. Short sentences.',
+            mid:'Use natural B1-B2 English.',
+            hard:'Use natural B2-C1 English with idioms and phrasal verbs.'}[C.level];
+  const mode=C.mode==='qa'
+    ? 'MODE: One question at a time. Ask ONE clear question, wait for the answer, briefly react, then ask the next question. Do not ask multiple questions in one turn.'
+    : 'MODE: Free conversation. React naturally to what the learner says, share a short thought of your own, and keep the conversation flowing. Let the topic drift naturally.';
+  return `You are a friendly English conversation teacher for a Japanese adult learner (around B1-B2 level) who is practicing speaking.
+
+${lv}
+${mode}
+${topicInstruction()}
+
+You MUST reply with ONLY a valid JSON object, no markdown fences, no text outside the JSON:
+{
+  "reply": "your English reply (2-4 sentences max, conversational, ends with a question)",
+  "jp": "上の英文の日本語訳",
+  "ok": true or false,
+  "corrections": [
+    {"was":"the learner's incorrect phrase","fix":"the corrected phrase","why":"日本語で理由を1-2文。なぜ間違いか、なぜ直した形が正しいかを具体的に"}
+  ],
+  "praise": "日本語で一言。良かった点があれば具体的に。なければ空文字"
+}
+
+Rules for corrections:
+- Check the learner's English for grammar, word choice, and naturalness.
+- If it is correct and natural, set "ok": true and "corrections": [].
+- If there are mistakes OR unnatural phrasing, set "ok": false and list up to 3 corrections.
+- Even when the sentence is grammatically correct, if a native speaker would say it differently, suggest the natural version.
+- "why" must be written in Japanese and be specific and educational.
+- Never correct the same thing twice in a row; focus on the most important issues.
+- Keep your "reply" natural — do not mention the corrections inside "reply".`;
+}
+
+function startChat(){
+  if(!getApiKey()){ showToast('先にAPIキーを設定してな'); showScreen('apikey'); return; }
+  C.history=[]; C.label=topicLabel();
+  document.getElementById('chat-setup').style.display='none';
+  document.getElementById('chat-room').style.display='block';
+  document.getElementById('chat-label').textContent=(C.mode==='qa'?'🎯 一問一答':'💬 自由会話')+' — '+C.label;
+  document.getElementById('chat-sub').textContent=CHAT_LEVELS.find(l=>l.k===C.level).n+'レベル';
+  document.getElementById('chat-log').innerHTML='';
+  addSys('会話スタート！英語で答えてな。間違いはその場で直してくれるで');
+  askAI(true);
+  const inp=document.getElementById('chat-inp');
+  inp.onkeydown=e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendChat(); } };
+}
+function endChat(){
+  document.getElementById('chat-setup').style.display='block';
+  document.getElementById('chat-room').style.display='none';
+  renderChatSetup();
+}
+
+function addSys(t){
+  const log=document.getElementById('chat-log');
+  const d=document.createElement('div'); d.className='msg sys'; d.textContent=t;
+  log.appendChild(d); scrollChat();
+}
+function addMe(t){
+  const log=document.getElementById('chat-log');
+  const d=document.createElement('div'); d.className='msg me'; d.textContent=t;
+  log.appendChild(d); scrollChat();
+}
+function addAI(obj){
+  const log=document.getElementById('chat-log');
+  const d=document.createElement('div'); d.className='msg ai';
+  let h='<div><span>'+esc(obj.reply||'')+'</span><span class="msg-speak" onclick="speak(this)">🔊</span></div>';
+  if(obj.jp) h+='<div class="msg-jp">'+esc(obj.jp)+'</div>';
+  if(obj.corrections&&obj.corrections.length){
+    h+='<div class="correction"><div class="corr-ttl">✏️ ここを直そう</div>';
+    obj.corrections.forEach(c=>{
+      h+='<div style="margin-bottom:7px"><span class="corr-was">'+esc(c.was||'')+'</span> → <span class="corr-fix">'+esc(c.fix||'')+'</span>';
+      if(c.why)h+='<div style="color:#666;margin-top:3px">'+esc(c.why)+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  } else if(obj.praise){
+    h+='<div class="correction good"><div class="corr-ttl">✓ '+esc(obj.praise)+'</div></div>';
+  }
+  d.innerHTML=h; log.appendChild(d); scrollChat();
+}
+function scrollChat(){ window.scrollTo(0,document.body.scrollHeight); }
+function speak(el){
+  const txt=el.parentElement.querySelector('span').textContent;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(txt);
+    u.lang='en-US'; u.rate=0.92;
+    speechSynthesis.speak(u);
+  }catch(e){ showToast('読み上げに対応してへんブラウザや'); }
+}
+
+function showTyping(){
+  const log=document.getElementById('chat-log');
+  const d=document.createElement('div'); d.className='msg ai'; d.id='typing-bubble';
+  d.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  log.appendChild(d); scrollChat();
+}
+function hideTyping(){ const t=document.getElementById('typing-bubble'); if(t)t.remove(); }
+
+function parseAI(raw){
+  let t=(raw||'').trim().replace(/^```(?:json)?/,'').replace(/```$/,'').trim();
+  try{ return JSON.parse(t); }catch(e){}
+  const m=t.match(/\{[\s\S]*\}/);
+  if(m){ try{ return JSON.parse(m[0]); }catch(e){} }
+  return {reply:t||'(no response)',jp:'',ok:true,corrections:[],praise:''};
+}
+
+async function askAI(isFirst){
+  if(C.busy)return; C.busy=true;
+  document.getElementById('chat-send').disabled=true;
+  showTyping();
+  try{
+    const msgs=isFirst
+      ? [{role:'user',content:'Start the conversation. Greet me briefly and ask your first question.'}]
+      : C.history;
+    const raw=await callClaude(msgs,buildSystem(),900);
+    hideTyping();
+    const obj=parseAI(raw);
+    addAI(obj);
+    C.history.push({role:'assistant',content:raw});
+    if(isFirst) C.history.unshift({role:'user',content:'Start the conversation. Greet me briefly and ask your first question.'});
+  }catch(e){
+    hideTyping();
+    const m=e.message==='NOKEY'?'APIキーが未設定や':e.message;
+    addSys('⚠️ エラー: '+m);
+  }
+  C.busy=false;
+  document.getElementById('chat-send').disabled=false;
+  const inp=document.getElementById('chat-inp'); if(inp)inp.focus();
+}
+
+async function sendChat(){
+  const inp=document.getElementById('chat-inp');
+  const txt=inp.value.trim();
+  if(!txt||C.busy)return;
+  addMe(txt); inp.value='';
+  C.history.push({role:'user',content:txt});
+  await askAI(false);
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>
