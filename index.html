@@ -764,7 +764,7 @@
 
   <div class="cs-box">
     <div class="cs-head"><div class="io-icon">☁️</div><div class="cs-title">クラウド同期</div></div>
-    <div class="cs-desc">同じコードを使えば、会社PCと自宅PCで学習履歴・★お気に入り・ストリーク・XPを共有できる。APIキーは同期されへん。</div>
+    <div class="cs-desc">同じコードの端末どうしで、学習履歴・★お気に入り・ストリーク・XPを共有する。アプリを開くたびに自動で突き合わせて、どちらの端末で進めたぶんも残るように統合するから、普段はこの画面を触らんでええ。APIキーは同期されへん。</div>
     <input class="cs-code" id="cs-code" placeholder="CODE" maxlength="8" autocomplete="off" spellcheck="false">
     <div class="cs-row">
       <button class="btn btn-primary btn-sm" onclick="cloudPush()">⬆ アップ</button>
@@ -2604,7 +2604,7 @@ function exportData(){
 function importData(e){
   const file=e.target.files[0]; if(!file)return;
   const reader=new FileReader();
-  reader.onload=ev=>{ try{ const d=JSON.parse(ev.target.result); if(d.history||d.favs||d.g){S.history={...S.history,...(d.history||{})};if(d.favs)S.favs=[...new Set([...S.favs,...d.favs])];if(d.g)mergeG(d.g);migrate();save();renderAll();showToast('📥 インポート完了！');} }catch{showToast('⚠️ ファイルが不正やで');} };
+  reader.onload=ev=>{ try{ const d=JSON.parse(ev.target.result); if(d.history||d.favs||d.g){if(d.favs)S.favs=[...new Set([...S.favs,...d.favs])];if(d.history)mergeHistory(d.history);if(d.g)mergeG(d.g);migrate();save();renderAll();showToast('📥 インポート完了！');} }catch{showToast('⚠️ ファイルが不正やで');} };
   reader.readAsText(file); e.target.value='';
 }
 function resetData(){
@@ -2612,7 +2612,32 @@ function resetData(){
   S.history={}; S.g=defG(); save(); renderAll(); showToast('🗑️ リセット完了');
 }
 
-/* 別端末のゲーム進捗をマージ（数値は多いほうを採用、日別記録は問題数の多いほうを採用） */
+/* ---------- 別端末とのデータ統合 ----------
+   2台を別々に使うと履歴が枝分かれする。どちらかで上書きすると片方が消えるので、
+   どちらの成果も捨てない方向にそろえる：
+     正解数・不正解数は多いほう（＝進んでいるほう）
+     復習ボックスと期限は手前のほう（＝復習が必要と言っているほうを信じる）
+   これなら何回マージしても結果が変わらず、間違えた記録も消えない。 */
+function mergeHistory(remote){
+  if(!remote||typeof remote!=='object') return 0;
+  let changed=0;
+  Object.keys(remote).forEach(id=>{
+    const b=remote[id];
+    if(!b||typeof b!=='object') return;
+    const a=S.history[id];
+    if(!a){ S.history[id]=Object.assign({},b); changed++; return; }
+    const before=JSON.stringify(a);
+    a.c=Math.max(a.c||0, b.c||0);
+    a.w=Math.max(a.w||0, b.w||0);
+    if(b.box!==undefined) a.box=Math.min(a.box===undefined?99:a.box, b.box);
+    if(b.due) a.due = a.due ? (String(b.due)<String(a.due)?b.due:a.due) : b.due;
+    if(b.seen) a.seen = a.seen ? (String(b.seen)>String(a.seen)?b.seen:a.seen) : b.seen;
+    if(JSON.stringify(a)!==before) changed++;
+  });
+  return changed;
+}
+
+/* 別端末のゲーム進捗をマージ。数値はすべて大きいほうを採用する */
 function mergeG(r){
   if(!r||typeof r!=='object') return;
   const g=S.g;
@@ -2624,8 +2649,11 @@ function mergeG(r){
   g.vc.speak =Math.max(g.vc.speak||0, (r.vc&&r.vc.speak)||0);
   g.days=g.days||{};
   Object.keys(r.days||{}).forEach(k=>{
-    const a=g.days[k], b=r.days[k];
-    if(!a || (b.n||0)>(a.n||0)) g.days[k]=b;
+    const a=g.days[k], b=r.days[k]||{};
+    if(!a){ g.days[k]=Object.assign({n:0,c:0,xp:0},b); return; }
+    a.n =Math.max(a.n||0,  b.n||0);     /* 日別も項目ごとに多いほうを残す */
+    a.c =Math.max(a.c||0,  b.c||0);
+    a.xp=Math.max(a.xp||0, b.xp||0);
   });
   if(r.lastGoal && (!g.lastGoal || r.lastGoal>g.lastGoal)) g.lastGoal=r.lastGoal;
   if(r.strict) g.strict=r.strict;
@@ -2692,16 +2720,12 @@ async function cloudPull(){
     const rows=await r.json();
     if(!rows.length){ csMsg('そのコードのデータが無い。英語アプリ用のコードか確認してや。','ng'); return; }
     const d=rows[0];
-    /* インポートと同じくマージ（衝突時はクラウド側を採用） */
-    S.history=Object.assign({},S.history,d.stats||{});
-    if(Array.isArray(d.favs)) S.favs=Array.from(new Set([].concat(S.favs||[],d.favs)));
-    if(d.custom&&d.custom.chat_model) localStorage.setItem('chat_model',d.custom.chat_model);
-    if(d.custom&&d.custom.g) mergeG(d.custom.g);
-    migrate(); save(); renderAll();
+    const n=applyRemote(d);
+    migrate(); save(); renderAll();   /* マージ結果はこのあと自動でアップし返される */
     localStorage.setItem(CS_LS,code);
     const when=d.updated_at?new Date(d.updated_at).toLocaleString('ja-JP'):'';
-    csMsg('✅ ダウン完了（クラウド側の更新: '+when+'）','ok');
-    showToast('📥 クラウドから復元したで');
+    csMsg('✅ ダウン完了（'+(n?n+'問ぶん取り込んだ':'新しいデータは無かった')+' / クラウド側の更新: '+when+'）','ok');
+    showToast(n?('📥 '+n+'問ぶん取り込んだで'):'📥 すでに最新やで');
   }catch(e){ csMsg('通信エラー: '+e.message,'ng'); }
 }
 
@@ -2715,35 +2739,44 @@ save=function(){
   csTimer=setTimeout(function(){ cloudPush(true); },5000);
 };
 
+/* クラウドから受け取った1行を、ローカルに取り込む。戻り値は取り込んだ件数 */
+function applyRemote(d){
+  if(!d) return 0;
+  const n=mergeHistory(d.stats||{});
+  if(Array.isArray(d.favs)) S.favs=Array.from(new Set([].concat(S.favs||[],d.favs)));
+  if(d.custom&&d.custom.chat_model && !localStorage.getItem('chat_model'))
+    localStorage.setItem('chat_model',d.custom.chat_model);
+  if(d.custom&&d.custom.g) mergeG(d.custom.g);
+  return n;
+}
+
 function csInit(){
   const el=document.getElementById('cs-code');
   const c=csKnownCode();
-  if(el&&c){ el.value=c; csMsg('コード '+c+' で自動アップ中。別端末で同じコードを入れて⬇ダウン。'); }
+  if(el&&c){ el.value=c; csMsg('コード '+c+' で自動同期中。'); }
   if(c) localStorage.setItem(CS_LS,c);
-
-  /* 履歴が空でコードが分かっている＝プロファイルが飛んだ可能性。黙って復元を試みる */
-  const empty = !S.history || Object.keys(S.history).length===0;
-  if(c && empty) csAutoRestore(c);
+  /* 起動のたびにクラウドと突き合わせる。別端末で進めたぶんをここで取り込む */
+  if(c) csSyncOnLoad(c);
 }
 
-async function csAutoRestore(code){
+async function csSyncOnLoad(code){
   try{
     const r=await fetch(CS_URL+'?code=eq.'+encodeURIComponent(code)+'&app=eq.'+CS_APP+'&select=*',{headers:csHead()});
     if(!r.ok) return;
     const rows=await r.json();
-    if(!rows.length) return;
+    if(!rows.length){ save(); return; }        /* クラウドが空なら今の状態を上げておく */
     const d=rows[0];
-    const n=Object.keys(d.stats||{}).length;
-    if(!n) return;
-    S.history=Object.assign({},S.history,d.stats||{});
-    if(Array.isArray(d.favs)) S.favs=Array.from(new Set([].concat(S.favs||[],d.favs)));
-    if(d.custom&&d.custom.chat_model) localStorage.setItem('chat_model',d.custom.chat_model);
-    if(d.custom&&d.custom.g) mergeG(d.custom.g);
+    const n=applyRemote(d);
     migrate();
-    _saveOrig();               /* 復元直後に再アップし返さない */
     renderAll();
-    csMsg('☁️ クラウドから自動復元した（'+n+'問ぶん）','ok');
-    showToast('☁️ 学習履歴を自動復元したで（'+n+'問）');
+    if(n>0){
+      save();                                   /* 統合結果を5秒後に上げ返す */
+      csMsg('☁️ 別の端末のぶんを'+n+'問取り込んだ','ok');
+      showToast('☁️ 別の端末のぶんを'+n+'問取り込んだで');
+    }else{
+      _saveOrig();                              /* 変化なしなら上げ返さない */
+      csMsg('☁️ クラウドと同じ状態や（コード '+code+'）','ok');
+    }
   }catch(e){}
 }
 
