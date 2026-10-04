@@ -20,11 +20,11 @@
     --shadow: 0 4px 20px rgba(44,24,16,0.10);
   }
   /* 文字サイズの基準。remで組んであるので、ここを変えると全体が拡大縮小する */
-  html { font-size: 18px; -webkit-text-size-adjust: 100%; }
-  html[data-fs="s"]  { font-size: 16px; }
-  html[data-fs="m"]  { font-size: 18px; }
-  html[data-fs="l"]  { font-size: 20px; }
-  html[data-fs="xl"] { font-size: 22px; }
+  html { font-size: 21px; -webkit-text-size-adjust: 100%; }
+  html[data-fs="s"]  { font-size: 17px; }
+  html[data-fs="m"]  { font-size: 21px; }
+  html[data-fs="l"]  { font-size: 25px; }
+  html[data-fs="xl"] { font-size: 29px; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Nunito', sans-serif; background: #FFF8E7; color: var(--dark);
@@ -432,6 +432,8 @@
   </div>
 
   <button class="btn btn-ghost btn-block" onclick="navTo('practice')" style="margin-top:4px">📝 自由練習モード（条件を選んで回す）</button>
+
+  <div class="pat-ex" id="diag" style="text-align:center;margin-top:16px;opacity:.65"></div>
 </div>
 
 <div class="screen" id="s-practice">
@@ -1372,11 +1374,45 @@ function defG(){
 }
 
 /* 文字サイズ。html の data-fs を切り替えるだけで全体がremで追従する */
-const FS_DEF=[{k:'s',n:'小'},{k:'m',n:'ふつう'},{k:'l',n:'大きい'},{k:'xl',n:'特大'}];
-function applyFs(){ document.documentElement.setAttribute('data-fs', S.g.fs||'m'); }
+const APP_VER='v2.1';
+const FS_DEF=[{k:'s',n:'小',px:17},{k:'m',n:'ふつう',px:21},{k:'l',n:'大きい',px:25},{k:'xl',n:'特大',px:29}];
+
+/* スマホで「PCサイト表示」になっていると、CSS上の表示幅が実機の画面幅より
+   大きくなり、ページ全体が縮小されて描画される。その分だけ基準サイズを上げて
+   物理的な見た目の大きさを揃える。通常表示のときは何もしない。 */
+function shrinkRatio(){
+  try{
+    const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const vw = window.innerWidth||0, sw = (window.screen&&window.screen.width)||0;
+    if(coarse && vw>0 && sw>0 && vw > sw*1.35) return Math.min(3, vw/sw);
+  }catch(e){}
+  return 1;
+}
+
+function applyFs(){
+  const k=S.g.fs||'m';
+  const d=document.documentElement;
+  d.setAttribute('data-fs', k);
+  const base=(FS_DEF.find(x=>x.k===k)||FS_DEF[1]).px;
+  const r=shrinkRatio();
+  if(r>1) d.style.fontSize=Math.round(base*r)+'px';   /* PCサイト表示のとき */
+  else    d.style.fontSize='';                        /* 通常はCSSにまかせる */
+}
 function setFs(k){
   S.g.fs=k; applyFs(); save(); renderDaily();
   showToast('文字サイズ: '+FS_DEF.find(x=>x.k===k).n);
+}
+
+/* 画面回転やPCサイト表示の切り替えに追従する */
+window.addEventListener('resize', ()=>{ applyFs(); const d=document.getElementById('diag'); if(d) renderDiag(); });
+
+function renderDiag(){
+  const el=document.getElementById('diag'); if(!el) return;
+  const root=Math.round(parseFloat(getComputedStyle(document.documentElement).fontSize));
+  const vw=window.innerWidth, sw=(window.screen&&window.screen.width)||0;
+  const r=shrinkRatio();
+  el.innerHTML=APP_VER+' ・ 文字の基準 '+root+'px ・ 表示幅 '+vw+'px / 実機 '+sw+'px'
+    +(r>1?'<br><b style="color:var(--red)">PCサイト表示になってるみたいやから補正をかけた。ブラウザのメニューで「モバイルサイト（スマホ版）で表示」に戻すともっと見やすなるで</b>':'');
 }
 
 function load(){
@@ -1557,6 +1593,7 @@ function renderDaily(){
     [['loose','ゆるい'],['mid','ふつう'],['strict','きびしい']].map(x=>
       `<button class="chip ${g.strict===x[0]?'on':''}" onclick="setStrict('${x[0]}')">${x[1]}</button>`).join('');
 
+  renderDiag();
   renderHeat('hm-home',5);
   const hn=document.getElementById('hm-note');
   hn.textContent = g.streak>0
