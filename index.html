@@ -416,6 +416,16 @@
   .heard.interim { color:var(--text3); font-style:italic; }
   .heard-lbl { font-size:0.7rem; font-weight:700; color:var(--vi); letter-spacing:.6px; margin-bottom:4px; text-align:left; }
 
+  /* 入力欄に付けるマイクボタン */
+  .mic-mini { flex-shrink:0; width:52px; align-self:stretch; min-height:52px; border-radius:13px; cursor:pointer;
+              border:1px solid rgba(167,139,250,0.55); background:var(--vi-soft); color:var(--vi);
+              font-family:inherit; font-size:1.25rem; line-height:1; transition:.15s; }
+  .mic-mini:hover { border-color:var(--vi); background:rgba(167,139,250,0.22); }
+  .mic-mini.rec { background:var(--ng); border-color:var(--ng); color:#2B0810; animation:minipulse 1.1s infinite; }
+  .mic-mini:disabled { opacity:.35; cursor:not-allowed; }
+  @keyframes minipulse { 0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,.5)} 50%{box-shadow:0 0 0 12px rgba(251,113,133,0)} }
+  .mic-hint { font-size:0.7812rem; color:var(--vi); font-weight:600; margin:-4px 0 10px; min-height:1.2em; }
+
   .spk-btn { background:none; border:none; cursor:pointer; font-size:1.3rem; padding:0 0 0 6px; vertical-align:middle; opacity:.7; }
   .spk-btn:hover { opacity:1; }
 
@@ -677,9 +687,11 @@
     <div class="chat-log" id="chat-log"></div>
     <div class="chat-input-row">
       <textarea class="answer-inp" id="chat-inp" placeholder="英語で入力してな..." style="min-height:52px;margin-bottom:0"></textarea>
+      <span id="chat-mic-slot"></span>
       <button class="btn btn-primary" id="chat-send" onclick="sendChat()">送信</button>
     </div>
-    <div class="pat-ex" style="margin-top:6px">Enterで送信 / Shift+Enterで改行</div>
+    <div class="mic-hint" id="chat-mic-hint" style="margin-top:6px"></div>
+    <div class="pat-ex">Enterで送信 / Shift+Enterで改行</div>
   </div>
 </div>
 
@@ -1816,13 +1828,13 @@ function enOf(q){
 }
 
 let _rec=null, _recRunning=false;
-function startRec(onText,onFinal,onErr){
+function startRec(onText,onFinal,onErr,lang){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){ onErr('このブラウザは音声認識に非対応。ChromeかEdgeで開いてな'); return false; }
   try{ speechSynthesis.cancel(); }catch(e){}
   _rec=new SR();
-  _rec.lang='en-US'; _rec.interimResults=true; _rec.continuous=false; _rec.maxAlternatives=1;
-  let fin='';
+  _rec.lang=lang||'en-US'; _rec.interimResults=true; _rec.continuous=false; _rec.maxAlternatives=1;
+  let fin='', errored=false;
   _rec.onresult=e=>{
     let itr='';
     for(let i=e.resultIndex;i<e.results.length;i++){
@@ -1832,12 +1844,14 @@ function startRec(onText,onFinal,onErr){
     onText((fin+itr).trim(), !!fin && !itr);
   };
   _rec.onerror=e=>{
-    _recRunning=false;
+    errored=true; _recRunning=false;
     onErr(e.error==='not-allowed'||e.error==='service-not-allowed'
       ? 'マイクの使用が許可されてへん。ブラウザのマイク権限を許可してな'
       : (e.error==='no-speech' ? '声が拾えへんかった。もう一回いこか' : '認識エラー: '+e.error));
   };
-  _rec.onend=()=>{ _recRunning=false; onFinal(fin.trim()); };
+  /* エラーのあとも onend は呼ばれる。そのまま確定処理に流すと
+     エラーの表示が「声が拾えへんかった」で上書きされてしまうので止める */
+  _rec.onend=()=>{ _recRunning=false; if(!errored) onFinal(fin.trim()); };
   try{ _rec.start(); _recRunning=true; return true; }
   catch(e){ onErr('マイクを起動できへんかった'); return false; }
 }
@@ -2078,10 +2092,14 @@ function renderQ(){
 
   }else{
     const ta=document.createElement('textarea'); ta.className='answer-inp'; ta.placeholder='英語で入力してください...'; ta.id='free-inp';
+    ta.style.marginBottom='8px';
+    const wrap=document.createElement('div'); wrap.className='chat-input-row'; wrap.style.marginBottom='8px';
+    const hint=makeMicHint();
+    wrap.appendChild(ta); wrap.appendChild(makeMicButton(ta,{hint:hint}));
     const row=document.createElement('div'); row.className='btn-row';
     const sbtn=document.createElement('button'); sbtn.className='btn btn-primary'; sbtn.style.flex='1'; sbtn.style.justifyContent='center'; sbtn.textContent='✅ 送信';
     sbtn.onclick=()=>submitFree(q,ta,row);
-    row.appendChild(sbtn); body.appendChild(ta); body.appendChild(row);
+    row.appendChild(sbtn); body.appendChild(wrap); body.appendChild(hint); body.appendChild(row);
     ta.addEventListener('keydown',e=>{
       if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); if(!ta.disabled) submitFree(q,ta,row); }
     });
@@ -2270,7 +2288,10 @@ function skipSpeak(){
   try{ stopRec(); }catch(e){}
   const body=document.getElementById('q-body'); body.innerHTML='';
   const ta=document.createElement('textarea');
-  ta.className='answer-inp'; ta.placeholder='英語で入力してください...';
+  ta.className='answer-inp'; ta.placeholder='英語で入力してください...'; ta.style.marginBottom='8px';
+  const wrap=document.createElement('div'); wrap.className='chat-input-row'; wrap.style.marginBottom='8px';
+  const hint=makeMicHint();
+  wrap.appendChild(ta); wrap.appendChild(makeMicButton(ta,{hint:hint}));
   const row=document.createElement('div'); row.className='btn-row';
   const b=document.createElement('button');
   b.className='btn btn-primary'; b.style.flex='1'; b.style.justifyContent='center'; b.textContent='✅ 送信';
@@ -2279,11 +2300,57 @@ function skipSpeak(){
     ta.disabled=true; row.innerHTML='';
     gradeSpeak(q,ta.value);
   };
-  row.appendChild(b); body.appendChild(ta); body.appendChild(row);
+  row.appendChild(b); body.appendChild(wrap); body.appendChild(hint); body.appendChild(row);
   ta.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); if(!ta.disabled) b.onclick(); }
   });
   setTimeout(()=>ta.focus(),80);
+}
+
+/* ==================== 入力欄のマイク入力 ====================
+   テキスト入力欄の横にマイクを置いて、しゃべった内容をそのまま打ち込む。
+   認識中の文字も随時反映し、途中でもう一度押せば止まる。 */
+function makeMicButton(ta, opts){
+  opts=opts||{};
+  const btn=document.createElement('button');
+  btn.type='button'; btn.className='mic-mini'; btn.textContent='🎤';
+  btn.title='マイクで入力';
+  if(!sttOK()){
+    btn.disabled=true;
+    btn.title='このブラウザは音声認識に非対応（ChromeかEdgeなら使える）';
+    return btn;
+  }
+  let on=false, base='';
+  const hint=opts.hint || null;
+  const say=t=>{ if(hint) hint.textContent=t||''; };
+
+  const stop=()=>{ on=false; btn.classList.remove('rec'); btn.textContent='🎤'; };
+
+  btn.onclick=()=>{
+    if(on){ stopRec(); return; }
+    if(ta.disabled) return;
+    base=ta.value ? ta.value.replace(/\s+$/,'')+' ' : '';
+    const ok=startRec(
+      (txt)=>{ ta.value=base+txt; },
+      (fin)=>{
+        stop();
+        if(fin){ ta.value=(base+fin).trim(); say('✅ 入力したで。直したければそのまま編集できる'); }
+        else   { ta.value=base.trim(); say('声が拾えへんかった。もう一回押してみて'); }
+        ta.focus();
+      },
+      (msg)=>{ stop(); say('⚠️ '+msg); },
+      opts.lang
+    );
+    if(ok){ on=true; btn.classList.add('rec'); btn.textContent='■'; say('🔴 録音中… 話し終わったら止まる'); }
+  };
+  return btn;
+}
+
+/* 入力欄の下にマイクの状態を出す小さな行 */
+function makeMicHint(){
+  const d=document.createElement('div'); d.className='mic-hint';
+  d.textContent = sttOK() ? '🎤 を押すとしゃべった英語がそのまま入る' : '';
+  return d;
 }
 
 /* ---------- 共通の小物 ---------- */
@@ -3041,6 +3108,13 @@ async function askAI(isFirst){
   }
   C.busy=false;
   document.getElementById('chat-send').disabled=false;
+  const slot=document.getElementById('chat-mic-slot');
+  if(slot && !slot.firstChild){
+    const ta=document.getElementById('chat-inp');
+    slot.appendChild(makeMicButton(ta,{hint:document.getElementById('chat-mic-hint')}));
+    const h=document.getElementById('chat-mic-hint');
+    if(h) h.textContent = sttOK() ? '🎤 を押すとしゃべった英語がそのまま入る' : '';
+  }
   const inp=document.getElementById('chat-inp'); if(inp)inp.focus();
 }
 
