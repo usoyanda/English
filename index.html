@@ -1094,7 +1094,7 @@ const QB = [
   {id:'t1201',pat:'prep',month:'2607',type:'translate',q:'「私は趣味で卓球をします」',a:'I play table tennis recreationally.',hint:'recreationally',lesson:'⑫7/25'},
   {id:'t1202',pat:'easytomaster',month:'2607',type:'translate',q:'「覚えやすいが奥が深い」',a:"It's easy to learn, but difficult to master.",hint:'easy to ~, difficult to ~',lesson:'⑫7/25'},
   {id:'t1203',pat:'prep',month:'2607',type:'translate',q:'「香港で3時間の乗り継ぎがあります」',a:'I have a three-hour layover in Hong Kong.',hint:'layover',lesson:'⑫7/25'},
-  {id:'t1204',pat:'beadj',month:'2607',type:'translate',q:'「最近やる気が落ちています」',a:"I'm losing motivation. / I've been losing motivation recently. / I've been losing motivation lately. / Recently, I've been losing motivation. / Lately, I've been losing motivation. / I'm losing motivation these days.",hint:'losing motivation',lesson:'⑫7/25'},
+  {id:'t1204',pat:'beadj',month:'2607',type:'translate',q:'「最近やる気が落ちています」',a:"I'm losing motivation. / I've been losing motivation recently. / I've been losing motivation lately. / Recently, I've been losing motivation. / Lately, I've been losing motivation. / I'm losing motivation these days. / I'm losing motivation lately.",hint:'losing motivation',lesson:'⑫7/25'},
   {id:'t1205',pat:'article',month:'2607',type:'translate',q:'「森の近くの美しい庭がある家に住みたい」',a:"I'd like a house near a forest with a beautiful garden.",hint:'near a forest / with',lesson:'⑫7/25'},
   {id:'fr1201',pat:'__vocab__',month:'2607',type:'free',q:'日本の夏の風物詩を英語で3つ書こう',a:'shaved ice / summer festival / fireworks / swimming in the sea など',hint:'夏の単語',lesson:'⑫7/25'},
   {id:'fr1202',pat:'easytomaster',month:'2607',type:'free',q:'"easy to ~, difficult to ~" を使った文を作ろう',a:"It's easy to learn, but difficult to master. など",hint:'easy to + 原形',lesson:'⑫7/25'},
@@ -2705,7 +2705,7 @@ function recentlyProgHint(t){
   if(!/\brecently\b/.test(x)) return null;
   if(/\b(have|has) been\b/.test(x)) return null;
   if(!/\b(am|is|are) \w+ing\b/.test(x)) return null;
-  return 'recently は現在進行形（am / is / are + ~ing）とは相性が悪い。「最近ずっと〜している」なら I have been ~ing recently、進行形のままなら these days / lately を使う。';
+  return 'recently は現在進行形（am / is / are + ~ing）とは少し相性が悪い。進行形のままなら lately か these days が自然（I\'m losing motivation lately / these days）。recently を使うなら現在完了（I\'ve been ~ing recently）か過去形（I recently started ~）にする。';
 }
 
 /* 主語と動詞の一致。助動詞のあとは原形が正しいので、直前の語を見て除外する */
