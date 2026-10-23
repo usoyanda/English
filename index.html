@@ -197,6 +197,16 @@
   .fb-title { font-size:1.0312rem; font-weight: 800; margin-bottom: 6px; color: var(--text); }
   .fb-correct { font-size:0.9688rem; font-weight: 700; color: var(--cy-lt); margin-bottom: 4px; }
   .fb-explain { background: rgba(0,0,0,0.26); border-radius: 11px; padding: 11px 14px; margin-top: 9px; font-size:0.9062rem; line-height: 1.65; color: var(--text2); }
+  /* 答え合わせの指摘 */
+  .rv { margin-top: 10px; display:flex; flex-direction:column; gap:7px; }
+  .rv-item { font-size:0.8438rem; line-height:1.6; border-radius:10px; padding:9px 12px; }
+  .rv-item.err  { background:rgba(251,113,133,0.13); border:1px solid rgba(251,113,133,0.4); color:#FFD3DA; }
+  .rv-item.tip  { background:rgba(251,191,36,0.11);  border:1px solid rgba(251,191,36,0.34);  color:#FDE8B0; }
+  .rv-item.diff { background:rgba(0,0,0,0.26); border:1px solid var(--line2); color:var(--text2); }
+  .rv-x { color:#FB7185; text-decoration:line-through; font-weight:700; }
+  .rv-m { color:#34D399; font-weight:700; }
+  .rv-arrow { color:var(--text3); margin:0 3px; }
+
   .self-judge { display: flex; gap: 8px; margin-top: 11px; }
   .self-judge .btn { flex: 1; }
 
@@ -2272,7 +2282,9 @@ function gradeSpeak(q,txt){
   document.getElementById('fb-correct').textContent='模範解答: '+q.a;
   const fe=document.getElementById('fb-explain');
   fe.style.display='block';
-  fe.innerHTML='🎤 聞き取り結果: <b>'+esc(txt)+'</b>'+(q.explain?'<br>📌 '+fmtExplain(q.explain):'');
+  fe.innerHTML='🎤 聞き取り結果: <b>'+esc(txt)+'</b>'
+    + (ok?'':renderReview(txt, q.a, null))
+    + (q.explain?'<br>📌 '+fmtExplain(q.explain):'');
   setupDeep(); attachSpeaker(q);
   document.getElementById('fb-self-judge').innerHTML=
     '<div class="self-judge"><button class="btn btn-ghost btn-sm" onclick="overrideSpeak(true)">✓ ほんまは合ってた</button>'
@@ -2458,20 +2470,213 @@ function fuzzyMatch(userAns, correctAns){
   return {match:false,typo:false};
 }
 
+/* ==================== 答え合わせ ====================
+   模範解答と一字一句合わせるのは無理なので、まず機械的に吸収できる差
+   （短縮形・冠詞・句読点）をならしてから判定する。それでも不一致なら、
+   どこがどう違うのかを指摘する。 */
+
+const CONTRACTIONS=[["it's",'it is'],["that's",'that is'],["i'm",'i am'],["you're",'you are'],
+ ["we're",'we are'],["they're",'they are'],["he's",'he is'],["she's",'she is'],
+ ["there's",'there is'],["don't",'do not'],["doesn't",'does not'],["didn't",'did not'],
+ ["can't",'cannot'],["won't",'will not'],["isn't",'is not'],["aren't",'are not'],
+ ["wasn't",'was not'],["weren't",'were not'],["haven't",'have not'],["hasn't",'has not'],
+ ["i've",'i have'],["i'd",'i would'],["i'll",'i will'],["it'll",'it will'],["let's",'let us'],
+ ["we'll",'we will'],["you'll",'you will'],["wouldn't",'would not'],["couldn't",'could not'],
+ ["shouldn't",'should not'],["what's",'what is'],["where's",'where is'],["how's",'how is']];
+
+function expandContr(t){
+  let x=' '+t+' ';
+  CONTRACTIONS.forEach(c=>{ x=x.split(' '+c[0]+' ').join(' '+c[1]+' '); });
+  return x.trim();
+}
+function dropArticles(t){ return (' '+t+' ').replace(/ (a|an|the) /g,' ').replace(/\s+/g,' ').trim(); }
+
+/* 翻訳問題の採点。冠詞だけの違いは正解にしつつ、注意だけ出す */
+function gradeText(user, correctAns){
+  const f=fuzzyMatch(user, correctAns);
+  if(f.match) return {match:true, typo:f.typo, articleOnly:false};
+  const variants=String(correctAns).split('/').map(v=>v.trim()).filter(Boolean);
+  const u=expandContr(normalizeAns(user));
+  for(const v of variants) if(u===expandContr(normalizeAns(v))) return {match:true,typo:false,articleOnly:false};
+  for(const v of variants) if(dropArticles(u)===dropArticles(expandContr(normalizeAns(v))))
+    return {match:true,typo:false,articleOnly:true};
+  return {match:false,typo:false,articleOnly:false};
+}
+
+/* 日本語話者がやりがちな誤り。QBの解説に書いてある知識をルールにしたもの。
+   pri が小さいほど優先して出す（1:語法 2:文の構造 3:主語と動詞の一致） */
+const MISTAKE_RULES=[
+ {pri:1, re:/\bkeep (the )?time\b/i,  m:'"keep time" は「（時計が）正確に動く・リズムを刻む」という意味。時間を守るは "be on time" / "be punctual"。'},
+ {pri:1, re:/\bdifferent than\b/i,    m:'「〜とは違う」は "different from ~" が基本形。than は比較級に付くもの。'},
+ {pri:1, re:/\bbased in\b/i,          m:'「〜に基づく」は "based on ~"。based in は「〜に拠点を置く」という別の意味。'},
+ {pri:1, re:/\barrive to\b/i,         m:'到着は "arrive at ~"（地点）か "arrive in ~"（広い場所）。arrive to とは言わん。'},
+ {pri:1, re:/\bfeel like (to )?(do|eat|go|play|study|watch|read|cook|buy|take|make)\b/i,
+         m:'"feel like" の後ろは動名詞(-ing)。原形や to不定詞は置けん（feel like doing）。'},
+ {pri:1, re:/\benjoy to \w+/i,        m:'"enjoy" の後ろは動名詞(-ing)。enjoy to do とは言わん。'},
+ {pri:1, re:/\bdiscuss about\b/i,     m:'discuss は他動詞なので about は不要（discuss the plan）。'},
+ {pri:1, re:/\b(hold|build|send|teach|catch|think|buy|bring)ed\b/i,
+         m:'不規則動詞に -ed は付かん（hold→held、build→built、send→sent、think→thought）。'},
+ {pri:1, re:/\b(two|three|four|five) times a (week|month|day|year)\b/i,
+         m:'2回は "twice"、1回は "once"。3回以上から "three times" と数字＋times になる。'},
+ {pri:1, re:/\bmake (volunteer|homework|the dishes)\b/i,
+         m:'この手の「〜をする」は make やなく do（do volunteer work / do homework / do the dishes）。'},
+ {pri:1, re:/\bmost favou?rite\b/i,   m:'favourite 自体が「一番好きな」なので most は重複。'},
+ {pri:1, re:/\bgo to (home|there)\b/i,m:'home / there は副詞なので to は要らん（go home / go there）。'},
+];
+
+/* if の条件節の中で will を使っていないか。
+   「If it rains, I will stay home.」の主節の will は正しいので、
+   コンマまでの条件節だけを見る */
+function ifWillHint(t){
+  const x=normalizeAns(t);
+  const i=x.indexOf('if ');
+  if(i<0) return null;
+  const rest=x.slice(i);
+  if(rest.indexOf(',')<0) return null;          /* 主節との境目が分からんときは見送る */
+  const clause=rest.split(',')[0];
+  return /\bwill\b/.test(clause)
+    ? 'if で始まる条件節の中は、未来のことでも現在形で書く（If it rains, I will stay home.）。' : null;
+}
+
+/* 主語と動詞の一致。助動詞のあとは原形が正しいので、直前の語を見て除外する */
+const AUX_WORDS=new Set(['do','does','did','to','will','would','can','could','should','must','may','might','not',"don't","doesn't","didn't",'never','always','often']);
+const BARE_VERBS=new Set(['go','have','do','like','eat','need','want','take','make','say','get','live','work','come','keep','feel','think']);
+const S_FORMS={go:'goes',do:'does',have:'has',say:'says'};
+function sForm(v){
+  if(S_FORMS[v]) return S_FORMS[v];
+  return /(ch|sh|s|x|z|o)$/.test(v) ? v+'es' : v+'s';
+}
+function agreementHint(t){
+  const w=normalizeAns(t).split(' ').filter(Boolean);
+  for(let i=1;i<w.length;i++){
+    const prev=w[i-1], cur=w[i];
+    if((prev==='he'||prev==='she'||prev==='it') && BARE_VERBS.has(cur)){
+      if(i>=2 && AUX_WORDS.has(w[i-2])) continue;   /* Does it have ~? は正しい */
+      return '三人称単数が主語なので、動詞に -s が要る（'+cur+' → '+sForm(cur)+'）。';
+    }
+    if(prev==='i' && (cur==='is'||cur==='are'||cur==='has')) return 'I に続くのは am / have（I was は正しい）。';
+    if((prev==='we'||prev==='you'||prev==='they') && (cur==='is'||cur==='was'||cur==='has'))
+      return prev+' に続くのは are / were / have。';
+  }
+  return null;
+}
+
+/* 1文に動詞が2つあって、つなぐ語が無いケース。
+   誤検出が出やすいので、be動詞が在ることを必須にしたうえで、
+   疑問文・節を取る動詞・関係詞・接続詞があるときは見送り、断定もせえへん。
+   （"How often do you eat out?" の do や "I go to work" の work を
+     動詞と数えてしまう事故を防ぐため） */
+const BE_RE=/\b(is|are|am|was|were)\b/;
+const LEX_VERBS=new Set(['need','needs','want','wants','go','goes','eat','eats','keep','keeps',
+  'like','likes','have','has','feel','feels','live','lives','come','comes','study','studies']);
+const CLAUSE_VERBS=/\b(think|thinks|thought|know|knows|believe|believes|say|says|said|hope|hopes|wonder|wonders|feel|feels|guess|hear|hears|mean|means|wish|remember|forget)\b/i;
+const CONJ_RE=/\b(and|but|or|that|because|so|when|if|which|who|whose|while|though|although|before|after|until|since|where|than|as)\b/i;
+const WH_RE=/^(what|when|where|who|why|how|which|do|does|did|is|are|am|was|were|can|could|will|would|should)\b/;
+
+function doubleVerbHint(user){
+  const t=normalizeAns(user);
+  if(t.indexOf(',')>=0 || t.indexOf('?')>=0) return null;
+  if(CONJ_RE.test(t) || CLAUSE_VERBS.test(t) || WH_RE.test(t)) return null;
+  if(!BE_RE.test(t)) return null;                      /* be動詞が無いなら対象外 */
+  const words=t.split(' ').filter(w=>w && w.indexOf('-')<0);
+  if(words.length<5) return null;
+  const beAt=words.findIndex(w=>/^(is|are|am|was|were)$/.test(w));
+  if(beAt<=0) return null;
+  const before=words.slice(0,beAt).filter(w=>LEX_VERBS.has(w));
+  if(!before.length) return null;
+  return '動詞が2つ（'+[...new Set(before)].join(' / ')+' / '+words[beAt]+'）あるのに、つなぐ語が無いかもしれん。1文に主語＋動詞は1組が基本で、2つ並べるなら and / that / because などが要る。';
+}
+
+/* 語単位の差分。余計な語・足りん語・置き換わった語を出す */
+function wordDiff(user, model){
+  const a=normalizeAns(user).split(' ').filter(Boolean);
+  const b=normalizeAns(model).split(' ').filter(Boolean);
+  const m=a.length, n=b.length;
+  if(!m||!n||m>60||n>60) return [];
+  const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
+  for(let i=m-1;i>=0;i--) for(let j=n-1;j>=0;j--)
+    dp[i][j]= a[i]===b[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
+  const raw=[]; let i=0,j=0;
+  while(i<m&&j<n){
+    if(a[i]===b[j]){ raw.push({t:'same'}); i++; j++; }
+    else if(dp[i+1][j]>=dp[i][j+1]){ raw.push({t:'extra',w:a[i++]}); }
+    else { raw.push({t:'missing',w:b[j++]}); }
+  }
+  while(i<m) raw.push({t:'extra',w:a[i++]});
+  while(j<n) raw.push({t:'missing',w:b[j++]});
+  const out=[];
+  for(let k=0;k<raw.length;){
+    const ex=[],ms=[];
+    while(k<raw.length&&raw[k].t==='extra') ex.push(raw[k++].w);
+    while(k<raw.length&&raw[k].t==='missing') ms.push(raw[k++].w);
+    if(ex.length&&ms.length) out.push({t:'swap',from:ex.join(' '),to:ms.join(' ')});
+    else if(ex.length) out.push({t:'extra',w:ex.join(' ')});
+    else if(ms.length) out.push({t:'missing',w:ms.join(' ')});
+    if(k<raw.length&&raw[k].t==='same') k++;
+  }
+  return out;
+}
+
+/* 指摘をまとめる。断定できるものを先に、最大3件まで */
+function buildReview(user, model, hint, opt){
+  opt=opt||{};
+  const found=[];
+  MISTAKE_RULES.forEach(r=>{ if(r.re.test(user)) found.push({pri:r.pri, k:'err', t:r.m}); });
+  const iw=ifWillHint(user);   if(iw) found.push({pri:1, k:'err', t:iw});
+  const dv=doubleVerbHint(user); if(dv) found.push({pri:2, k:'tip', t:dv});
+  const ag=agreementHint(user);  if(ag) found.push({pri:3, k:'err', t:ag});
+  /* hint の使い忘れ。模範解答もhintも「/」で別解を並べることがあるので、
+     どちらも分解したうえで、どれか1つでも使われていればよしとする */
+  if(hint && model){
+    const nu=normalizeAns(user);
+    const hs=String(hint).split('/').map(h=>normalizeAns(h)).filter(Boolean);
+    const ms=String(model).split('/').map(m=>normalizeAns(m));
+    const relevant=hs.some(h=>ms.some(m=>m.indexOf(h)>=0));   /* 模範解答に実在する語句か */
+    const used=hs.some(h=>nu.indexOf(h)>=0);
+    if(relevant && !used) found.push({pri:2, k:'tip', t:'ポイントの表現「'+hint+'」が使われてへん。'});
+  }
+  found.sort((a,b)=>a.pri-b.pri);
+  const items=found.slice(0,2).map(x=>({k:x.k,t:x.t}));
+  if(!opt.noDiff && model){
+    const d=wordDiff(user,model).slice(0,6);
+    if(d.length){
+      const html=d.map(o=> o.t==='swap'
+          ? '<span class="rv-x">'+esc(o.from)+'</span><span class="rv-arrow">→</span><span class="rv-m">'+esc(o.to)+'</span>'
+          : o.t==='extra' ? '<span class="rv-x">'+esc(o.w)+'</span>'
+          : '<span class="rv-m">＋'+esc(o.w)+'</span>').join('　');
+      items.push({k:'diff',t:'模範解答との違い：'+html, raw:true});
+    }
+  }
+  return items.slice(0,3);
+}
+
+function renderReview(user, model, hint, opt){
+  const items=buildReview(user, model, hint, opt);
+  if(!items.length) return '';
+  const ico={err:'❌',tip:'💡',diff:'📝'};
+  return '<div class="rv">'+items.map(it=>
+    '<div class="rv-item '+it.k+'">'+ico[it.k]+' '+(it.raw?it.t:esc(it.t))+'</div>').join('')+'</div>';
+}
+
 function submitFree(q,ta,row){
   if(!ta.value.trim()){showToast('何か書いてみてや！');return;}
   ta.disabled=true; row.innerHTML='';
   const fb=document.getElementById('q-feedback');
 
   if(q.type==='translate'){
-    const result=fuzzyMatch(ta.value, q.a);
+    const result=gradeText(ta.value, q.a);
     const isCorrect=result.match;
     recordResult(q,isCorrect);
     fb.className='feedback show '+(isCorrect?'ok':'ng');
-    const typoNote=result.typo?' (スペルミスはスルー！)':'';
-    document.getElementById('fb-title').textContent=(isCorrect?'✓ 正解！'+typoNote:'✗ 残念...')+xpTag();
+    const note=result.typo?' (スペルミスはスルー！)':(result.articleOnly?' (冠詞だけ違うで)':'');
+    document.getElementById('fb-title').textContent=(isCorrect?'✓ 正解！'+note:'✗ 残念...')+xpTag();
     document.getElementById('fb-correct').textContent='模範解答: '+q.a;
-    document.getElementById('fb-explain').style.display='none';
+    const fe=document.getElementById('fb-explain');
+    if(isCorrect){ fe.style.display='none'; }
+    else {
+      const rv=renderReview(ta.value, q.a, q.hint);
+      if(rv){ fe.style.display='block'; fe.innerHTML=rv; } else fe.style.display='none';
+    }
     document.getElementById('fb-self-judge').innerHTML='';
     setupDeep(); attachSpeaker(q);
     if(S.g.autoPlay) setTimeout(()=>say(q.a,0.9),300);
@@ -2482,7 +2687,9 @@ function submitFree(q,ta,row){
     fb.className='feedback neutral show';
     document.getElementById('fb-title').textContent='📋 模範解答';
     document.getElementById('fb-correct').textContent=q.a;
-    document.getElementById('fb-explain').style.display='none';
+    const fe2=document.getElementById('fb-explain');
+    const rv2=renderReview(ta.value, null, null, {noDiff:true});   /* 模範解答に [A/B] が入るため差分は出さん */
+    if(rv2){ fe2.style.display='block'; fe2.innerHTML=rv2; } else fe2.style.display='none';
     setupDeep();
     const sj=document.getElementById('fb-self-judge');
     sj.innerHTML=`<div class="self-judge"><button class="btn btn-green" onclick="selfJudge(true,'${q.id}')">✓ 合ってた</button><button class="btn btn-red" onclick="selfJudge(false,'${q.id}')">✗ 違った</button></div>`;
