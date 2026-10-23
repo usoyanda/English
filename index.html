@@ -1094,7 +1094,7 @@ const QB = [
   {id:'t1201',pat:'prep',month:'2607',type:'translate',q:'「私は趣味で卓球をします」',a:'I play table tennis recreationally.',hint:'recreationally',lesson:'⑫7/25'},
   {id:'t1202',pat:'easytomaster',month:'2607',type:'translate',q:'「覚えやすいが奥が深い」',a:"It's easy to learn, but difficult to master.",hint:'easy to ~, difficult to ~',lesson:'⑫7/25'},
   {id:'t1203',pat:'prep',month:'2607',type:'translate',q:'「香港で3時間の乗り継ぎがあります」',a:'I have a three-hour layover in Hong Kong.',hint:'layover',lesson:'⑫7/25'},
-  {id:'t1204',pat:'beadj',month:'2607',type:'translate',q:'「最近やる気が落ちています」',a:"I'm losing motivation.",hint:'losing motivation',lesson:'⑫7/25'},
+  {id:'t1204',pat:'beadj',month:'2607',type:'translate',q:'「最近やる気が落ちています」',a:"I'm losing motivation. / I've been losing motivation recently. / I've been losing motivation lately. / Recently, I've been losing motivation. / Lately, I've been losing motivation. / I'm losing motivation these days. / I'm losing motivation lately.",hint:'losing motivation',lesson:'⑫7/25'},
   {id:'t1205',pat:'article',month:'2607',type:'translate',q:'「森の近くの美しい庭がある家に住みたい」',a:"I'd like a house near a forest with a beautiful garden.",hint:'near a forest / with',lesson:'⑫7/25'},
   {id:'fr1201',pat:'__vocab__',month:'2607',type:'free',q:'日本の夏の風物詩を英語で3つ書こう',a:'shaved ice / summer festival / fireworks / swimming in the sea など',hint:'夏の単語',lesson:'⑫7/25'},
   {id:'fr1202',pat:'easytomaster',month:'2607',type:'free',q:'"easy to ~, difficult to ~" を使った文を作ろう',a:"It's easy to learn, but difficult to master. など",hint:'easy to + 原形',lesson:'⑫7/25'},
@@ -2698,6 +2698,16 @@ function ifWillHint(t){
     ? 'if で始まる条件節の中は、未来のことでも現在形で書く（If it rains, I will stay home.）。' : null;
 }
 
+/* recently は「最近〜した」「最近ずっと〜している」と過去〜現在完了で使う語で、
+   現在進行形とは相性が悪い。進行形のままなら these days / lately を使う */
+function recentlyProgHint(t){
+  const x=expandContr(normalizeAns(t));
+  if(!/\brecently\b/.test(x)) return null;
+  if(/\b(have|has) been\b/.test(x)) return null;
+  if(!/\b(am|is|are) \w+ing\b/.test(x)) return null;
+  return 'recently は現在進行形（am / is / are + ~ing）とは少し相性が悪い。進行形のままなら lately か these days が自然（I\'m losing motivation lately / these days）。recently を使うなら現在完了（I\'ve been ~ing recently）か過去形（I recently started ~）にする。';
+}
+
 /* 主語と動詞の一致。助動詞のあとは原形が正しいので、直前の語を見て除外する */
 const AUX_WORDS=new Set(['do','does','did','to','will','would','can','could','should','must','may','might','not',"don't","doesn't","didn't",'never','always','often']);
 const BARE_VERBS=new Set(['go','have','do','like','eat','need','want','take','make','say','get','live','work','come','keep','feel','think']);
@@ -2749,8 +2759,8 @@ function doubleVerbHint(user){
 
 /* 語単位の差分。余計な語・足りん語・置き換わった語を出す */
 function wordDiff(user, model){
-  const a=normalizeAns(user).split(' ').filter(Boolean);
-  const b=normalizeAns(model).split(' ').filter(Boolean);
+  const a=expandContr(normalizeAns(user)).split(' ').filter(Boolean);
+  const b=expandContr(normalizeAns(model)).split(' ').filter(Boolean);
   const m=a.length, n=b.length;
   if(!m||!n||m>60||n>60) return [];
   const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));
@@ -2783,6 +2793,7 @@ function buildReview(user, model, hint, opt){
   const found=[];
   MISTAKE_RULES.forEach(r=>{ if(r.re.test(user)) found.push({pri:r.pri, k:'err', t:r.m}); });
   const iw=ifWillHint(user);   if(iw) found.push({pri:1, k:'err', t:iw});
+  const rp=recentlyProgHint(user); if(rp) found.push({pri:1, k:'tip', t:rp});
   const dv=doubleVerbHint(user); if(dv) found.push({pri:2, k:'tip', t:dv});
   const ag=agreementHint(user);  if(ag) found.push({pri:3, k:'err', t:ag});
   /* hint の使い忘れ。模範解答もhintも「/」で別解を並べることがあるので、
@@ -2798,7 +2809,13 @@ function buildReview(user, model, hint, opt){
   found.sort((a,b)=>a.pri-b.pri);
   const items=found.slice(0,2).map(x=>({k:x.k,t:x.t}));
   if(!opt.noDiff && model){
-    const d=wordDiff(user,model).slice(0,6);
+    /* 別解が複数あるときは、違いが一番少ないものと比べる */
+    let d=null;
+    String(model).split('/').map(v=>v.trim()).filter(Boolean).forEach(v=>{
+      const x=wordDiff(user,v);
+      if(d===null || x.length<d.length) d=x;
+    });
+    d=(d||[]).slice(0,6);
     if(d.length){
       const html=d.map(o=> o.t==='swap'
           ? '<span class="rv-x">'+esc(o.from)+'</span><span class="rv-arrow">→</span><span class="rv-m">'+esc(o.to)+'</span>'
