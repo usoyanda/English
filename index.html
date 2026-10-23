@@ -98,6 +98,16 @@
   .screen { display: none; padding: 20px 16px 112px; max-width: 700px; margin: 0 auto; }
   .screen.active { display: block; }
 
+  /* 出題中は1画面に収めたいので、ボトムナビと戻るリンクを畳んで縦を稼ぐ。
+     代わりに上のバーへ✕を置き、いつでも抜けられるようにする */
+  body.quiz-mode .bnav { display: none; }
+  body.quiz-mode #s-quiz { padding: 14px 16px 24px; }
+  #s-quiz > .back-link { display: none; }
+  .quiz-x { flex-shrink:0; width:34px; height:34px; border-radius:11px; cursor:pointer;
+            border:1px solid var(--line2); background:var(--surface2); color:var(--text2);
+            font-family:inherit; font-size:0.95rem; line-height:1; transition:.15s; }
+  .quiz-x:hover { border-color:var(--cy); color:var(--cy-lt); }
+
   .page-title { font-size:1.6rem; font-weight: 700; color: var(--text); letter-spacing:-0.015em; margin-bottom: 5px; }
   .page-sub { font-size:0.9062rem; color: var(--text3); margin-bottom: 22px; font-weight: 500; }
   .section-label { font-size:0.73rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--text3); margin: 24px 0 9px; }
@@ -132,31 +142,38 @@
   .back-link:hover { text-decoration: underline; }
 
   /* QUIZ */
-  .quiz-topbar { background: var(--surface); border:1px solid var(--line); border-radius: 15px; padding: 13px 17px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .quiz-topbar { background: var(--surface); border:1px solid var(--line); border-radius: 15px; padding: 11px 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .quiz-title-sm { font-weight: 700; font-size:0.9062rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .progress-info { font-size:0.8438rem; font-weight: 700; color: var(--text3); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .progress-track { height: 7px; background: var(--surface3); border-radius: 99px; margin-top: 7px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cy), var(--lime)); border-radius: 99px; transition: width 0.4s ease; }
 
-  .q-card { background: var(--surface); border:1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: var(--shadow-sm); margin-bottom: 14px; animation: fadeUp 0.3s ease; }
+  .q-card { background: var(--surface); border:1px solid var(--line); border-radius: 20px; padding: 17px; box-shadow: var(--shadow-sm); margin-bottom: 14px; animation: fadeUp 0.3s ease; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
-  .q-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
+  .q-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
   .q-num { font-size:0.7812rem; font-weight: 800; color: var(--cy); letter-spacing: 1px; }
   .q-type-badge { padding: 3px 9px; border-radius: 7px; font-size:0.75rem; font-weight: 700; background: var(--bl-soft); color: var(--bl); }
   .q-lesson { font-size:0.75rem; color: var(--text3); font-weight: 600; margin-left: auto; }
   .q-text { font-size:1.125rem; font-weight: 600; line-height: 1.7; margin-bottom: 6px; color: var(--text); }
-  .q-hint { font-size:0.8438rem; color: var(--text3); margin-bottom: 14px; min-height: 18px; }
+  .q-hint { font-size:0.8438rem; color: var(--text3); margin-bottom: 12px; }
+  .q-hint:empty { display: none; }
 
   /* CHOICES */
-  .choice-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 12px; }
-  .choice-btn { padding: 15px 16px; border-radius: 13px; border: 1px solid var(--line2); background: var(--surface2); cursor: pointer;
+  .choice-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+  .choice-btn { padding: 13px 15px; border-radius: 13px; border: 1px solid var(--line2); background: var(--surface2); cursor: pointer;
                 font-family: inherit; font-size:0.9688rem; font-weight: 600; text-align: left; transition: all 0.15s; color: var(--text);
                 display: flex; align-items: center; gap: 11px; }
   .choice-btn:hover:not(:disabled) { border-color: var(--cy); background: var(--cy-soft); }
   .choice-btn.ok { border-color: var(--ok); background: var(--ok-soft); color: #B9F7DD; }
   .choice-btn.ng { border-color: var(--ng); background: var(--ng-soft); color: #FFD3DA; }
   .choice-btn:disabled { cursor: default; }
+  /* 数字キーで選べることの目印。指で触る端末には出さない */
+  .kcap { display:none; margin-left:auto; flex-shrink:0; font-size:0.7rem; font-weight:700;
+          color:var(--text3); border:1px solid var(--line2); border-radius:6px; padding:1px 8px; }
+  @media (hover:hover) and (pointer:fine) { .choice-btn .kcap { display:inline-block; } }
+  .choice-btn.ok .kcap, .choice-btn.ng .kcap { opacity:.5; }
+
   .cletter { width: 28px; height: 28px; border-radius: 9px; background: var(--surface3); color: var(--text2);
              display: flex; align-items: center; justify-content: center; font-size:0.8438rem; font-weight: 800; flex-shrink: 0; }
   .ok .cletter { background: var(--ok); color: #06231A; }
@@ -172,7 +189,7 @@
   input, textarea, select { font-size: max(1rem, 16px); }
 
   /* FEEDBACK */
-  .feedback { border-radius: 15px; padding: 15px 16px; margin-bottom: 12px; display: none; animation: fadeUp 0.2s; border: 1px solid transparent; }
+  .feedback { border-radius: 15px; padding: 14px 15px; margin-bottom: 10px; display: none; animation: fadeUp 0.2s; border: 1px solid transparent; }
   .feedback.show { display: block; }
   .feedback.ok { background: var(--ok-soft); border-color: rgba(52,211,153,0.4); }
   .feedback.ng { background: var(--ng-soft); border-color: rgba(251,113,133,0.4); }
@@ -601,6 +618,7 @@
     </div>
     <div class="progress-info" id="q-prog-text">1/25</div>
     <div class="progress-info" id="q-combo" style="color:var(--lime);display:none">🔥0</div>
+    <button class="quiz-x" onclick="goHome()" title="やめてホームに戻る">✕</button>
   </div>
 
   <div class="q-card">
@@ -830,11 +848,11 @@ const QB = [
   {id:'f0103',pat:'favourite',month:'2603',type:'fill',q:'My go-___ place is Yayoiken.',blank:'to',choices:['to','in','for','at'],hint:'行きつけ',lesson:'①3/28'},
   {id:'f0104',pat:'favourite',month:'2603',type:'fill',q:'This is my go-to karaoke ___.',blank:'song',choices:['song','music','track','voice'],hint:'十八番',lesson:'①3/28'},
   {id:'f0105',pat:'greeting',month:'2603',type:'fill',q:'___ are you? — I\'m fine.',blank:'How',choices:['How','What','Who','Where'],hint:'挨拶',lesson:'①3/28'},
-  {id:'g0101',pat:'almost',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'I almost eat out every day.',optB:'I eat out almost every day.',a:'B',explain:"\"almost\" は修飾する語の直前に置くのがルール。Aの \"I almost eat out\" だと「外食しかけた（実際はしてない）」という妙な意味になる。every day を修飾したいので almost every day の語順が正しい。",lesson:'①3/28'},
-  {id:'g0102',pat:'times',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'about 2 times in week',optB:'about twice a week',a:'B',explain:"回数は \"twice a week\"（週2回）のように、回数＋a＋期間で言うのが定番。\"2 times in week\" は不自然で、in ではなく a を使う。1回なら once、3回以上は three times と数字＋times になる。",deep:"【a と per】`twice a week` の a は「〜につき」の意味で、per と同じ働きをしている。`60 kilometers an hour`（時速60km）、`3 times a day`（1日3回）のように広く使われ、フォーマルな文書では `per week` `per hour` と置き換えられる。in を使った `two times in week` は誤りだが、`twice in a week` は「1週間のうちに2回も」と回数の多さを強調する別の言い方として成立する場合がある。基本は a を使うと覚えておけばよい。",lesson:'①3/28'},
-  {id:'g0103',pat:'howoften',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'How many you eat out?',optB:'How often do you eat out?',a:'B',explain:"頻度を聞くときは \"How often do you ~?\" が定番。\"How many\" は数を聞く表現なので、後ろに数える名詞（How many times など）が必要になる。回数を明示せず頻度そのものを聞くなら How often を使う。",deep:"【How often と How many times】`How often do you ~?` は頻度そのものを尋ねる定番形で、答えは `twice a week` など。`How many times ~?` は具体的な回数を尋ねる形で、必ず times が必要（×How many do you eat out?）。過去の合計回数を聞くなら `How many times have you been there?` と現在完了を使う。関連する疑問詞に `How long`（期間）、`How soon`（あとどれくらいで）、`How far`（距離）があり、How + 形容詞/副詞 で様々な尺度を尋ねられる。",lesson:'①3/28'},
-  {id:'g0104',pat:'favourite',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'My restaurant is Yayoiken.',optB:'My go-to restaurant is Yayoiken.',a:'B',explain:"\"go-to\" は「行きつけの・いつもの・定番の」という意味の形容詞。Aの \"My restaurant\" だと自分が経営している店に聞こえてしまう。go-to place / go-to song のように名詞の前に置いて使う。",lesson:'①3/28'},
-  {id:'g0105',pat:'greeting',month:'2603',type:'grammar',q:'どちらが正しい？',optA:'I\'m Good.',optB:'Good. / I\'m fine.',a:'B',explain:"体調や気分を聞かれたときの返しは \"Good.\" や \"I'm fine.\"。Aの \"I'm Good.\" は大文字が誤りなだけでなく、カジュアルな会話では I'm を省いて Good. だけで充分。その後に And you? を続けると自然。",lesson:'①3/28'},
+  {id:'g0101',pat:'almost',month:'2603',type:'grammar',q:'どちらが正しい？（ほぼ毎日外食します）',optA:'I almost eat out every day.',optB:'I eat out almost every day.',a:'B',explain:"\"almost\" は修飾する語の直前に置くのがルール。Aの \"I almost eat out\" だと「外食しかけた（実際はしてない）」という妙な意味になる。every day を修飾したいので almost every day の語順が正しい。",lesson:'①3/28'},
+  {id:'g0102',pat:'times',month:'2603',type:'grammar',q:'どちらが正しい？（週に約2回）',optA:'about 2 times in week',optB:'about twice a week',a:'B',explain:"回数は \"twice a week\"（週2回）のように、回数＋a＋期間で言うのが定番。\"2 times in week\" は不自然で、in ではなく a を使う。1回なら once、3回以上は three times と数字＋times になる。",deep:"【a と per】`twice a week` の a は「〜につき」の意味で、per と同じ働きをしている。`60 kilometers an hour`（時速60km）、`3 times a day`（1日3回）のように広く使われ、フォーマルな文書では `per week` `per hour` と置き換えられる。in を使った `two times in week` は誤りだが、`twice in a week` は「1週間のうちに2回も」と回数の多さを強調する別の言い方として成立する場合がある。基本は a を使うと覚えておけばよい。",lesson:'①3/28'},
+  {id:'g0103',pat:'howoften',month:'2603',type:'grammar',q:'どちらが正しい？（どれくらいの頻度で外食しますか？）',optA:'How many you eat out?',optB:'How often do you eat out?',a:'B',explain:"頻度を聞くときは \"How often do you ~?\" が定番。\"How many\" は数を聞く表現なので、後ろに数える名詞（How many times など）が必要になる。回数を明示せず頻度そのものを聞くなら How often を使う。",deep:"【How often と How many times】`How often do you ~?` は頻度そのものを尋ねる定番形で、答えは `twice a week` など。`How many times ~?` は具体的な回数を尋ねる形で、必ず times が必要（×How many do you eat out?）。過去の合計回数を聞くなら `How many times have you been there?` と現在完了を使う。関連する疑問詞に `How long`（期間）、`How soon`（あとどれくらいで）、`How far`（距離）があり、How + 形容詞/副詞 で様々な尺度を尋ねられる。",lesson:'①3/28'},
+  {id:'g0104',pat:'favourite',month:'2603',type:'grammar',q:'どちらが正しい？（行きつけの店はやよい軒です）',optA:'My restaurant is Yayoiken.',optB:'My go-to restaurant is Yayoiken.',a:'B',explain:"\"go-to\" は「行きつけの・いつもの・定番の」という意味の形容詞。Aの \"My restaurant\" だと自分が経営している店に聞こえてしまう。go-to place / go-to song のように名詞の前に置いて使う。",lesson:'①3/28'},
+  {id:'g0105',pat:'greeting',month:'2603',type:'grammar',q:'どちらが自然？（「元気？」への返し）',optA:'So-so.',optB:'Good. / I\'m fine.',a:'B',explain:"日本語の「まあまあ」をそのまま \"So-so.\" と返す人は多いが、英語ではほとんど使われず不自然に響く。定番は \"Good.\" \"I'm fine.\" \"Not bad.\" で、続けて And you? と返すと会話が回る。なお \"I'm good.\" も口語として正しい。",lesson:'①3/28'},
   {id:'t0101',pat:'times',month:'2603',type:'translate',q:'「週に約2回外食します」',a:'I eat out about twice a week.',hint:'about / twice / a week',lesson:'①3/28'},
   {id:'t0102',pat:'favourite',month:'2603',type:'translate',q:'「私の行きつけの店はやよい軒です」',a:'My go-to place is Yayoiken.',hint:'go-to place',lesson:'①3/28'},
   {id:'t0103',pat:'howoften',month:'2603',type:'translate',q:'「どれくらい外食しますか？」',a:'How often do you eat out?',hint:'How often',lesson:'①3/28'},
@@ -857,9 +875,9 @@ const QB = [
   {id:'f0203',pat:'reasonwhy',month:'2604',type:'fill',q:'The reason ___ I started learning English is because ~.',blank:'why',choices:['why','that','which','when'],lesson:'②4/4'},
   {id:'f0204',pat:'tiredof',month:'2604',type:'fill',q:'I\'m getting ___ of my commute.',blank:'tired',choices:['tired','boring','bored','tiring'],hint:'〜に飽き飽きしている',lesson:'②4/4'},
   {id:'f0205',pat:'everexp',month:'2604',type:'fill',q:'How ___ countries have you been to?',blank:'many',choices:['many','much','long','often'],lesson:'②4/4'},
-  {id:'g0201',pat:'gerundnoun',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'My hobby is cook.',optB:'My hobby is cooking.',a:'B',explain:"\"My hobby is ~\" の後ろは動名詞(-ing)。Aの cook は動詞の原形なので「私の趣味は料理する」という文法的に崩れた形になる。My hobby is cooking / reading / traveling のように -ing にする。",deep:"【動名詞と不定詞の使い分け】`My hobby is cooking.` のように be動詞の後で「〜すること」を表すときは動名詞が自然。不定詞の `My hobby is to cook.` も文法的には可能だが硬く、趣味の話では使わない。一般に動名詞は「すでにしていること・経験」、不定詞は「これからすること・目的」を表す傾向がある。`I stopped smoking.`（吸うのをやめた）と `I stopped to smoke.`（吸うために立ち止まった）のように、動詞によっては意味が大きく変わる。",lesson:'②4/4'},
-  {id:'g0202',pat:'tiredof',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I\'m getting boring of my job.',optB:'I\'m getting tired of my job.',a:'B',explain:"\"be getting tired of ~\" で「〜に飽き飽きしてきた」。Aの boring は「（物が）退屈させる」という意味なので、主語が I だと「私は退屈な人間になってきた」になってしまう。飽きている側の人が主語なら tired。",lesson:'②4/4'},
-  {id:'g0203',pat:'whatdo',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'What\'s your work?',optB:'What\'s your job? / What do you do?',a:'B',explain:"職業を聞くときは \"What do you do?\" が最も自然で、少し丁寧なら \"What's your job?\"。Aの \"What's your work?\" は文法的には通じるが、work は不可算で「仕事内容・作業」を指すため職業を尋ねる表現としては使われない。",lesson:'②4/4'},
+  {id:'g0201',pat:'gerundnoun',month:'2604',type:'grammar',q:'どちらが正しい？（趣味は料理です）',optA:'My hobby is cook.',optB:'My hobby is cooking.',a:'B',explain:"\"My hobby is ~\" の後ろは動名詞(-ing)。Aの cook は動詞の原形なので「私の趣味は料理する」という文法的に崩れた形になる。My hobby is cooking / reading / traveling のように -ing にする。",deep:"【動名詞と不定詞の使い分け】`My hobby is cooking.` のように be動詞の後で「〜すること」を表すときは動名詞が自然。不定詞の `My hobby is to cook.` も文法的には可能だが硬く、趣味の話では使わない。一般に動名詞は「すでにしていること・経験」、不定詞は「これからすること・目的」を表す傾向がある。`I stopped smoking.`（吸うのをやめた）と `I stopped to smoke.`（吸うために立ち止まった）のように、動詞によっては意味が大きく変わる。",lesson:'②4/4'},
+  {id:'g0202',pat:'tiredof',month:'2604',type:'grammar',q:'どちらが正しい？（仕事に飽きてきた）',optA:'I\'m getting boring of my job.',optB:'I\'m getting tired of my job.',a:'B',explain:"\"be getting tired of ~\" で「〜に飽き飽きしてきた」。Aの boring は「（物が）退屈させる」という意味なので、主語が I だと「私は退屈な人間になってきた」になってしまう。飽きている側の人が主語なら tired。",lesson:'②4/4'},
+  {id:'g0203',pat:'whatdo',month:'2604',type:'grammar',q:'どちらが正しい？（お仕事は何ですか？）',optA:'What\'s your work?',optB:'What\'s your job? / What do you do?',a:'B',explain:"職業を聞くときは \"What do you do?\" が最も自然で、少し丁寧なら \"What's your job?\"。Aの \"What's your work?\" は文法的には通じるが、work は不可算で「仕事内容・作業」を指すため職業を尋ねる表現としては使われない。",lesson:'②4/4'},
   {id:'t0201',pat:'reasonwhy',month:'2604',type:'translate',q:'「私が英語を学び始めた理由は〜だからです」',a:'The reason why I started learning English is because ~.',lesson:'②4/4'},
   {id:'t0202',pat:'favourite',month:'2604',type:'translate',q:'「私の一番嫌いな食べ物は〜です」',a:'My least favourite food is ~.',lesson:'②4/4'},
   {id:'t0203',pat:'taste',month:'2604',type:'translate',q:'「苦い味がします」',a:'It tastes bitter.',lesson:'②4/4'},
@@ -877,8 +895,8 @@ const QB = [
   {id:'f0303',pat:'diffrom',month:'2604',type:'fill',q:'Poker is different ___ gambling.',blank:'from',choices:['from','than','of','as'],lesson:'③4/23'},
   {id:'f0304',pat:'__vocab__',month:'2604',type:'fill',q:'dog → ___ / puppy',blank:'pup',choices:['pup','kit','foal','cub'],lesson:'③4/23'},
   {id:'f0305',pat:'__vocab__',month:'2604',type:'fill',q:'cat → ___ / kitten',blank:'kit',choices:['kit','pup','foal','cub'],lesson:'③4/23'},
-  {id:'g0301',pat:'pasttense',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I holded the harness.',optB:'I held the harness.',a:'B',explain:"\"hold\" は不規則動詞で、過去形・過去分詞ともに \"held\"。Aのように -ed を付けた holded という形は存在しない。同じ不規則型に build→built、send→sent がある。",lesson:'③4/23'},
-  {id:'g0302',pat:'diffrom',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'Poker is different than gambling.',optB:'Poker is different from gambling.',a:'B',explain:"「〜とは違う」は \"different from ~\" が正式な形。Aの than は比較級（bigger than など）の後に使うもので、different は比較級ではないため than は取らない。会話では different than も聞くが、書き言葉では from が安全。",deep:"【different from / than / to】標準的で最も安全なのは `different from`。アメリカ英語の口語では `different than` も使われるが、書き言葉では避けた方がよい。イギリス英語では `different to` も一般的で、地域差がある。試験や文書では from を選んでおけば間違いない。関連表現として `be similar to`（〜に似ている）、`be the same as`（〜と同じ）があり、それぞれ前置詞が異なるのでセットで覚える。",lesson:'③4/23'},
+  {id:'g0301',pat:'pasttense',month:'2604',type:'grammar',q:'どちらが正しい？（ハーネスを持った）',optA:'I holded the harness.',optB:'I held the harness.',a:'B',explain:"\"hold\" は不規則動詞で、過去形・過去分詞ともに \"held\"。Aのように -ed を付けた holded という形は存在しない。同じ不規則型に build→built、send→sent がある。",lesson:'③4/23'},
+  {id:'g0302',pat:'diffrom',month:'2604',type:'grammar',q:'どちらが自然？（ポーカーはギャンブルとは違う）',optA:'Poker is different than gambling.',optB:'Poker is different from gambling.',a:'B',explain:"「〜とは違う」は \"different from ~\" が正式な形。Aの than は比較級（bigger than など）の後に使うもので、different は比較級ではないため than は取らない。会話では different than も聞くが、書き言葉では from が安全。",deep:"【different from / than / to】標準的で最も安全なのは `different from`。アメリカ英語の口語では `different than` も使われるが、書き言葉では避けた方がよい。イギリス英語では `different to` も一般的で、地域差がある。試験や文書では from を選んでおけば間違いない。関連表現として `be similar to`（〜に似ている）、`be the same as`（〜と同じ）があり、それぞれ前置詞が異なるのでセットで覚える。",lesson:'③4/23'},
   {id:'t0301',pat:'pasttense',month:'2604',type:'translate',q:'「私はハネムーンでネパールへ行きました」',a:'I went to Nepal for my honeymoon.',lesson:'③4/23'},
   {id:'t0302',pat:'pasttense',month:'2604',type:'translate',q:'「象に乗って手綱を握りました」',a:'I rode an elephant and held the harness.',lesson:'③4/23'},
   {id:'fr0301',pat:'__vocab__',month:'2604',type:'free',q:'動物の赤ちゃん：犬・猫・馬・熊の英語を書こう',a:'puppy/pup / kitten/kit / foal / cub',lesson:'③4/23'},
@@ -892,9 +910,9 @@ const QB = [
   {id:'f0403',pat:'morethan',month:'2604',type:'fill',q:'USJ is ___ expensive than Disney.',blank:'more',choices:['more','most','much','very'],lesson:'④4/25'},
   {id:'f0404',pat:'themost',month:'2604',type:'fill',q:'USJ is the ___ expensive amusement park.',blank:'most',choices:['most','more','very','so'],lesson:'④4/25'},
   {id:'f0405',pat:'routine',month:'2604',type:'fill',q:'I ___ home at 6:50 am.',blank:'leave',choices:['leave','left','go','exit'],deep:"【go home と leave home は逆】`leave home`＝家を出る（出発）、`go home`＝家に帰る（到着先が家）。朝6:50に出勤するなら家を出るので leave が正解で、`I go home at 6:50 am.` だと「朝6:50に帰宅する」という意味になり夜勤明けの人の文になる。なお go home は home の前に to を付けない（×go to home）。home がここでは副詞として働くためで、同じ仲間に go abroad / go downtown がある。一方 leave は他動詞なので `leave home` `leave the office` と目的語を直接取る。",lesson:'④4/25'},
-  {id:'g0401',pat:'routine',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I am leaving home at 6:50 am every day.',optB:'I leave home at 6:50 am.',a:'B',explain:"毎日の習慣は現在形（Present Simple）で表す。Aの現在進行形 \"I am leaving\" は「今まさに出かけるところ」という一時的な動作を指すので、every day と組み合わせると矛盾する。習慣なら I leave home at 6:50。",deep:"【現在形と現在進行形の使い分け】現在形は「いつもそうしている」という習慣や変わらない事実、現在進行形は「今この瞬間やっている」一時的な動作を表す。`I leave home at 6:50.`＝毎日そうしている。`I'm leaving home now.`＝今まさに出るところ。ただし現在進行形には例外があり、`I'm leaving tomorrow.` のように確定した近い未来の予定にも使える。また always と組み合わせた `He's always complaining.` は「いつも文句ばかり言っている」という苛立ちを含む特別な使い方になる。",lesson:'④4/25'},
-  {id:'g0402',pat:'indirect',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'I\'m wondering why you do.',optB:'I wonder why you do that.',a:'B',explain:'"I wonder why ..." が正しい構文',lesson:'④4/25'},
-  {id:'g0403',pat:'prep',month:'2604',type:'grammar',q:'どちらが正しい？',optA:'The movie is based in a true story.',optB:'The movie is based on a true story.',a:'B',explain:"「〜に基づく」は \"based on ~\" で、前置詞は on で固定。Aの based in は「〜に拠点を置く」という別の意味で、The company is based in Osaka.（大阪に本社がある）のように使う。",deep:"【based on と based in】`based on`＝〜に基づく（根拠・題材）。`The movie is based on a true story.` `based in`＝〜に拠点を置く（場所）。`The company is based in Osaka.` 前置詞ひとつで「根拠」か「所在地」かが変わる。人について `I'm based in Tokyo.` と言えば「東京を拠点に活動している」という意味になり、単に住んでいる（live in）よりも仕事の拠点というニュアンスが強い。",lesson:'④4/25'},
+  {id:'g0401',pat:'routine',month:'2604',type:'grammar',q:'どちらが正しい？（毎日6時50分に家を出ます）',optA:'I am leaving home at 6:50 am every day.',optB:'I leave home at 6:50 am every day.',a:'B',explain:"毎日の習慣は現在形（Present Simple）で表す。Aの現在進行形 \"I am leaving\" は「今まさに出かけるところ」という一時的な動作を指すので、every day と組み合わせると矛盾する。習慣なら I leave home at 6:50。",deep:"【現在形と現在進行形の使い分け】現在形は「いつもそうしている」という習慣や変わらない事実、現在進行形は「今この瞬間やっている」一時的な動作を表す。`I leave home at 6:50.`＝毎日そうしている。`I'm leaving home now.`＝今まさに出るところ。ただし現在進行形には例外があり、`I'm leaving tomorrow.` のように確定した近い未来の予定にも使える。また always と組み合わせた `He's always complaining.` は「いつも文句ばかり言っている」という苛立ちを含む特別な使い方になる。",lesson:'④4/25'},
+  {id:'g0402',pat:'indirect',month:'2604',type:'grammar',q:'どちらが正しい？（なんでそうするんやろ、と思う）',optA:'I\'m wondering why you do.',optB:'I wonder why you do that.',a:'B',explain:"文の中に埋め込まれた疑問は、疑問文の語順に戻さず「主語＋動詞」の並びにする。加えてAの \"why you do\" は「何を」するのかが抜けていて文が尻切れになるため、that で受けて \"I wonder why you do that.\" とする。",lesson:'④4/25'},
+  {id:'g0403',pat:'prep',month:'2604',type:'grammar',q:'どちらが正しい？（その映画は実話に基づいている）',optA:'The movie is based in a true story.',optB:'The movie is based on a true story.',a:'B',explain:"「〜に基づく」は \"based on ~\" で、前置詞は on で固定。Aの based in は「〜に拠点を置く」という別の意味で、The company is based in Osaka.（大阪に本社がある）のように使う。",deep:"【based on と based in】`based on`＝〜に基づく（根拠・題材）。`The movie is based on a true story.` `based in`＝〜に拠点を置く（場所）。`The company is based in Osaka.` 前置詞ひとつで「根拠」か「所在地」かが変わる。人について `I'm based in Tokyo.` と言えば「東京を拠点に活動している」という意味になり、単に住んでいる（live in）よりも仕事の拠点というニュアンスが強い。",lesson:'④4/25'},
   {id:'t0401',pat:'routine',month:'2604',type:'translate',q:'「私は6時に起きます」',a:'I get up at 6am.',hint:'get up',lesson:'④4/25'},
   {id:'t0402',pat:'routine',month:'2604',type:'translate',q:'「自転車で通勤しています」',a:'I go to work by bike / bicycle.',lesson:'④4/25'},
   {id:'t0403',pat:'morethan',month:'2604',type:'translate',q:'「USJはディズニーより高い」',a:'USJ is more expensive than Disney.',lesson:'④4/25'},
@@ -911,8 +929,8 @@ const QB = [
   {id:'f0501',pat:'beadj',month:'2605',type:'fill',q:'The house ___ abandoned.',blank:'is',choices:['is','was','has','does'],hint:'現在の状態',lesson:'⑤5/9'},
   {id:'f0502',pat:'progress',month:'2605',type:'fill',q:'The area ___ developing.',blank:'is',choices:['is','was','has','does'],hint:'開発が進んでいる',lesson:'⑤5/9'},
   {id:'f0503',pat:'progress',month:'2605',type:'fill',q:'They are ___.',blank:'migrating',choices:['migrating','migration','migrate','migrated'],lesson:'⑤5/9'},
-  {id:'g0501',pat:'progress',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'The area is developed.',optB:'The area is developing.',a:'B',explain:"開発が進行中なら現在進行形 \"is developing\"。Aの \"is developed\" は受動態で「開発され終わった・先進的な」という完了した状態を指す（a developed country = 先進国）。今まさに進んでいる最中なら -ing。",lesson:'⑤5/9'},
-  {id:'g0502',pat:'beadj',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'The house abandoned.',optB:'The house is abandoned.',a:'B',explain:"\"abandoned\" は「捨てられた」という状態を表す形容詞なので、be動詞が必要。Aのように The house abandoned だけでは動詞が過去形に見え「その家が（何かを）捨てた」という意味になってしまう。",lesson:'⑤5/9'},
+  {id:'g0501',pat:'progress',month:'2605',type:'grammar',q:'どちらが正しい？（その地域は発展しつつある）',optA:'The area is developed.',optB:'The area is developing.',a:'B',explain:"開発が進行中なら現在進行形 \"is developing\"。Aの \"is developed\" は受動態で「開発され終わった・先進的な」という完了した状態を指す（a developed country = 先進国）。今まさに進んでいる最中なら -ing。",lesson:'⑤5/9'},
+  {id:'g0502',pat:'beadj',month:'2605',type:'grammar',q:'どちらが正しい？（その家は空き家だ）',optA:'The house abandoned.',optB:'The house is abandoned.',a:'B',explain:"\"abandoned\" は「捨てられた」という状態を表す形容詞なので、be動詞が必要。Aのように The house abandoned だけでは動詞が過去形に見え「その家が（何かを）捨てた」という意味になってしまう。",lesson:'⑤5/9'},
   {id:'t0501',pat:'beadj',month:'2605',type:'translate',q:'「その家は捨てられている」',a:'The house is abandoned.',lesson:'⑤5/9'},
   {id:'t0502',pat:'progress',month:'2605',type:'translate',q:'「彼らは移動しています」',a:'They are migrating.',lesson:'⑤5/9'},
   {id:'fr0501',pat:'__vocab__',month:'2605',type:'free',q:'南アフリカの3都市と役割を英語で書こう',a:'Pretoria=Executive / Bloemfontein=Judicial / Cape Town=Constitutional',lesson:'⑤5/9'},
@@ -929,10 +947,10 @@ const QB = [
   {id:'f0603',pat:'times',month:'2605',type:'fill',q:'I do volunteer work ___ a month.',blank:'once',choices:['once','one','a','every'],lesson:'⑥5/12'},
   {id:'f0604',pat:'reasonwhy',month:'2605',type:'fill',q:'I wrote a report ___ I finished an experiment.',blank:'because',choices:['because','when','after','since'],lesson:'⑥5/12'},
   {id:'f0605',pat:'edingadj',month:'2605',type:'fill',q:'The movie is very ___.',blank:'touching',choices:['touching','touched','move','emotional'],hint:'感動的だ（形容詞）',lesson:'⑥5/12'},
-  {id:'g0601',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'I was moving by the movie.',optB:'I was moved by the movie.',a:'B',explain:"感情は \"be moved / touched\" で「（人が）感動させられた」と受け身で表す。Aの moving は「感動的な」という意味なので、主語が I だと「私が人を感動させる存在だ」になる。人が主語なら -ed、物が主語なら -ing。",deep:"【-ed と -ing の感情形容詞】感情を表す動詞は2つの形を持ち、-ed は「そう感じている人」、-ing は「そう感じさせる物や人」に使う。`I was moved.`＝私が感動した。`The movie was moving.`＝映画が感動的だった。取り違えると `I am boring.`（私は退屈な人間です）のように意図しない自己紹介になってしまうので注意。同じ型の代表例は interested/interesting、excited/exciting、surprised/surprising、confused/confusing。判断の目安は、主語が感情を持てる人間なら -ed、原因となる物なら -ing。",lesson:'⑥5/12'},
-  {id:'g0602',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'My job is tired.',optB:'My job is tiring.',a:'B',explain:"\"tiring\" は「（物が人を）疲れさせる」、\"tired\" は「（人が）疲れている」。主語が My job なので、疲れさせる側を表す tiring が正しい。人が主語なら I am tired. となる。interesting / interested も同じ関係。",deep:"【tired と tiring の主語の違い】`tiring`＝疲れさせる側（原因）、`tired`＝疲れている側（人）。`My job is tiring.`（仕事が疲れさせる）と `I am tired.`（私が疲れている）は主語が入れ替わる関係にある。両方を1文にすると `I'm tired because my job is tiring.` となる。なお `tired of ~` になると意味が変わり、「疲れた」ではなく「〜に飽きた」を表すので `I'm tired of my job.` は「仕事に飽き飽きしている」となる。前置詞 of の有無で意味が変わる点に注意。",lesson:'⑥5/12'},
-  {id:'g0603',pat:'lasttime',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'When was the last time you go on a trip?',optB:'When was the last time you went on a trip?',a:'B',explain:"\"the last time\" に続く節は過去形になる。最後に〜したのはいつか、という過ぎたことを聞いているため、Aの現在形 go は使えない。When was the last time you went / ate / saw ~? の形で覚える。",lesson:'⑥5/12'},
-  {id:'g0604',pat:'times',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'I make volunteer work once a month.',optB:'I do volunteer work once a month.',a:'B',explain:"「ボランティアをする」は \"do volunteer work\"。動詞は make ではなく do を使うのがルールで、make は何かを作り出すときの動詞。do homework / do the dishes と同じ仲間。",lesson:'⑥5/12'},
+  {id:'g0601',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？（その映画に感動した）',optA:'I was moving by the movie.',optB:'I was moved by the movie.',a:'B',explain:"感情は \"be moved / touched\" で「（人が）感動させられた」と受け身で表す。Aの moving は「感動的な」という意味なので、主語が I だと「私が人を感動させる存在だ」になる。人が主語なら -ed、物が主語なら -ing。",deep:"【-ed と -ing の感情形容詞】感情を表す動詞は2つの形を持ち、-ed は「そう感じている人」、-ing は「そう感じさせる物や人」に使う。`I was moved.`＝私が感動した。`The movie was moving.`＝映画が感動的だった。取り違えると `I am boring.`（私は退屈な人間です）のように意図しない自己紹介になってしまうので注意。同じ型の代表例は interested/interesting、excited/exciting、surprised/surprising、confused/confusing。判断の目安は、主語が感情を持てる人間なら -ed、原因となる物なら -ing。",lesson:'⑥5/12'},
+  {id:'g0602',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？（私の仕事は疲れる）',optA:'My job is tired.',optB:'My job is tiring.',a:'B',explain:"\"tiring\" は「（物が人を）疲れさせる」、\"tired\" は「（人が）疲れている」。主語が My job なので、疲れさせる側を表す tiring が正しい。人が主語なら I am tired. となる。interesting / interested も同じ関係。",deep:"【tired と tiring の主語の違い】`tiring`＝疲れさせる側（原因）、`tired`＝疲れている側（人）。`My job is tiring.`（仕事が疲れさせる）と `I am tired.`（私が疲れている）は主語が入れ替わる関係にある。両方を1文にすると `I'm tired because my job is tiring.` となる。なお `tired of ~` になると意味が変わり、「疲れた」ではなく「〜に飽きた」を表すので `I'm tired of my job.` は「仕事に飽き飽きしている」となる。前置詞 of の有無で意味が変わる点に注意。",lesson:'⑥5/12'},
+  {id:'g0603',pat:'lasttime',month:'2605',type:'grammar',q:'どちらが正しい？（最後に旅行したのはいつ？）',optA:'When was the last time you go on a trip?',optB:'When was the last time you went on a trip?',a:'B',explain:"\"the last time\" に続く節は過去形になる。最後に〜したのはいつか、という過ぎたことを聞いているため、Aの現在形 go は使えない。When was the last time you went / ate / saw ~? の形で覚える。",lesson:'⑥5/12'},
+  {id:'g0604',pat:'times',month:'2605',type:'grammar',q:'どちらが正しい？（月に1回ボランティアをする）',optA:'I make volunteer work once a month.',optB:'I do volunteer work once a month.',a:'B',explain:"「ボランティアをする」は \"do volunteer work\"。動詞は make ではなく do を使うのがルールで、make は何かを作り出すときの動詞。do homework / do the dishes と同じ仲間。",lesson:'⑥5/12'},
   {id:'t0601',pat:'edingadj',month:'2605',type:'translate',q:'「その映画は感動的です」',a:'The movie is touching / moving.',lesson:'⑥5/12'},
   {id:'t0602',pat:'edingadj',month:'2605',type:'translate',q:'「私は映画で感動した」',a:'I was moved / touched by the movie.',lesson:'⑥5/12'},
   {id:'t0603',pat:'lasttime',month:'2605',type:'translate',q:'「最後に旅行したのはいつですか？」',a:'When was the last time you went on a trip?',lesson:'⑥5/12'},
@@ -949,8 +967,8 @@ const QB = [
   {id:'f0702',pat:'wanna',month:'2605',type:'fill',q:'She wants ___ give water to her plants.',blank:'to',choices:['to','of','for','at'],lesson:'⑦5/14'},
   {id:'f0703',pat:'ideal',month:'2605',type:'fill',q:'What is your ___ day off?',blank:'ideal',choices:['ideal','perfect','best','good'],lesson:'⑦5/14'},
   {id:'f0704',pat:'__vocab__',month:'2605',type:'fill',q:'Thunder is the ___, lightning is the light.',blank:'sound',choices:['sound','noise','music','voice'],lesson:'⑦5/14'},
-  {id:'g0701',pat:'ifclause',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'If you will get married, what is your ideal wedding?',optB:'If you get married, what is your ideal wedding party?',a:'B',explain:"if で始まる条件節の中は、未来のことでも現在形で書く。Aの \"If you will get married\" は will が余分で、正しくは If you get married。主節の方には will を使ってよい（If it rains, I will stay home.）。",deep:"【時と条件の副詞節では未来形を使わない】if や when で始まる節の中では、未来のことでも will を使わず現在形にする。`If you get married, ...` `When I get home, I'll call you.` 主節の方には will を使ってよい。ただし if が「〜かどうか」を意味する名詞節の場合は例外で、`I don't know if he will come.` のように will を使える。見分け方は、if を「もし」と訳せるなら現在形、「〜かどうか」と訳せるなら will も可。",lesson:'⑦5/14'},
-  {id:'g0702',pat:'have',month:'2605',type:'grammar',q:'どちらが正しい？',optA:'My ideal house is a big kitchen.',optB:'My ideal house has a big kitchen.',a:'B',explain:"\"has\" は「〜を持っている・〜がある」。Aのように is を使うと「私の理想の家＝大きなキッチン」という意味になり、家とキッチンが同一のものになってしまう。設備を説明するときは has を使う。",lesson:'⑦5/14'},
+  {id:'g0701',pat:'ifclause',month:'2605',type:'grammar',q:'どちらが正しい？（もし結婚するなら、理想の結婚式は？）',optA:'If you will get married, what is your ideal wedding?',optB:'If you get married, what is your ideal wedding party?',a:'B',explain:"if で始まる条件節の中は、未来のことでも現在形で書く。Aの \"If you will get married\" は will が余分で、正しくは If you get married。主節の方には will を使ってよい（If it rains, I will stay home.）。",deep:"【時と条件の副詞節では未来形を使わない】if や when で始まる節の中では、未来のことでも will を使わず現在形にする。`If you get married, ...` `When I get home, I'll call you.` 主節の方には will を使ってよい。ただし if が「〜かどうか」を意味する名詞節の場合は例外で、`I don't know if he will come.` のように will を使える。見分け方は、if を「もし」と訳せるなら現在形、「〜かどうか」と訳せるなら will も可。",lesson:'⑦5/14'},
+  {id:'g0702',pat:'have',month:'2605',type:'grammar',q:'どちらが正しい？（理想の家には広いキッチンがある）',optA:'My ideal house is a big kitchen.',optB:'My ideal house has a big kitchen.',a:'B',explain:"\"has\" は「〜を持っている・〜がある」。Aのように is を使うと「私の理想の家＝大きなキッチン」という意味になり、家とキッチンが同一のものになってしまう。設備を説明するときは has を使う。",lesson:'⑦5/14'},
   {id:'t0701',pat:'have',month:'2605',type:'translate',q:'「私の理想の家には大きなキッチンがある」',a:'My ideal house has a big kitchen.',lesson:'⑦5/14'},
   {id:'t0702',pat:'ideal',month:'2605',type:'translate',q:'「理想の休日は何ですか？」',a:'What is your ideal day off?',lesson:'⑦5/14'},
   {id:'t0703',pat:'ideal',month:'2605',type:'translate',q:'「理想の旅行先はどこですか？」',a:'What is your ideal place for travelling?',lesson:'⑦5/14'},
@@ -969,8 +987,8 @@ const QB = [
   {id:'f0804',pat:'beusedto',month:'2606',type:'fill',q:"I'm used to ___ it because I do it every day.",blank:'doing',choices:['doing','do','done','did'],hint:'be used to + 動名詞',lesson:'⑧6/10'},
   {id:'f0805',pat:'tiredof',month:'2606',type:'fill',q:'Cooking is very time-___.',blank:'consuming',choices:['consuming','wasting','taking','costing'],hint:'時間がかかる',lesson:'⑧6/10'},
   {id:'g0801',pat:'usedto',month:'2606',type:'grammar',q:'どちらが正しい？（昔は料理していた）',optA:"I used to cooking.",optB:'I used to cook.',a:'B',explain:'"used to + 動詞の原形" で昔の習慣を表す。"be used to + ing" は「〜に慣れている」なので別の意味。',deep:"【used to / be used to / get used to】この3つは形も意味も違う。①`used to + 動詞の原形`＝昔は〜していた（今はしていない）。②`be used to + 名詞/動名詞`＝〜に慣れている（状態）。③`get used to + 名詞/動名詞`＝〜に慣れてきた（変化）。`I used to cook.`（昔は料理していた）と `I'm used to cooking.`（料理に慣れている）は全く別の意味になる。見分け方は be動詞の有無で、be や get があれば「慣れ」、なければ「過去の習慣」。なお②③の to は不定詞ではなく前置詞なので、後ろは必ず -ing 形になる。",lesson:'⑧6/10'},
-  {id:'g0802',pat:'tooto',month:'2606',type:'grammar',q:'どちらが正しい？',optA:"I'm too lazy for cook.",optB:"I'm too lazy to cook.",a:'B',explain:'"too + 形容詞 + to + 動詞原形" で「〜すぎて...できない」。"for" は不可。',deep:"【too ~ to と enough to】`too + 形容詞 + to + 原形`＝〜すぎて…できない、という否定的な意味を含む。`I'm too lazy to cook.`＝怠けすぎて料理できない。反対に肯定的に「〜するのに十分」と言うなら `形容詞 + enough + to`の語順で `I'm old enough to drive.` となり、enough は形容詞の後ろに置く点が独特。また `too` を `very` に置き換えると意味が変わり、`I'm very lazy.` は単に怠け者だという事実を述べるだけで、できないという含みは消える。",lesson:'⑧6/10'},
-  {id:'g0803',pat:'beadj',month:'2606',type:'grammar',q:'どちらが正しい？',optA:"It's very convenience.",optB:"It's very convenient.",a:'B',explain:"be動詞の後ろに置くのは形容詞なので \"convenient\" が正しい。Aの convenience は名詞で「便利さ・コンビニ」の意味。It's very convenient. / for your convenience のように品詞で使い分ける。",lesson:'⑧6/10'},
+  {id:'g0802',pat:'tooto',month:'2606',type:'grammar',q:'どちらが正しい？（怠けすぎて料理する気になれない）',optA:"I'm too lazy for cook.",optB:"I'm too lazy to cook.",a:'B',explain:'"too + 形容詞 + to + 動詞原形" で「〜すぎて...できない」。"for" は不可。',deep:"【too ~ to と enough to】`too + 形容詞 + to + 原形`＝〜すぎて…できない、という否定的な意味を含む。`I'm too lazy to cook.`＝怠けすぎて料理できない。反対に肯定的に「〜するのに十分」と言うなら `形容詞 + enough + to`の語順で `I'm old enough to drive.` となり、enough は形容詞の後ろに置く点が独特。また `too` を `very` に置き換えると意味が変わり、`I'm very lazy.` は単に怠け者だという事実を述べるだけで、できないという含みは消える。",lesson:'⑧6/10'},
+  {id:'g0803',pat:'beadj',month:'2606',type:'grammar',q:'どちらが正しい？（それはとても便利だ）',optA:"It's very convenience.",optB:"It's very convenient.",a:'B',explain:"be動詞の後ろに置くのは形容詞なので \"convenient\" が正しい。Aの convenience は名詞で「便利さ・コンビニ」の意味。It's very convenient. / for your convenience のように品詞で使い分ける。",lesson:'⑧6/10'},
   {id:'g0804',pat:'howcome',month:'2606',type:'grammar',q:'どちらが正しい？（なんで料理しないの？）',optA:"How come you don't cook?",optB:"How come don't you cook?",a:'A',explain:"\"How come\" の後ろは疑問文の語順にせず、主語＋動詞のまま続ける。Bのように don't you と倒置すると誤り。Why を使うときは Why don't you cook? と倒置が必要なので、How come だけ例外的な形になる。",lesson:'⑧6/10'},
   {id:'t0801',pat:'tooto',month:'2606',type:'translate',q:'「料理するには怠け過ぎる」',a:"I'm too lazy to cook.",hint:'too ~ to ...',lesson:'⑧6/10'},
   {id:'t0802',pat:'beusedto',month:'2606',type:'translate',q:'「毎日やってるから慣れた」',a:"I'm used to it because I do it every day.",hint:'be used to / because',lesson:'⑧6/10'},
@@ -991,7 +1009,7 @@ const QB = [
   {id:'f0903',pat:'getdone',month:'2606',type:'fill',q:'I got my nails ___.',blank:'done',choices:['done','do','doing','did'],hint:'get + 目的語 + done',lesson:'⑨6/25'},
   {id:'f0904',pat:'getdone',month:'2606',type:'fill',q:'I got ___ in traffic on the way home.',blank:'stuck',choices:['stuck','stock','stacked','stocked'],hint:'渋滞にはまる',lesson:'⑨6/25'},
   {id:'f0905',pat:'wanna',month:'2606',type:'fill',q:'You can eat as much as you ___.',blank:'want',choices:['want','like','wish','can'],hint:'好きなだけ',lesson:'⑨6/25'},
-  {id:'g0901',pat:'feellike',month:'2606',type:'grammar',q:'どちらが正しい？',optA:'I feel like do nothing.',optB:'I feel like doing nothing.',a:'B',explain:'"feel like" の後は動名詞（-ing形）が必須。"feel like to do" も誤り。',deep:"【feel like の2つの意味】①`feel like + 動名詞`＝〜したい気分だ。`I feel like eating ramen.` ②`feel like + 名詞`＝〜のような感じがする。`It feels like winter.` どちらも後ろに動詞の原形は置けず、①では必ず -ing になる（×feel like to eat）。「〜したくない」なら `I don't feel like doing anything.` と否定形にする。似た表現の `would like to + 原形`（〜したい）は不定詞を取るので、形を混同しないよう注意。",lesson:'⑨6/25'},
+  {id:'g0901',pat:'feellike',month:'2606',type:'grammar',q:'どちらが正しい？（何もしたくない気分だ）',optA:'I feel like do nothing.',optB:'I feel like doing nothing.',a:'B',explain:'"feel like" の後は動名詞（-ing形）が必須。"feel like to do" も誤り。',deep:"【feel like の2つの意味】①`feel like + 動名詞`＝〜したい気分だ。`I feel like eating ramen.` ②`feel like + 名詞`＝〜のような感じがする。`It feels like winter.` どちらも後ろに動詞の原形は置けず、①では必ず -ing になる（×feel like to eat）。「〜したくない」なら `I don't feel like doing anything.` と否定形にする。似た表現の `would like to + 原形`（〜したい）は不定詞を取るので、形を混同しないよう注意。",lesson:'⑨6/25'},
   {id:'g0902',pat:'usedto',month:'2606',type:'grammar',q:'どちらが正しい？（以前は大阪に住んでいた）',optA:'I was used to live in Osaka.',optB:'I used to live in Osaka.',a:'B',explain:'"used to + 動詞原形" で過去の習慣・状態。"was used to" は「慣れていた」なので意味が違う。',lesson:'⑨6/25'},
   {id:'g0903',pat:'getdone',month:'2606',type:'grammar',q:'どちらが正しい？（美容院で髪をやってもらった）',optA:'I cut my hair.',optB:'I got my hair cut.',a:'B',explain:'"get + 目的語 + 過去分詞" で「〜してもらった」。"I cut my hair" は自分で切った意味。',deep:"【get + 目的語 + 過去分詞】「〜してもらう・〜される」を表す形で、自分でやったのではないことを示す。`I got my hair cut.`＝美容院で切ってもらった。`I cut my hair.` だと自分で切ったことになる。同じ意味で `have + 目的語 + 過去分詞`（I had my hair cut.）も使え、have の方がややフォーマル。また被害を表すこともでき、`I got my wallet stolen.`＝財布を盗まれた。語順は必ず 目的語→過去分詞 で、`I got cut my hair.` は誤り。",lesson:'⑨6/25'},
   {id:'g0904',pat:'nightsdays',month:'2606',type:'grammar',q:'どちらが正しい？（2泊3日）',optA:'two days three nights',optB:'two nights, three days',a:'B',explain:"英語では宿泊数（nights）を先に言う。日本語の「2泊3日」をそのまま並べたAは不自然で、正しくは two nights, three days。旅行の話でよく出るので、日本語と語順が逆になる点に注意する。",deep:"【英語では泊数を先に言う】日本語の「2泊3日」を語順どおり訳すと通じにくく、英語では `two nights, three days` と宿泊数を先に置く。ホテルの予約では `I'd like to stay for two nights.` のように nights で数えるのが基本で、日数は補足的に添える形になる。旅行会社の広告でも `3 nights 4 days` の順で表記される。日本語と順序が逆転する数少ない例なので、旅行の話をするときは意識して切り替える。",lesson:'⑨6/25'},
@@ -1015,8 +1033,8 @@ const QB = [
   {id:'f1004',pat:'spendtime',month:'2607',type:'fill',q:'I ___ time reading books.',blank:'spend',choices:['spend','use','take','make'],hint:'時間を使う',lesson:'⑩7/23'},
   {id:'f1005',pat:'routine',month:'2607',type:'fill',q:'I wanna take a shower first when I get ___.',blank:'home',choices:['home','house','back','there'],lesson:'⑩7/23'},
   {id:'g1001',pat:'sometimes',month:'2607',type:'grammar',q:'どちらが正しい？（ときどき週末に行く）',optA:'I sometime go there on weekends.',optB:'I sometimes go there on weekends.',a:'B',explain:'"sometime"=いつか（未来）/ "sometimes"=ときどき（頻度）。頻度を表すには必ず"sometimes"。',lesson:'⑩7/23'},
-  {id:'g1002',pat:'indirect',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'I\'m interested in what is she gonna say.',optB:'I\'m interested in what she\'s gonna say.',a:'B',explain:'間接疑問文（embedded question）の語順は「疑問詞＋主語＋動詞」。疑問文の倒置は不要。',lesson:'⑩7/23'},
-  {id:'g1003',pat:'spendtime',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'What do you spend the most time during the week?',optB:'What do you spend the most time on during the week?',a:'B',explain:'"spend time on ~"の"on"が必要。"spend time on work"など、何に時間を使うかを示す前置詞。',lesson:'⑩7/23'},
+  {id:'g1002',pat:'indirect',month:'2607',type:'grammar',q:'どちらが正しい？（彼女が何を言うのか気になる）',optA:'I\'m interested in what is she gonna say.',optB:'I\'m interested in what she\'s gonna say.',a:'B',explain:'間接疑問文（embedded question）の語順は「疑問詞＋主語＋動詞」。疑問文の倒置は不要。',lesson:'⑩7/23'},
+  {id:'g1003',pat:'spendtime',month:'2607',type:'grammar',q:'どちらが正しい？（平日は何に一番時間を使ってる？）',optA:'What do you spend the most time during the week?',optB:'What do you spend the most time on during the week?',a:'B',explain:'"spend time on ~"の"on"が必要。"spend time on work"など、何に時間を使うかを示す前置詞。',lesson:'⑩7/23'},
   {id:'t1001',pat:'sometimes',month:'2607',type:'translate',q:'「ときどき週末に行きます」',a:'I sometimes go there on weekends.',hint:'sometimes',lesson:'⑩7/23'},
   {id:'t1002',pat:'times',month:'2607',type:'translate',q:'「週に1〜2回です」',a:'Once or twice a week.',hint:'once or twice',lesson:'⑩7/23'},
   {id:'t1003',pat:'wanna',month:'2607',type:'translate',q:'「ジャンクフードを避けるようにしています」',a:'I try to stay away from junk food.',hint:'stay away from',lesson:'⑩7/23'},
@@ -1036,10 +1054,10 @@ const QB = [
   {id:'f1103',pat:'considered',month:'2607',type:'fill',q:'It\'s considered ___ be rude if you come too early.',blank:'to',choices:['to','of','as','for'],lesson:'⑪7/23'},
   {id:'f1104',pat:'particular',month:'2607',type:'fill',q:'Is there anything in ___?',blank:'particular',choices:['particular','especially','specific','detail'],hint:'特に何か',lesson:'⑪7/23'},
   {id:'f1105',pat:'startlike',month:'2607',type:'fill',q:'Why did you start ___ this anime?',blank:'liking',choices:['liking','like','liked','to liking'],hint:'start + -ing',lesson:'⑪7/23'},
-  {id:'g1101',pat:'startlike',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'I started to like this anime.',optB:'I started liking this anime.',a:'B',explain:'どちらも文法的に正しいが、"start -ing"の方が「自然に始まった」ニュアンスで会話では自然に聞こえる。',lesson:'⑪7/23'},
+  {id:'g1101',pat:'startlike',month:'2607',type:'grammar',q:'どちらが自然？（このアニメを好きになった）',optA:'I started like this anime.',optB:'I started liking this anime.',a:'B',explain:"start のあとは to不定詞（to like）でも動名詞（liking）でもよく、どちらも正しい。ただし原形の like はそのまま置けないので、Aは文として成り立たない。I started to like / I started liking のどちらで覚えてもよい。",lesson:'⑪7/23'},
   {id:'g1102',pat:'gerundnoun',month:'2607',type:'grammar',q:'どちらが正しい？（時間を守ることが大切）',optA:'To keep on time is very important.',optB:'To be on time is very important.',a:'B',explain:'"be on time"=時間通りに来る。"keep on time"は不自然。"be punctual"も同じ意味で使える。',deep:"【be on time と in time】`on time`＝時間ぴったり・定刻通り。`The train arrived on time.` `in time`＝間に合って（締め切りに遅れずに）。`I arrived in time for the meeting.` 電車が定刻に来たなら on time、会議に遅れずに着いたなら in time。`keep time` は「時間を守る」ではなく「（時計が）正確に動く・リズムを刻む」という別の意味なので、時間厳守を言いたいときは be on time を使う。",lesson:'⑪7/23'},
   {id:'g1103',pat:'wordpair',month:'2607',type:'grammar',q:'どちらが自然？（特に何か食べたいものある？）',optA:'Is there anything especially you want to eat?',optB:'Is there anything in particular you want to eat?',a:'B',explain:'"in particular"は疑問文との相性が良い。"especially"は「特に〜が好き」のような断言に使う。',lesson:'⑪7/23'},
-  {id:'g1104',pat:'indirect',month:'2607',type:'grammar',q:'どちらが正しい？',optA:'I wonder what does she think.',optB:'I wonder what she thinks.',a:'B',explain:'間接疑問文は「疑問詞＋主語＋動詞」の語順。"what does she"の倒置は不要。',lesson:'⑪7/23'},
+  {id:'g1104',pat:'indirect',month:'2607',type:'grammar',q:'どちらが正しい？（彼女が何を考えてるのか気になる）',optA:'I wonder what does she think.',optB:'I wonder what she thinks.',a:'B',explain:'間接疑問文は「疑問詞＋主語＋動詞」の語順。"what does she"の倒置は不要。',lesson:'⑪7/23'},
   {id:'t1101',pat:'whystart',month:'2607',type:'translate',q:'「なんでこのアニメが好きになったの？」',a:'Why did you start liking this anime?',hint:'start liking',lesson:'⑪7/23'},
   {id:'t1102',pat:'gerundnoun',month:'2607',type:'translate',q:'「時間を守ることがとても大切です」',a:'To be on time is very important.',hint:'to be on time',lesson:'⑪7/23'},
   {id:'t1103',pat:'considered',month:'2607',type:'translate',q:'「お礼を言うときはいつもお辞儀します」',a:'I always bow when I say thank you.',hint:'bow',lesson:'⑪7/23'},
@@ -1729,7 +1747,8 @@ function renderHeat(elId,weeks){
 const DAILY_CAP={translate:3, free:1};   /* 入力系が偏ると5分で終わらんので上限をつける */
 
 /* 直前のセットで出した問題は、次のセットでは後回しにする（同じ問題の連続を防ぐ） */
-const RECENT_MAX=10;
+const RECENT_MAX=30;          /* 直近3セットぶん。ここに入っている問題は後回しになる */
+const PAT_CAP=3;              /* 1セットで同じ文法パターンは3問まで */
 function noteRecent(ids){ S.g.recent=[...ids, ...(S.g.recent||[])].slice(0,RECENT_MAX); }
 
 function buildDaily(){
@@ -1744,12 +1763,16 @@ function buildDaily(){
   const fresh=shuffle(QB.filter(q=>!answered(q)));
 
   const out=[], used={};
+  const usedPat={};
   const add=(q,strict)=>{
     if(out.length>=GOAL) return false;
     if(out.some(o=>o.id===q.id)) return false;
     if(strict && recent.has(q.id)) return false;
     if(strict && DAILY_CAP[q.type] && (used[q.type]||0)>=DAILY_CAP[q.type]) return false;
-    out.push(q); used[q.type]=(used[q.type]||0)+1; return true;
+    /* 同じ文法パターンばかり続くと「似た問題ばかり」に感じるので散らす */
+    if(strict && (usedPat[q.pat]||0)>=PAT_CAP) return false;
+    out.push(q); used[q.type]=(used[q.type]||0)+1; usedPat[q.pat]=(usedPat[q.pat]||0)+1;
+    return true;
   };
   const push=(arr,strict)=>{ for(const q of arr){ if(out.length>=GOAL)break; add(q,strict); } };
 
@@ -2064,6 +2087,7 @@ function renderQ(){
   document.getElementById('q-next-btn').style.display='none';
 
   const body=document.getElementById('q-body'); body.innerHTML='';
+  unbindChoiceKeys();
 
   if(q.v==='listen'){ renderListen(q,body); return; }
   if(q.v==='speak'){  renderSpeak(q,body);  return; }
@@ -2073,22 +2097,22 @@ function renderQ(){
     const ul=document.createElement('div'); ul.className='choice-list';
     sc.forEach((c,i)=>{
       const correct=q.type==='vocab'?(c===q.a):(c===q.blank);
-      const btn=document.createElement('button'); btn.className='choice-btn';
-      btn.innerHTML=`<div class="cletter">${String.fromCharCode(65+i)}</div>${c}`;
+      const btn=choiceButton(String.fromCharCode(65+i), c, i);
       btn.onclick=()=>answerChoice(btn,correct,q.type==='vocab'?q.a:q.blank,ul,q);
       ul.appendChild(btn);
     });
     body.appendChild(ul);
+    bindChoiceKeys(ul);
 
   }else if(q.type==='grammar'){
     const ul=document.createElement('div'); ul.className='choice-list';
     ['A','B'].forEach((letter,i)=>{
-      const btn=document.createElement('button'); btn.className='choice-btn';
-      btn.innerHTML=`<div class="cletter">${letter}</div>${q['opt'+letter]}`;
+      const btn=choiceButton(letter, q['opt'+letter], i);
       btn.onclick=()=>answerGrammar(letter,btn,ul,q);
       ul.appendChild(btn);
     });
     body.appendChild(ul);
+    bindChoiceKeys(ul);
 
   }else{
     const ta=document.createElement('textarea'); ta.className='answer-inp'; ta.placeholder='英語で入力してください...'; ta.id='free-inp';
@@ -2145,12 +2169,12 @@ function renderListen(q,body){
 
   const ul=document.createElement('div'); ul.className='choice-list';
   sp.choices.forEach((c,i)=>{
-    const btn=document.createElement('button'); btn.className='choice-btn';
-    btn.innerHTML='<div class="cletter">'+String.fromCharCode(65+i)+'</div>'+esc(c);
+    const btn=choiceButton(String.fromCharCode(65+i), c, i);
     btn.onclick=()=>answerListen(btn, c===sp.correct, sp, ul, q);
     ul.appendChild(btn);
   });
   body.appendChild(ul);
+  bindChoiceKeys(ul);
 
   setTimeout(()=>playListen(0.92), 420);   /* 開いたら1回だけ自動再生 */
 }
@@ -2169,8 +2193,7 @@ function answerListen(btn,isCorrect,sp,ul,q){
   try{ speechSynthesis.cancel(); }catch(e){}
   ul.querySelectorAll('.choice-btn').forEach(b=>{
     b.disabled=true;
-    const txt=b.textContent.slice(1).trim();
-    if(txt===String(sp.correct).trim()) b.classList.add('ok');
+    if(b.dataset.val===String(sp.correct)) b.classList.add('ok');
     else if(b===btn&&!isCorrect) b.classList.add('ng');
   });
   recordResult(q,isCorrect);
@@ -2184,7 +2207,7 @@ function answerListen(btn,isCorrect,sp,ul,q){
   setupDeep(); attachSpeaker(q);
   document.getElementById('fb-self-judge').innerHTML='';
   document.getElementById('q-next-btn').style.display='block';
-  enableEnterNext();
+  enableEnterNext(); revealFeedback();
   if(S.g.autoPlay) setTimeout(()=>say(sp.audio,0.9), 300);
 }
 
@@ -2255,7 +2278,7 @@ function gradeSpeak(q,txt){
     '<div class="self-judge"><button class="btn btn-ghost btn-sm" onclick="overrideSpeak(true)">✓ ほんまは合ってた</button>'
     +'<button class="btn btn-ghost btn-sm" onclick="overrideSpeak(false)">✗ ほんまは違った</button></div>';
   document.getElementById('q-next-btn').style.display='block';
-  enableEnterNext();
+  enableEnterNext(); revealFeedback();
   if(S.g.autoPlay) setTimeout(()=>say(q.a,0.9), 320);
 }
 
@@ -2356,6 +2379,14 @@ function makeMicHint(){
 /* ---------- 共通の小物 ---------- */
 function xpTag(){ return (S.lastGain>0) ? '  ＋'+S.lastGain+'XP' : ''; }
 
+/* 解説は画面に収まりきらないことがあるので、出たら見える位置まで寄せる。
+   すでに見えているときは nearest なので動かない */
+function revealFeedback(){
+  const fb=document.getElementById('q-feedback');
+  if(!fb) return;
+  setTimeout(()=>{ try{ fb.scrollIntoView({behavior:'smooth',block:'nearest'}); }catch(e){} }, 80);
+}
+
 function attachSpeaker(q){
   const en=enOf(q);
   if(!en||!ttsOK()) return;
@@ -2374,7 +2405,11 @@ function paintCombo(){
 }
 
 function answerChoice(btn,isCorrect,correctAns,ul,q){
-  ul.querySelectorAll('.choice-btn').forEach(b=>{ b.disabled=true; const txt=b.textContent.slice(1).trim(); if(txt===correctAns)b.classList.add('ok'); else if(b===btn&&!isCorrect)b.classList.add('ng'); });
+  ul.querySelectorAll('.choice-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.val===String(correctAns)) b.classList.add('ok');
+    else if(b===btn&&!isCorrect) b.classList.add('ng');
+  });
   recordResult(q,isCorrect);
   showFeedback(isCorrect,'正解: '+correctAns,q.explain||null);
 }
@@ -2441,6 +2476,7 @@ function submitFree(q,ta,row){
     setupDeep(); attachSpeaker(q);
     if(S.g.autoPlay) setTimeout(()=>say(q.a,0.9),300);
     document.getElementById('q-next-btn').style.display='block';
+    revealFeedback();
   } else {
     document.getElementById('fb-self-judge').innerHTML='';
     fb.className='feedback neutral show';
@@ -2450,6 +2486,7 @@ function submitFree(q,ta,row){
     setupDeep();
     const sj=document.getElementById('fb-self-judge');
     sj.innerHTML=`<div class="self-judge"><button class="btn btn-green" onclick="selfJudge(true,'${q.id}')">✓ 合ってた</button><button class="btn btn-red" onclick="selfJudge(false,'${q.id}')">✗ 違った</button></div>`;
+    revealFeedback();
   }
 }
 
@@ -2496,8 +2533,41 @@ function showFeedback(correct,answer,explain){
   const _q=S.session[S.idx];
   if(_q){ attachSpeaker(_q); const _en=enOf(_q); if(S.g.autoPlay&&_en) setTimeout(()=>say(_en,0.9),300); }
   const nb=document.getElementById('q-next-btn'); nb.style.display='block';
-  enableEnterNext();
+  enableEnterNext(); revealFeedback();
 }
+/* 選択肢を数字キー（1→A, 2→B, …）で選べるようにする */
+let _choiceKeyHandler=null;
+function unbindChoiceKeys(){
+  if(_choiceKeyHandler){ document.removeEventListener('keydown',_choiceKeyHandler); _choiceKeyHandler=null; }
+}
+function bindChoiceKeys(ul){
+  unbindChoiceKeys();
+  _choiceKeyHandler=(e)=>{
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    const t=e.target;
+    if(t && (t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable)) return;
+    const n=parseInt(e.key,10);
+    if(!n) return;
+    const btns=ul.querySelectorAll('.choice-btn');
+    const b=btns[n-1];
+    if(!b||b.disabled) return;
+    e.preventDefault();
+    b.click();
+  };
+  document.addEventListener('keydown',_choiceKeyHandler);
+}
+
+/* 選択肢ボタンを1つ作る。本文は dataset に持たせ、画面の飾りと混ざらんようにする */
+function choiceButton(label, text, idx){
+  const btn=document.createElement('button');
+  btn.className='choice-btn';
+  btn.dataset.val=text;
+  btn.innerHTML='<div class="cletter">'+label+'</div>'
+               +'<span style="flex:1">'+esc(text)+'</span>'
+               +'<span class="kcap">'+(idx+1)+'</span>';
+  return btn;
+}
+
 let _enterNextHandler=null;
 function enableEnterNext(){
   if(_enterNextHandler) document.removeEventListener('keydown',_enterNextHandler);
@@ -2554,6 +2624,7 @@ function recordResult(q,correct){
 
 function nextQuestion(){
   if(_enterNextHandler){ document.removeEventListener('keydown',_enterNextHandler); _enterNextHandler=null; }
+  unbindChoiceKeys();
   try{ speechSynthesis.cancel(); stopRec(); }catch(e){}
   _micOn=false;
   S.idx++; renderQ();
@@ -2613,6 +2684,7 @@ function showScreen(name){
   _micOn=false;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('s-'+name).classList.add('active');
+  document.body.classList.toggle('quiz-mode', name==='quiz');
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
   const NAV_OF={data:'stats',apikey:'chat',quiz:null,result:null};
   const key=(name in NAV_OF)?NAV_OF[name]:name;
