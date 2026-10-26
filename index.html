@@ -304,6 +304,8 @@
   .side-box.on .pat-box { background: var(--cy); border-color: var(--cy); }
   .side-box.fav.on { border-color: var(--lime); background: var(--lime-soft); }
   .side-box.fav.on .pat-box { background: var(--lime); border-color: var(--lime); }
+  .side-box.fresh.on { border-color: var(--lime); background: var(--lime-soft); }
+  .side-box.fresh.on .pat-box { background: var(--lime); border-color: var(--lime); }
   .side-box.weak.on { border-color: var(--ng); background: var(--ng-soft); }
   .side-box.weak.on .pat-box { background: var(--ng); border-color: var(--ng); }
   .side-ico { font-size:1.4rem; }
@@ -587,6 +589,19 @@
       <div class="pat-ex">layover / purebred / calf など、意味だけ覚えるやつ</div>
     </div>
     <div class="cat-cnt" id="vocab-cnt">0問</div>
+  </div>
+
+  <div id="new-box-wrap" style="display:none">
+    <div class="section-label">まだ出してへんやつ</div>
+    <div class="side-box fresh" id="new-box" onclick="toggleNew()">
+      <div class="pat-box" id="new-chk"></div>
+      <div class="side-ico">🆕</div>
+      <div class="side-info">
+        <div class="side-name">未出題だけ</div>
+        <div class="pat-ex">まだ一度も解いてへん問題だけを出す</div>
+      </div>
+      <div class="cat-cnt" id="new-cnt">0問</div>
+    </div>
   </div>
 
   <div class="section-label">自分で★を付けたやつ</div>
@@ -1651,7 +1666,7 @@ const BADGES = [
 
 let S = {
   selPats:[], selTypes:['fill','grammar','translate','free','vocab'],
-  selCnt:10, useVocab:false, useFav:false, useWeak:false, openCat:null,
+  selCnt:10, useVocab:false, useFav:false, useWeak:false, useNew:false, openCat:null,
   session:[], idx:0, results:[],
   history:{}, favs:[],
   mode:'daily', combo:0, lastGain:0, goalJustMet:false, lvUp:null,
@@ -1805,6 +1820,11 @@ function vocabCount(){
 }
 function favCount(){
   return QB.filter(q=>S.favs.includes(q.id) && S.selTypes.includes(q.type)).length;
+}
+/* 一度も解いたことがない問題。履歴は解いた問題にしか作られないので、無ければ未出題 */
+function isNewQ(id){ return !S.history[id]; }
+function freshCount(){
+  return QB.filter(q=>isNewQ(q.id) && S.selTypes.includes(q.type)).length;
 }
 function getWeakIds(){ return Object.entries(S.history).filter(([,h])=>h.w>h.c).map(([id])=>id); }
 function weakCount(){
@@ -2108,6 +2128,9 @@ function renderHome(){
   }).join('');
 
   setSide('vocab-box','vocab-chk','vocab-cnt',S.useVocab,vocabCount());
+  const nc=freshCount();
+  document.getElementById('new-box-wrap').style.display=nc>0?'block':'none';
+  setSide('new-box','new-chk','new-cnt',S.useNew,nc);
   setSide('fav-box','fav-chk','fav-cnt',S.useFav,favCount());
   const wc=weakCount();
   document.getElementById('weak-box-wrap').style.display=wc>0?'block':'none';
@@ -2130,6 +2153,7 @@ function updateSummary(){
   const names=[];
   S.selPats.forEach(k=>{ const p=PATS_DEF.find(x=>x.key===k); if(p)names.push(p.t); });
   if(S.useVocab)names.push('単語チェック');
+  if(S.useNew)names.push('未出題');
   if(S.useFav)names.push('お気に入り');
   if(S.useWeak)names.push('苦手だけ');
   document.getElementById('sel-summary').innerHTML = tot===0
@@ -2160,6 +2184,7 @@ function toggleCatAll(catKey){
   renderHome();
 }
 function toggleVocab(){ S.useVocab=!S.useVocab; renderHome(); }
+function toggleNew(){ S.useNew=!S.useNew; renderHome(); }
 function toggleFav(){ S.useFav=!S.useFav; renderHome(); }
 function toggleWeak(){ S.useWeak=!S.useWeak; renderHome(); }
 
@@ -2204,6 +2229,7 @@ function getPool(){
     let hit=false;
     if(S.selPats.includes(q.pat)) hit=true;
     if(S.useVocab && q.pat==='__vocab__') hit=true;
+    if(S.useNew && isNewQ(q.id)) hit=true;
     if(S.useFav && S.favs.includes(q.id)) hit=true;
     if(S.useWeak && weak.includes(q.id)) hit=true;
     if(!hit) return false;
