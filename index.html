@@ -94,6 +94,12 @@
   }
   .header h1 { font-size:1.22rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
   .header .sub { font-size:0.74rem; color: var(--text3); font-weight: 500; margin-top: 1px; }
+  /* 版の印はヘッダーの右上に重ねる小さな字。幅も高さも取らんので、レイアウトを動かさへん */
+  .header { position: sticky; }
+  .header .ver { position: absolute; top: 3px; right: 8px; pointer-events: none;
+                 color: var(--text3); font-size:0.52rem; font-weight: 600; letter-spacing: .02em;
+                 font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1.2; opacity: .85; }
+  html[data-fs="xl"] .header .ver { display: none; }
 
   .screen { display: none; padding: 20px 16px 112px; max-width: 700px; margin: 0 auto; }
   .screen.active { display: block; }
@@ -484,6 +490,7 @@
     <h1>英会話デイリー</h1>
     <div class="sub">1日5分・授業の復習ドリル</div>
   </div>
+  <span class="ver" id="app-ver"></span>
 </div>
 
 <!-- HOME (今日のレッスン) -->
@@ -1377,7 +1384,7 @@ const QB = [
   {id:'f2504',pat:'__vocab__',month:'2610',type:'fill',q:'Is it well ___?',blank:'paid',choices:['paid','pay','payed','paying'],hint:'それって給料いいの？',lesson:'㉕10/2'},
   {id:'f2505',pat:'__vocab__',month:'2610',type:'fill',q:'Could you ___ your hair at school?',blank:'dye',choices:['dye','die','dyed','dying'],hint:'学校で髪を染めてもよかった？',lesson:'㉕10/2'},
   {id:'g2501',pat:'usedto',month:'2610',type:'grammar',q:'どちらが正しい？（昔はクラスのお調子者だった？）',optA:'Did you used to be the class clown?',optB:'Did you use to be the class clown?',a:'B',explain:"did が付くと、後ろの動詞は原形に戻るので used ではなく use になる。Aは過去を表す did と過去形の used が二重になっている。否定も同じで I didn't use to ~ の形。",lesson:'㉕10/2'},
-  {id:'g2502',pat:'__vocab__',month:'2610',type:'grammar',q:'どちらが正しい？（私たちはおいしい食べ物で有名です）',optA:'We are famous for delicious food.',optB:'We are famous of delicious food.',a:'A',explain:"「〜で有名」は be famous for + 名詞 で前置詞は for に決まっている。Aが正しい。Bの of は be proud of（〜を誇りに思う）などと混同しやすいが、famous とは組まない。",lesson:'㉕10/2'},
+  {id:'g2502',pat:'__vocab__',month:'2610',type:'grammar',q:'どちらが正しい？（大阪はおいしい食べ物で有名です）',optA:'Osaka is famous for delicious food.',optB:'Osaka is famous of delicious food.',a:'A',explain:"「〜で有名」は be famous for + 名詞 で前置詞は for に決まっている。Aが正しい。Bの of は be proud of（〜を誇りに思う）などと混同しやすいが、famous とは組まない。",lesson:'㉕10/2'},
   {id:'g2503',pat:'article',month:'2610',type:'grammar',q:'どちらが正しい？（私は本の虫だった）',optA:'I was bookworm.',optB:'I was a bookworm.',a:'B',explain:"bookworm は数えられる名詞なので、単数なら a が要る。Aは冠詞が抜けている。class clown のように「そのクラスに1人の役割」なら the、bookworm のように「そういうタイプ」なら a を付ける。",lesson:'㉕10/2'},
   {id:'g2504',pat:'__vocab__',month:'2610',type:'grammar',q:'どちらが正しい？（25歳です）',optA:"I'm 25 years.",optB:"I'm 25.",a:'B',explain:"年齢は I'm 25. だけで自然に通じる。丁寧に言うなら I'm 25 years old. と old まで付ける。Aの I'm 25 years. は old が抜けていて「25年です」のような中途半端な文になる。",lesson:'㉕10/2'},
   {id:'t2501',pat:'childq',month:'2610',type:'translate',q:'「どんな生徒だった？」',a:'What kind of student were you?',hint:'What kind of',lesson:'㉕10/2'},
@@ -1680,7 +1687,10 @@ function defG(){
 }
 
 /* 文字サイズ。html の data-fs を切り替えるだけで全体がremで追従する */
-const APP_VER='v2.1';
+/* 版の印＝公開した時刻（日本時間）。公開のたびに、この1行の時刻を書き換える：
+   sed -i "s|^const APP_VER='.*';|const APP_VER='$(TZ=Asia/Tokyo date +%m/%d-%H:%M)';|" index.html */
+const APP_VER='10/26-10:40';
+(function(){ var e=document.getElementById('app-ver'); if(e) e.textContent='版 '+APP_VER; })();
 const FS_DEF=[{k:'s',n:'小',px:17},{k:'m',n:'ふつう',px:21},{k:'l',n:'大きい',px:25},{k:'xl',n:'特大',px:29}];
 
 /* スマホで「PCサイト表示」になっていると、CSS上の表示幅が実機の画面幅より
@@ -1717,7 +1727,7 @@ function renderDiag(){
   const root=Math.round(parseFloat(getComputedStyle(document.documentElement).fontSize));
   const vw=window.innerWidth, sw=(window.screen&&window.screen.width)||0;
   const r=shrinkRatio();
-  el.innerHTML=APP_VER+' ・ 文字の基準 '+root+'px ・ 表示幅 '+vw+'px / 実機 '+sw+'px'
+  el.innerHTML='版 '+APP_VER+' ・ 文字の基準 '+root+'px ・ 表示幅 '+vw+'px / 実機 '+sw+'px'
     +(r>1?'<br><b style="color:var(--red)">PCサイト表示になってるみたいやから補正をかけた。ブラウザのメニューで「モバイルサイト（スマホ版）で表示」に戻すともっと見やすなるで</b>':'');
 }
 
