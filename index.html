@@ -107,8 +107,11 @@
   /* 出題中は1画面に収めたいので、ボトムナビと戻るリンクを畳んで縦を稼ぐ。
      代わりに上のバーへ✕を置き、いつでも抜けられるようにする */
   body.quiz-mode .bnav { display: none; }
-  body.quiz-mode #s-quiz { padding: 14px 16px 24px; }
+  body.quiz-mode #s-quiz { padding: 10px 16px 14px; }
   #s-quiz > .back-link { display: none; }
+  /* 上のバーに✕があるので、下の🏠は重複。外して縦を稼ぐ（「次へ」だけ残す） */
+  body.quiz-mode .quiz-actions .btn-ghost { display: none; }
+  body.quiz-mode .quiz-actions { margin-top: 0; }
   .quiz-x { flex-shrink:0; width:34px; height:34px; border-radius:11px; cursor:pointer;
             border:1px solid var(--line2); background:var(--surface2); color:var(--text2);
             font-family:inherit; font-size:0.95rem; line-height:1; transition:.15s; }
@@ -154,7 +157,7 @@
   .progress-track { height: 7px; background: var(--surface3); border-radius: 99px; margin-top: 7px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cy), var(--lime)); border-radius: 99px; transition: width 0.4s ease; }
 
-  .q-card { background: var(--surface); border:1px solid var(--line); border-radius: 20px; padding: 17px; box-shadow: var(--shadow-sm); margin-bottom: 14px; animation: fadeUp 0.3s ease; }
+  .q-card { background: var(--surface); border:1px solid var(--line); border-radius: 20px; padding: 14px 15px; box-shadow: var(--shadow-sm); margin-bottom: 10px; animation: fadeUp 0.3s ease; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
   .q-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
@@ -371,6 +374,8 @@
            background: var(--surface3); border:1px solid var(--line2); color: var(--text); padding: 11px 20px; border-radius: 99px;
            font-size:0.9062rem; font-weight: 700; transition: transform 0.3s ease, opacity 0.3s; z-index: 999; opacity: 0; box-shadow: var(--shadow); }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  /* 透明なときも、表示中も、下のボタンのタップを横取りさせない */
+  .toast { pointer-events: none; }
 
   /* ========== DAILY / GAMIFY ========== */
   .topstats { display:flex; gap:8px; padding:10px 16px 0; max-width:700px; margin:0 auto; }
@@ -426,16 +431,17 @@
   .hm-dow span { text-align:center; font-size:0.66rem; font-weight:700; color:var(--text3); }
 
   /* voice question */
-  .listen-box { background:var(--bl-soft); border:1px solid rgba(96,165,250,0.35); border-radius:18px; padding:22px 16px; text-align:center; margin-bottom:14px; }
-  .play-btn { width:78px; height:78px; border-radius:50%; border:none; background:linear-gradient(140deg,var(--bl),#3B82F6); color:#fff;
-              font-size:2.05rem; cursor:pointer; box-shadow:0 8px 22px rgba(96,165,250,0.4); transition:.15s; }
+  .listen-box { background:var(--bl-soft); border:1px solid rgba(96,165,250,0.35); border-radius:18px; padding:14px 14px; text-align:center; margin-bottom:12px; }
+  .lsn-ctl { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .play-btn { width:62px; height:62px; border-radius:50%; border:none; background:linear-gradient(140deg,var(--bl),#3B82F6); color:#fff;
+              font-size:1.6rem; cursor:pointer; box-shadow:0 6px 16px rgba(96,165,250,0.4); transition:.15s; }
   .play-btn:active { transform:translateY(2px); box-shadow:0 4px 12px rgba(96,165,250,0.35); }
   .play-btn.playing { animation:pulse 1s infinite; }
   @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
   .listen-note { font-size:0.8125rem; color:var(--bl); font-weight:600; margin-top:12px; }
   .replay-row { display:flex; gap:8px; justify-content:center; margin-top:11px; }
-  .replay-btn { background:transparent; border:1px solid rgba(96,165,250,0.5); color:var(--bl); border-radius:11px; padding:7px 14px;
-                font-size:0.8125rem; font-weight:700; cursor:pointer; font-family: inherit; transition:.15s; }
+  .replay-btn { background:transparent; border:1px solid rgba(96,165,250,0.5); color:var(--bl); border-radius:11px; padding:7px 10px;
+                font-size:0.78rem; font-weight:700; cursor:pointer; font-family: inherit; transition:.15s; white-space:nowrap; }
   .replay-btn:hover { border-color:var(--bl); background:var(--bl-soft); }
 
   .mic-box { background:var(--vi-soft); border:1px solid rgba(167,139,250,0.35); border-radius:18px; padding:20px 16px; text-align:center; margin-bottom:14px; }
@@ -460,6 +466,12 @@
   .mic-mini:disabled { opacity:.35; cursor:not-allowed; }
   @keyframes minipulse { 0%,100%{box-shadow:0 0 0 0 rgba(251,113,133,.5)} 50%{box-shadow:0 0 0 12px rgba(251,113,133,0)} }
   .mic-hint { font-size:0.7812rem; color:var(--vi); font-weight:600; margin:-4px 0 10px; min-height:1.2em; }
+
+  /* 穴埋めの和訳 */
+  .q-ja { font-size:0.9688rem; font-weight:600; color:var(--text2); margin:2px 0 8px; line-height:1.55; }
+  .q-ja::before { content:'和訳'; display:inline-block; margin-right:8px; padding:0 7px; border-radius:6px;
+                  background:var(--surface3); color:var(--text3); font-size:0.7rem; font-weight:700; vertical-align:1px; }
+  .listen-box .q-ja { margin:8px 0 0; }
 
   .spk-btn { background:none; border:none; cursor:pointer; font-size:1.3rem; padding:0 0 0 6px; vertical-align:middle; opacity:.7; }
   .spk-btn:hover { opacity:1; }
@@ -875,11 +887,11 @@ const QB = [
   {id:'v0103',pat:'howoften',month:'2603',type:'vocab',q:'"twice" の意味は？',a:'2回',choices:['2回','3回','半分','1回'],explain:"「2回」を表す専用の語で、two times より自然。`I eat out twice a week.` 1回は once、3回以上は three times と数字＋times になる。",lesson:'①3/28'},
   {id:'v0104',pat:'howoften',month:'2603',type:'vocab',q:'"once or twice" の日本語は？',a:'1〜2回',choices:['1〜2回','2〜3回','3〜4回','ほぼ毎日'],explain:"はっきり決まっていない回数をぼかして言う表現。`I go there once or twice a month.` 頻度を聞かれて即答しづらいときに便利。",lesson:'①3/28'},
   {id:'v0105',pat:'howoften',month:'2603',type:'vocab',q:'"two or three times" の日本語は？',a:'2〜3回',choices:['2〜3回','1〜2回','3〜4回','4〜5回'],explain:"「2〜3回」と幅を持たせた言い方。`I cook two or three times a week.` once or twice と同じく、だいたいの頻度を答えるときに使う。",lesson:'①3/28'},
-  {id:'f0101',pat:'almost',month:'2603',type:'fill',q:'I eat out ___ every day.',blank:'almost',choices:['almost','always','never','rarely'],hint:'「ほぼ毎日外食する」',lesson:'①3/28'},
-  {id:'f0102',pat:'times',month:'2603',type:'fill',q:'I eat out about ___ a week.',blank:'twice',choices:['twice','two times','double','2 time'],hint:'「週に約2回」',deep:"【回数の言い方】1回は once、2回は twice、3回以上は `three times` のように数字＋times を使う。頻度を表すときは `once a week`（週1回）のように 回数＋a＋期間 の形にし、この a は「〜につき」を意味する per と同じ働きをする。`twice a week` を `two times in a week` と言っても通じるが不自然。曖昧にぼかしたいときは `once or twice a week`（週1〜2回）や `about twice a week`（週2回くらい）と幅を持たせる。",lesson:'①3/28'},
-  {id:'f0103',pat:'favourite',month:'2603',type:'fill',q:'My go-___ place is Yayoiken.',blank:'to',choices:['to','in','for','at'],hint:'行きつけ',lesson:'①3/28'},
-  {id:'f0104',pat:'favourite',month:'2603',type:'fill',q:'This is my go-to karaoke ___.',blank:'song',choices:['song','music','track','voice'],hint:'十八番',lesson:'①3/28'},
-  {id:'f0105',pat:'greeting',month:'2603',type:'fill',q:'___ are you? — I\'m fine.',blank:'How',choices:['How','What','Who','Where'],hint:'挨拶',lesson:'①3/28'},
+  {id:'f0101',pat:'almost',month:'2603',type:'fill',q:'I eat out ___ every day.',blank:'almost',choices:['almost','always','never','rarely'],hint:'「ほぼ毎日外食する」',ja:"ほぼ毎日外食します。",lesson:'①3/28'},
+  {id:'f0102',pat:'times',month:'2603',type:'fill',q:'I eat out about ___ a week.',blank:'twice',choices:['twice','two times','double','2 time'],hint:'「週に約2回」',deep:"【回数の言い方】1回は once、2回は twice、3回以上は `three times` のように数字＋times を使う。頻度を表すときは `once a week`（週1回）のように 回数＋a＋期間 の形にし、この a は「〜につき」を意味する per と同じ働きをする。`twice a week` を `two times in a week` と言っても通じるが不自然。曖昧にぼかしたいときは `once or twice a week`（週1〜2回）や `about twice a week`（週2回くらい）と幅を持たせる。",ja:"週に2回くらい外食します。",lesson:'①3/28'},
+  {id:'f0103',pat:'favourite',month:'2603',type:'fill',q:'My go-___ place is Yayoiken.',blank:'to',choices:['to','in','for','at'],hint:'行きつけ',ja:"私の行きつけの店はやよい軒です。",lesson:'①3/28'},
+  {id:'f0104',pat:'favourite',month:'2603',type:'fill',q:'This is my go-to karaoke ___.',blank:'song',choices:['song','music','track','voice'],hint:'十八番',ja:"これは私の十八番のカラオケ曲です。",lesson:'①3/28'},
+  {id:'f0105',pat:'greeting',month:'2603',type:'fill',q:'___ are you? — I\'m fine.',blank:'How',choices:['How','What','Who','Where'],hint:'挨拶',ja:"元気？ ――元気です。",lesson:'①3/28'},
   {id:'g0101',pat:'almost',month:'2603',type:'grammar',q:'どちらが正しい？（ほぼ毎日外食します）',optA:'I almost eat out every day.',optB:'I eat out almost every day.',a:'B',explain:"\"almost\" は修飾する語の直前に置くのがルール。Aの \"I almost eat out\" だと「外食しかけた（実際はしてない）」という妙な意味になる。every day を修飾したいので almost every day の語順が正しい。",lesson:'①3/28'},
   {id:'g0102',pat:'times',month:'2603',type:'grammar',q:'どちらが正しい？（週に約2回）',optA:'about 2 times in week',optB:'about twice a week',a:'B',explain:"回数は \"twice a week\"（週2回）のように、回数＋a＋期間で言うのが定番。\"2 times in week\" は不自然で、in ではなく a を使う。1回なら once、3回以上は three times と数字＋times になる。",deep:"【a と per】`twice a week` の a は「〜につき」の意味で、per と同じ働きをしている。`60 kilometers an hour`（時速60km）、`3 times a day`（1日3回）のように広く使われ、フォーマルな文書では `per week` `per hour` と置き換えられる。in を使った `two times in week` は誤りだが、`twice in a week` は「1週間のうちに2回も」と回数の多さを強調する別の言い方として成立する場合がある。基本は a を使うと覚えておけばよい。",lesson:'①3/28'},
   {id:'g0103',pat:'howoften',month:'2603',type:'grammar',q:'どちらが正しい？（どれくらいの頻度で外食しますか？）',optA:'How many you eat out?',optB:'How often do you eat out?',a:'B',explain:"頻度を聞くときは \"How often do you ~?\" が定番。\"How many\" は数を聞く表現なので、後ろに数える名詞（How many times など）が必要になる。回数を明示せず頻度そのものを聞くなら How often を使う。",deep:"【How often と How many times】`How often do you ~?` は頻度そのものを尋ねる定番形で、答えは `twice a week` など。`How many times ~?` は具体的な回数を尋ねる形で、必ず times が必要（×How many do you eat out?）。過去の合計回数を聞くなら `How many times have you been there?` と現在完了を使う。関連する疑問詞に `How long`（期間）、`How soon`（あとどれくらいで）、`How far`（距離）があり、How + 形容詞/副詞 で様々な尺度を尋ねられる。",lesson:'①3/28'},
@@ -902,11 +914,11 @@ const QB = [
   {id:'v0203',pat:'__vocab__',month:'2604',type:'vocab',q:'"ingredients" の意味は？',a:'食材・原材料',choices:['食材・原材料','調理器具','レシピ','料理名'],explain:"料理に使う材料のこと。`What ingredients do you need?` 通常は複数形で使い、レシピの話で頻出。",lesson:'②4/4'},
   {id:'v0204',pat:'__vocab__',month:'2604',type:'vocab',q:'"bitter" の意味は？',a:'苦い',choices:['苦い','甘い','辛い','酸っぱい'],explain:"コーヒーやゴーヤのような苦味。`It tastes bitter.` 味の仲間は sweet（甘い）、sour（酸っぱい）、salty（塩辛い）、spicy（辛い）。",lesson:'②4/4'},
   {id:'v0205',pat:'__vocab__',month:'2604',type:'vocab',q:'"hay fever" の意味は？',a:'花粉症',choices:['花粉症','インフル','頭痛','乾燥肌'],explain:"スギ花粉などで起きるアレルギー症状。`I have hay fever.` fever が付くが熱が出るわけではなく、くしゃみや鼻水を指す。",lesson:'②4/4'},
-  {id:'f0201',pat:'favourite',month:'2604',type:'fill',q:'My ___ favourite food is natto.',blank:'least',choices:['least','most','best','top'],hint:'一番嫌いな食べ物',lesson:'②4/4'},
-  {id:'f0202',pat:'taste',month:'2604',type:'fill',q:'It tastes ___.',blank:'bitter',choices:['bitter','biting','badly','bite'],hint:'苦い味がする',lesson:'②4/4'},
-  {id:'f0203',pat:'reasonwhy',month:'2604',type:'fill',q:'The reason ___ I started learning English is because ~.',blank:'why',choices:['why','that','which','when'],lesson:'②4/4'},
-  {id:'f0204',pat:'tiredof',month:'2604',type:'fill',q:'I\'m getting ___ of my commute.',blank:'tired',choices:['tired','boring','bored','tiring'],hint:'〜に飽き飽きしている',lesson:'②4/4'},
-  {id:'f0205',pat:'everexp',month:'2604',type:'fill',q:'How ___ countries have you been to?',blank:'many',choices:['many','much','long','often'],lesson:'②4/4'},
+  {id:'f0201',pat:'favourite',month:'2604',type:'fill',q:'My ___ favourite food is natto.',blank:'least',choices:['least','most','best','top'],hint:'一番嫌いな食べ物',ja:"一番嫌いな食べ物は納豆です。",lesson:'②4/4'},
+  {id:'f0202',pat:'taste',month:'2604',type:'fill',q:'It tastes ___.',blank:'bitter',choices:['bitter','biting','badly','bite'],hint:'苦い味がする',ja:"苦い味がする。",lesson:'②4/4'},
+  {id:'f0203',pat:'reasonwhy',month:'2604',type:'fill',q:'The reason ___ I started learning English is because ~.',blank:'why',choices:['why','that','which','when'],ja:"私が英語を学び始めた理由は〜だからです。",lesson:'②4/4'},
+  {id:'f0204',pat:'tiredof',month:'2604',type:'fill',q:'I\'m getting ___ of my commute.',blank:'tired',choices:['tired','boring','bored','tiring'],hint:'〜に飽き飽きしている',ja:"通勤に飽き飽きしてきた。",lesson:'②4/4'},
+  {id:'f0205',pat:'everexp',month:'2604',type:'fill',q:'How ___ countries have you been to?',blank:'many',choices:['many','much','long','often'],ja:"何か国に行ったことがありますか？",lesson:'②4/4'},
   {id:'g0201',pat:'gerundnoun',month:'2604',type:'grammar',q:'どちらが正しい？（趣味は料理です）',optA:'My hobby is cook.',optB:'My hobby is cooking.',a:'B',explain:"\"My hobby is ~\" の後ろは動名詞(-ing)。Aの cook は動詞の原形なので「私の趣味は料理する」という文法的に崩れた形になる。My hobby is cooking / reading / traveling のように -ing にする。",deep:"【動名詞と不定詞の使い分け】`My hobby is cooking.` のように be動詞の後で「〜すること」を表すときは動名詞が自然。不定詞の `My hobby is to cook.` も文法的には可能だが硬く、趣味の話では使わない。一般に動名詞は「すでにしていること・経験」、不定詞は「これからすること・目的」を表す傾向がある。`I stopped smoking.`（吸うのをやめた）と `I stopped to smoke.`（吸うために立ち止まった）のように、動詞によっては意味が大きく変わる。",lesson:'②4/4'},
   {id:'g0202',pat:'tiredof',month:'2604',type:'grammar',q:'どちらが正しい？（仕事に飽きてきた）',optA:'I\'m getting boring of my job.',optB:'I\'m getting tired of my job.',a:'B',explain:"\"be getting tired of ~\" で「〜に飽き飽きしてきた」。Aの boring は「（物が）退屈させる」という意味なので、主語が I だと「私は退屈な人間になってきた」になってしまう。飽きている側の人が主語なら tired。",lesson:'②4/4'},
   {id:'g0203',pat:'whatdo',month:'2604',type:'grammar',q:'どちらが正しい？（お仕事は何ですか？）',optA:'What\'s your work?',optB:'What\'s your job? / What do you do?',a:'B',explain:"職業を聞くときは \"What do you do?\" が最も自然で、少し丁寧なら \"What's your job?\"。Aの \"What's your work?\" は文法的には通じるが、work は不可算で「仕事内容・作業」を指すため職業を尋ねる表現としては使われない。",lesson:'②4/4'},
@@ -922,11 +934,11 @@ const QB = [
   {id:'v0303',pat:'__vocab__',month:'2604',type:'vocab',q:'"foal" の意味は？',a:'子馬',choices:['子馬','子犬','子猫','子牛'],explain:"馬の子ども。`We saw a foal in the field.` 動物の子どもは種類ごとに専用の単語があり、犬は puppy、猫は kitten。",lesson:'③4/23'},
   {id:'v0304',pat:'__vocab__',month:'2604',type:'vocab',q:'"cub" が使えない動物は？',a:'馬',choices:['馬','熊','ライオン','トラ'],explain:"cub は熊・ライオン・トラなど肉食獣の子に使う語。馬の子は foal と呼ぶので cub は使えない。",lesson:'③4/23'},
   {id:'v0305',pat:'__vocab__',month:'2604',type:'vocab',q:'"orphanage" の意味は？',a:'孤児院',choices:['孤児院','学校','病院','養老院'],explain:"親のいない子どもを保護する施設。`I volunteered at an orphanage.` orphan（孤児）に場所を表す -age が付いた形。",lesson:'③4/23'},
-  {id:'f0301',pat:'pasttense',month:'2604',type:'fill',q:'I ___ to Nepal for my honeymoon.',blank:'went',choices:['went','go','have gone','gone'],lesson:'③4/23'},
-  {id:'f0302',pat:'prep',month:'2604',type:'fill',q:'I\'m gonna ___ at an orphanage.',blank:'volunteer',choices:['volunteer','work','help','join'],lesson:'③4/23'},
-  {id:'f0303',pat:'diffrom',month:'2604',type:'fill',q:'Poker is different ___ gambling.',blank:'from',choices:['from','than','of','as'],lesson:'③4/23'},
-  {id:'f0304',pat:'__vocab__',month:'2604',type:'fill',q:'dog → ___ / puppy',blank:'pup',choices:['pup','kit','foal','cub'],lesson:'③4/23'},
-  {id:'f0305',pat:'__vocab__',month:'2604',type:'fill',q:'cat → ___ / kitten',blank:'kit',choices:['kit','pup','foal','cub'],lesson:'③4/23'},
+  {id:'f0301',pat:'pasttense',month:'2604',type:'fill',q:'I ___ to Nepal for my honeymoon.',blank:'went',choices:['went','go','have gone','gone'],ja:"新婚旅行でネパールに行きました。",lesson:'③4/23'},
+  {id:'f0302',pat:'prep',month:'2604',type:'fill',q:'I\'m gonna ___ at an orphanage.',blank:'volunteer',choices:['volunteer','work','help','join'],ja:"孤児院でボランティアをするつもりです。",lesson:'③4/23'},
+  {id:'f0303',pat:'diffrom',month:'2604',type:'fill',q:'Poker is different ___ gambling.',blank:'from',choices:['from','than','of','as'],ja:"ポーカーはギャンブルとは違う。",lesson:'③4/23'},
+  {id:'f0304',pat:'__vocab__',month:'2604',type:'fill',q:'dog → ___ / puppy',blank:'pup',choices:['pup','kit','foal','cub'],ja:"犬 → 子犬（pup / puppy）。",lesson:'③4/23'},
+  {id:'f0305',pat:'__vocab__',month:'2604',type:'fill',q:'cat → ___ / kitten',blank:'kit',choices:['kit','pup','foal','cub'],ja:"猫 → 子猫（kit / kitten）。",lesson:'③4/23'},
   {id:'g0301',pat:'pasttense',month:'2604',type:'grammar',q:'どちらが正しい？（ハーネスを持った）',optA:'I holded the harness.',optB:'I held the harness.',a:'B',explain:"\"hold\" は不規則動詞で、過去形・過去分詞ともに \"held\"。Aのように -ed を付けた holded という形は存在しない。同じ不規則型に build→built、send→sent がある。",lesson:'③4/23'},
   {id:'g0302',pat:'diffrom',month:'2604',type:'grammar',q:'どちらが自然？（ポーカーはギャンブルとは違う）',optA:'Poker is different than gambling.',optB:'Poker is different from gambling.',a:'B',explain:"「〜とは違う」は \"different from ~\" が正式な形。Aの than は比較級（bigger than など）の後に使うもので、different は比較級ではないため than は取らない。会話では different than も聞くが、書き言葉では from が安全。",deep:"【different from / than / to】標準的で最も安全なのは `different from`。アメリカ英語の口語では `different than` も使われるが、書き言葉では避けた方がよい。イギリス英語では `different to` も一般的で、地域差がある。試験や文書では from を選んでおけば間違いない。関連表現として `be similar to`（〜に似ている）、`be the same as`（〜と同じ）があり、それぞれ前置詞が異なるのでセットで覚える。",lesson:'③4/23'},
   {id:'t0301',pat:'pasttense',month:'2604',type:'translate',q:'「私はハネムーンでネパールへ行きました」',a:'I went to Nepal for my honeymoon.',lesson:'③4/23'},
@@ -937,11 +949,11 @@ const QB = [
   // ===== 2604（4月）④YUTA 4/25 =====
   {id:'v0401',pat:'__vocab__',month:'2604',type:'vocab',q:'"immature" の意味は？',a:'幼稚な・未熟な',choices:['幼稚な・未熟な','成熟した','知的な','明るい'],explain:"年齢のわりに考え方が幼いこと。`That was an immature reaction.` 反対語は mature（成熟した）で、im- が否定を表す接頭辞。",lesson:'④4/25'},
   {id:'v0402',pat:'__vocab__',month:'2604',type:'vocab',q:'"live-action version" の意味は？',a:'実写版',choices:['実写版','アニメ版','続編','リメイク'],explain:"アニメや漫画を俳優が演じる形で映像化したもの。`They made a live-action version of the anime.` アニメ版は anime version。",lesson:'④4/25'},
-  {id:'f0401',pat:'routine',month:'2604',type:'fill',q:'I get ___ at 6am.',blank:'up',choices:['up','out','off','on'],hint:'起床',lesson:'④4/25'},
-  {id:'f0402',pat:'routine',month:'2604',type:'fill',q:'I go to work ___ bike.',blank:'by',choices:['by','with','on','in'],hint:'手段',lesson:'④4/25'},
-  {id:'f0403',pat:'morethan',month:'2604',type:'fill',q:'USJ is ___ expensive than Disney.',blank:'more',choices:['more','most','much','very'],lesson:'④4/25'},
-  {id:'f0404',pat:'themost',month:'2604',type:'fill',q:'USJ is the ___ expensive amusement park.',blank:'most',choices:['most','more','very','so'],lesson:'④4/25'},
-  {id:'f0405',pat:'routine',month:'2604',type:'fill',q:'I ___ home at 6:50 am.',blank:'leave',choices:['leave','left','go','exit'],deep:"【go home と leave home は逆】`leave home`＝家を出る（出発）、`go home`＝家に帰る（到着先が家）。朝6:50に出勤するなら家を出るので leave が正解で、`I go home at 6:50 am.` だと「朝6:50に帰宅する」という意味になり夜勤明けの人の文になる。なお go home は home の前に to を付けない（×go to home）。home がここでは副詞として働くためで、同じ仲間に go abroad / go downtown がある。一方 leave は他動詞なので `leave home` `leave the office` と目的語を直接取る。",lesson:'④4/25'},
+  {id:'f0401',pat:'routine',month:'2604',type:'fill',q:'I get ___ at 6am.',blank:'up',choices:['up','out','off','on'],hint:'起床',ja:"朝6時に起きます。",lesson:'④4/25'},
+  {id:'f0402',pat:'routine',month:'2604',type:'fill',q:'I go to work ___ bike.',blank:'by',choices:['by','with','on','in'],hint:'手段',ja:"自転車で通勤しています。",lesson:'④4/25'},
+  {id:'f0403',pat:'morethan',month:'2604',type:'fill',q:'USJ is ___ expensive than Disney.',blank:'more',choices:['more','most','much','very'],ja:"USJはディズニーより高い。",lesson:'④4/25'},
+  {id:'f0404',pat:'themost',month:'2604',type:'fill',q:'USJ is the ___ expensive amusement park.',blank:'most',choices:['most','more','very','so'],ja:"USJは一番高い遊園地です。",lesson:'④4/25'},
+  {id:'f0405',pat:'routine',month:'2604',type:'fill',q:'I ___ home at 6:50 am.',blank:'leave',choices:['leave','left','go','exit'],deep:"【go home と leave home は逆】`leave home`＝家を出る（出発）、`go home`＝家に帰る（到着先が家）。朝6:50に出勤するなら家を出るので leave が正解で、`I go home at 6:50 am.` だと「朝6:50に帰宅する」という意味になり夜勤明けの人の文になる。なお go home は home の前に to を付けない（×go to home）。home がここでは副詞として働くためで、同じ仲間に go abroad / go downtown がある。一方 leave は他動詞なので `leave home` `leave the office` と目的語を直接取る。",ja:"朝6時50分に家を出ます。",lesson:'④4/25'},
   {id:'g0401',pat:'routine',month:'2604',type:'grammar',q:'どちらが正しい？（毎日6時50分に家を出ます）',optA:'I am leaving home at 6:50 am every day.',optB:'I leave home at 6:50 am every day.',a:'B',explain:"毎日の習慣は現在形（Present Simple）で表す。Aの現在進行形 \"I am leaving\" は「今まさに出かけるところ」という一時的な動作を指すので、every day と組み合わせると矛盾する。習慣なら I leave home at 6:50。",deep:"【現在形と現在進行形の使い分け】現在形は「いつもそうしている」という習慣や変わらない事実、現在進行形は「今この瞬間やっている」一時的な動作を表す。`I leave home at 6:50.`＝毎日そうしている。`I'm leaving home now.`＝今まさに出るところ。ただし現在進行形には例外があり、`I'm leaving tomorrow.` のように確定した近い未来の予定にも使える。また always と組み合わせた `He's always complaining.` は「いつも文句ばかり言っている」という苛立ちを含む特別な使い方になる。",lesson:'④4/25'},
   {id:'g0402',pat:'indirect',month:'2604',type:'grammar',q:'どちらが正しい？（なんでそうするんやろ、と思う）',optA:'I\'m wondering why you do.',optB:'I wonder why you do that.',a:'B',explain:"文の中に埋め込まれた疑問は、疑問文の語順に戻さず「主語＋動詞」の並びにする。加えてAの \"why you do\" は「何を」するのかが抜けていて文が尻切れになるため、that で受けて \"I wonder why you do that.\" とする。",lesson:'④4/25'},
   {id:'g0403',pat:'prep',month:'2604',type:'grammar',q:'どちらが正しい？（その映画は実話に基づいている）',optA:'The movie is based in a true story.',optB:'The movie is based on a true story.',a:'B',explain:"「〜に基づく」は \"based on ~\" で、前置詞は on で固定。Aの based in は「〜に拠点を置く」という別の意味で、The company is based in Osaka.（大阪に本社がある）のように使う。",deep:"【based on と based in】`based on`＝〜に基づく（根拠・題材）。`The movie is based on a true story.` `based in`＝〜に拠点を置く（場所）。`The company is based in Osaka.` 前置詞ひとつで「根拠」か「所在地」かが変わる。人について `I'm based in Tokyo.` と言えば「東京を拠点に活動している」という意味になり、単に住んでいる（live in）よりも仕事の拠点というニュアンスが強い。",lesson:'④4/25'},
@@ -958,9 +970,9 @@ const QB = [
   {id:'v0503',pat:'__vocab__',month:'2605',type:'vocab',q:'"mulligan" はどのスポーツの用語？',a:'ゴルフ',choices:['ゴルフ','テニス','野球','バスケ'],explain:"ゴルフで打ち直しを認めるローカルルールのこと。カジュアルなラウンドで使われ、公式競技では認められていない。",lesson:'⑤5/9'},
   {id:'v0504',pat:'__vocab__',month:'2605',type:'vocab',q:'"Springbok" の意味は？',a:'跳ぶ鹿（南ア産アンテロープ）',choices:['跳ぶ鹿（南ア産アンテロープ）','ペンギン','サイ','ライオン'],explain:"南アフリカに生息する跳ねるアンテロープ。同国のラグビー代表チームの愛称としても有名。",lesson:'⑤5/9'},
   {id:'v0505',pat:'__vocab__',month:'2605',type:'vocab',q:'南アフリカの人口は約何百万人？',a:'65 million',choices:['65 million','122 million','45 million','80 million'],explain:"南アフリカの人口はおよそ6,500万人。million は100万を表すので、65 million = 6,500万。",lesson:'⑤5/9'},
-  {id:'f0501',pat:'beadj',month:'2605',type:'fill',q:'The house ___ abandoned.',blank:'is',choices:['is','was','has','does'],hint:'現在の状態',lesson:'⑤5/9'},
-  {id:'f0502',pat:'progress',month:'2605',type:'fill',q:'The area ___ developing.',blank:'is',choices:['is','was','has','does'],hint:'開発が進んでいる',lesson:'⑤5/9'},
-  {id:'f0503',pat:'progress',month:'2605',type:'fill',q:'They are ___.',blank:'migrating',choices:['migrating','migration','migrate','migrated'],lesson:'⑤5/9'},
+  {id:'f0501',pat:'beadj',month:'2605',type:'fill',q:'The house ___ abandoned.',blank:'is',choices:['is','was','has','does'],hint:'現在の状態',ja:"その家は空き家になっている。",lesson:'⑤5/9'},
+  {id:'f0502',pat:'progress',month:'2605',type:'fill',q:'The area ___ developing.',blank:'is',choices:['is','was','has','does'],hint:'開発が進んでいる',ja:"その地域は発展しつつある。",lesson:'⑤5/9'},
+  {id:'f0503',pat:'progress',month:'2605',type:'fill',q:'They are ___.',blank:'migrating',choices:['migrating','migration','migrate','migrated'],ja:"彼らは移動している（渡り・移住の最中）。",lesson:'⑤5/9'},
   {id:'g0501',pat:'progress',month:'2605',type:'grammar',q:'どちらが正しい？（その地域は発展しつつある）',optA:'The area is developed.',optB:'The area is developing.',a:'B',explain:"開発が進行中なら現在進行形 \"is developing\"。Aの \"is developed\" は受動態で「開発され終わった・先進的な」という完了した状態を指す（a developed country = 先進国）。今まさに進んでいる最中なら -ing。",lesson:'⑤5/9'},
   {id:'g0502',pat:'beadj',month:'2605',type:'grammar',q:'どちらが正しい？（その家は空き家だ）',optA:'The house abandoned.',optB:'The house is abandoned.',a:'B',explain:"\"abandoned\" は「捨てられた」という状態を表す形容詞なので、be動詞が必要。Aのように The house abandoned だけでは動詞が過去形に見え「その家が（何かを）捨てた」という意味になってしまう。",lesson:'⑤5/9'},
   {id:'t0501',pat:'beadj',month:'2605',type:'translate',q:'「その家は捨てられている」',a:'The house is abandoned.',lesson:'⑤5/9'},
@@ -974,11 +986,11 @@ const QB = [
   {id:'v0603',pat:'pasttense',month:'2605',type:'vocab',q:'"in a row" の意味は？',a:'連続して',choices:['連続して','一列に','一度に','ランダムに'],explain:"「連続して」という意味。`I drank two days in a row.` 3日連続なら three days in a row。休まず続いたことを強調するときに使う。",lesson:'⑥5/12'},
   {id:'v0604',pat:'edingadj',month:'2605',type:'vocab',q:'"moved / touched" の感情の意味は？',a:'感動した',choices:['感動した','驚いた','笑った','泣いた'],explain:"心を動かされた状態。`I was moved by the movie.` 人が主語なら moved/touched、映画など物が主語なら moving/touching と形が変わる。",lesson:'⑥5/12'},
   {id:'v0605',pat:'__vocab__',month:'2605',type:'vocab',q:'"issue" の意味は？',a:'問題・課題',choices:['問題・課題','論文','出版物のみ','雑誌のみ'],explain:"「問題・課題」の意味で、解決すべきものを指す。`That's a big issue.` 雑誌の号という意味もあるが、会話では課題の意味で使うことが多い。",lesson:'⑥5/12'},
-  {id:'f0601',pat:'pasttense',month:'2605',type:'fill',q:'I ___ 2 days in a row.',blank:'drank',choices:['drank','drink','drunk','drinking'],hint:'過去形',lesson:'⑥5/12'},
-  {id:'f0602',pat:'lasttime',month:'2605',type:'fill',q:'The last ___ I watched a movie was a week ago.',blank:'time',choices:['time','day','moment','when'],lesson:'⑥5/12'},
-  {id:'f0603',pat:'times',month:'2605',type:'fill',q:'I do volunteer work ___ a month.',blank:'once',choices:['once','one','a','every'],lesson:'⑥5/12'},
-  {id:'f0604',pat:'reasonwhy',month:'2605',type:'fill',q:'I wrote a report ___ I finished an experiment.',blank:'because',choices:['because','when','after','since'],lesson:'⑥5/12'},
-  {id:'f0605',pat:'edingadj',month:'2605',type:'fill',q:'The movie is very ___.',blank:'touching',choices:['touching','touched','move','emotional'],hint:'感動的だ（形容詞）',lesson:'⑥5/12'},
+  {id:'f0601',pat:'pasttense',month:'2605',type:'fill',q:'I ___ 2 days in a row.',blank:'drank',choices:['drank','drink','drunk','drinking'],hint:'過去形',ja:"2日続けて飲んだ。",lesson:'⑥5/12'},
+  {id:'f0602',pat:'lasttime',month:'2605',type:'fill',q:'The last ___ I watched a movie was a week ago.',blank:'time',choices:['time','day','moment','when'],ja:"最後に映画を見たのは1週間前です。",lesson:'⑥5/12'},
+  {id:'f0603',pat:'times',month:'2605',type:'fill',q:'I do volunteer work ___ a month.',blank:'once',choices:['once','one','a','every'],ja:"月に1回ボランティアをしています。",lesson:'⑥5/12'},
+  {id:'f0604',pat:'reasonwhy',month:'2605',type:'fill',q:'I wrote a report ___ I finished an experiment.',blank:'because',choices:['because','when','after','since'],ja:"実験が終わったので、レポートを書いた。",lesson:'⑥5/12'},
+  {id:'f0605',pat:'edingadj',month:'2605',type:'fill',q:'The movie is very ___.',blank:'touching',choices:['touching','touched','move','emotional'],hint:'感動的だ（形容詞）',ja:"その映画はとても感動的だ。",lesson:'⑥5/12'},
   {id:'g0601',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？（その映画に感動した）',optA:'I was moving by the movie.',optB:'I was moved by the movie.',a:'B',explain:"感情は \"be moved / touched\" で「（人が）感動させられた」と受け身で表す。Aの moving は「感動的な」という意味なので、主語が I だと「私が人を感動させる存在だ」になる。人が主語なら -ed、物が主語なら -ing。",deep:"【-ed と -ing の感情形容詞】感情を表す動詞は2つの形を持ち、-ed は「そう感じている人」、-ing は「そう感じさせる物や人」に使う。`I was moved.`＝私が感動した。`The movie was moving.`＝映画が感動的だった。取り違えると `I am boring.`（私は退屈な人間です）のように意図しない自己紹介になってしまうので注意。同じ型の代表例は interested/interesting、excited/exciting、surprised/surprising、confused/confusing。判断の目安は、主語が感情を持てる人間なら -ed、原因となる物なら -ing。",lesson:'⑥5/12'},
   {id:'g0602',pat:'edingadj',month:'2605',type:'grammar',q:'どちらが正しい？（私の仕事は疲れる）',optA:'My job is tired.',optB:'My job is tiring.',a:'B',explain:"\"tiring\" は「（物が人を）疲れさせる」、\"tired\" は「（人が）疲れている」。主語が My job なので、疲れさせる側を表す tiring が正しい。人が主語なら I am tired. となる。interesting / interested も同じ関係。",deep:"【tired と tiring の主語の違い】`tiring`＝疲れさせる側（原因）、`tired`＝疲れている側（人）。`My job is tiring.`（仕事が疲れさせる）と `I am tired.`（私が疲れている）は主語が入れ替わる関係にある。両方を1文にすると `I'm tired because my job is tiring.` となる。なお `tired of ~` になると意味が変わり、「疲れた」ではなく「〜に飽きた」を表すので `I'm tired of my job.` は「仕事に飽き飽きしている」となる。前置詞 of の有無で意味が変わる点に注意。",lesson:'⑥5/12'},
   {id:'g0603',pat:'lasttime',month:'2605',type:'grammar',q:'どちらが正しい？（最後に旅行したのはいつ？）',optA:'When was the last time you go on a trip?',optB:'When was the last time you went on a trip?',a:'B',explain:"\"the last time\" に続く節は過去形になる。最後に〜したのはいつか、という過ぎたことを聞いているため、Aの現在形 go は使えない。When was the last time you went / ate / saw ~? の形で覚える。",lesson:'⑥5/12'},
@@ -995,10 +1007,10 @@ const QB = [
   {id:'v0702',pat:'wordpair',month:'2605',type:'vocab',q:'"lightning" と "thunder" の違いは？',a:'lightning=稲妻(光) / thunder=雷(音)',choices:['lightning=稲妻(光) / thunder=雷(音)','lightning=雷(音) / thunder=稲妻(光)','同じ意味','lightningは雨'],explain:"lightning は空が光る「稲妻」、thunder は後から聞こえる「雷鳴」。`I saw lightning and heard thunder.` 光と音で使い分ける。",lesson:'⑦5/14'},
   {id:'v0703',pat:'__vocab__',month:'2605',type:'vocab',q:'"wild boar" の意味は？',a:'イノシシ',choices:['イノシシ','クマ','サル','シカ'],explain:"山にいる野生のイノシシ。`Wild boars sometimes come down to the village.` boar 単体でも通じる。",lesson:'⑦5/14'},
   {id:'v0704',pat:'ideal',month:'2605',type:'vocab',q:'理想の季節を聞く空欄は？ "What is your ideal ___?"',a:'season',choices:['season','weather','time','date'],explain:"理想の季節を尋ねる形。`What is your ideal season?` ideal の後ろには聞きたい名詞をそのまま入れる。",lesson:'⑦5/14'},
-  {id:'f0701',pat:'have',month:'2605',type:'fill',q:'My ideal house ___ a big kitchen.',blank:'has',choices:['has','have','is','with'],lesson:'⑦5/14'},
-  {id:'f0702',pat:'wanna',month:'2605',type:'fill',q:'She wants ___ give water to her plants.',blank:'to',choices:['to','of','for','at'],lesson:'⑦5/14'},
-  {id:'f0703',pat:'ideal',month:'2605',type:'fill',q:'What is your ___ day off?',blank:'ideal',choices:['ideal','perfect','best','good'],lesson:'⑦5/14'},
-  {id:'f0704',pat:'__vocab__',month:'2605',type:'fill',q:'Thunder is the ___, lightning is the light.',blank:'sound',choices:['sound','noise','music','voice'],lesson:'⑦5/14'},
+  {id:'f0701',pat:'have',month:'2605',type:'fill',q:'My ideal house ___ a big kitchen.',blank:'has',choices:['has','have','is','with'],ja:"私の理想の家には大きなキッチンがある。",lesson:'⑦5/14'},
+  {id:'f0702',pat:'wanna',month:'2605',type:'fill',q:'She wants ___ give water to her plants.',blank:'to',choices:['to','of','for','at'],ja:"彼女は植物に水をやりたがっている。",lesson:'⑦5/14'},
+  {id:'f0703',pat:'ideal',month:'2605',type:'fill',q:'What is your ___ day off?',blank:'ideal',choices:['ideal','perfect','best','good'],ja:"あなたの理想の休日は？",lesson:'⑦5/14'},
+  {id:'f0704',pat:'__vocab__',month:'2605',type:'fill',q:'Thunder is the ___, lightning is the light.',blank:'sound',choices:['sound','noise','music','voice'],ja:"雷鳴は音で、稲光は光のことです。",lesson:'⑦5/14'},
   {id:'g0701',pat:'ifclause',month:'2605',type:'grammar',q:'どちらが正しい？（もし結婚するなら、理想の結婚式は？）',optA:'If you will get married, what is your ideal wedding?',optB:'If you get married, what is your ideal wedding party?',a:'B',explain:"if で始まる条件節の中は、未来のことでも現在形で書く。Aの \"If you will get married\" は will が余分で、正しくは If you get married。主節の方には will を使ってよい（If it rains, I will stay home.）。",deep:"【時と条件の副詞節では未来形を使わない】if や when で始まる節の中では、未来のことでも will を使わず現在形にする。`If you get married, ...` `When I get home, I'll call you.` 主節の方には will を使ってよい。ただし if が「〜かどうか」を意味する名詞節の場合は例外で、`I don't know if he will come.` のように will を使える。見分け方は、if を「もし」と訳せるなら現在形、「〜かどうか」と訳せるなら will も可。",lesson:'⑦5/14'},
   {id:'g0702',pat:'have',month:'2605',type:'grammar',q:'どちらが正しい？（理想の家には広いキッチンがある）',optA:'My ideal house is a big kitchen.',optB:'My ideal house has a big kitchen.',a:'B',explain:"\"has\" は「〜を持っている・〜がある」。Aのように is を使うと「私の理想の家＝大きなキッチン」という意味になり、家とキッチンが同一のものになってしまう。設備を説明するときは has を使う。",lesson:'⑦5/14'},
   {id:'t0701',pat:'have',month:'2605',type:'translate',q:'「私の理想の家には大きなキッチンがある」',a:'My ideal house has a big kitchen.',lesson:'⑦5/14'},
@@ -1013,11 +1025,11 @@ const QB = [
   {id:'v0803',pat:'__vocab__',month:'2606',type:'vocab',q:'"hang out" の意味は？',a:'一緒に過ごす・つるむ',choices:['一緒に過ごす・つるむ','外出する','帰宅する','働く'],explain:"友達と一緒にダラダラ過ごすこと。`I hang out with my friends on weekends.` 目的のない気楽な時間を指す。",lesson:'⑧6/10'},
   {id:'v0804',pat:'__vocab__',month:'2606',type:'vocab',q:'"open-minded" の意味は？',a:'心が広い・柔軟な',choices:['心が広い・柔軟な','頑固な','内向的な','慎重な'],explain:"新しい考えや違う価値観を受け入れられる性格。`She's very open-minded.` 反対は narrow-minded（頑固）。",lesson:'⑧6/10'},
   {id:'v0805',pat:'__vocab__',month:'2606',type:'vocab',q:'"constantly" の意味は？',a:'絶えず・ずっと',choices:['絶えず・ずっと','たまに','最近','急に'],explain:"途切れずずっと続いているようす。`He's constantly checking his phone.` always より「絶え間なさ」が強い。",lesson:'⑧6/10'},
-  {id:'f0801',pat:'tooto',month:'2606',type:'fill',q:"I'm too lazy ___ cook.",blank:'to',choices:['to','for','of','at'],hint:'too ~ to ... 構文',lesson:'⑧6/10'},
-  {id:'f0802',pat:'wanna',month:'2606',type:'fill',q:"It's necessary ___ practice every day.",blank:'to',choices:['to','for','of','at'],hint:'necessary to + 動詞原形',lesson:'⑧6/10'},
-  {id:'f0803',pat:'prep',month:'2606',type:'fill',q:'I use AI every day, except ___ weekends.',blank:'for',choices:['for','of','on','in'],hint:'except for ～',deep:"【weekends と the weekend の違い】`on weekends`（複数形）＝毎週末・習慣として。`on the weekend`（単数＋the）＝特定の今度の週末、または話し手同士が分かっている週末。`I play tennis on weekends.` なら毎週の習慣、`What are you doing on the weekend?` なら今度の週末の予定を指す。イギリス英語では `at the weekend` と at を使うことが多い。この複数形＝習慣という考え方は曜日にも当てはまり、`on Mondays`＝毎週月曜、`on Monday`＝今度の月曜となる。",lesson:'⑧6/10'},
-  {id:'f0804',pat:'beusedto',month:'2606',type:'fill',q:"I'm used to ___ it because I do it every day.",blank:'doing',choices:['doing','do','done','did'],hint:'be used to + 動名詞',lesson:'⑧6/10'},
-  {id:'f0805',pat:'tiredof',month:'2606',type:'fill',q:'Cooking is very time-___.',blank:'consuming',choices:['consuming','wasting','taking','costing'],hint:'時間がかかる',lesson:'⑧6/10'},
+  {id:'f0801',pat:'tooto',month:'2606',type:'fill',q:"I'm too lazy ___ cook.",blank:'to',choices:['to','for','of','at'],hint:'too ~ to ... 構文',ja:"面倒くさくて、料理する気になれない。",lesson:'⑧6/10'},
+  {id:'f0802',pat:'wanna',month:'2606',type:'fill',q:"It's necessary ___ practice every day.",blank:'to',choices:['to','for','of','at'],hint:'necessary to + 動詞原形',ja:"毎日練習することが必要です。",lesson:'⑧6/10'},
+  {id:'f0803',pat:'prep',month:'2606',type:'fill',q:'I use AI every day, except ___ weekends.',blank:'for',choices:['for','of','on','in'],hint:'except for ～',deep:"【weekends と the weekend の違い】`on weekends`（複数形）＝毎週末・習慣として。`on the weekend`（単数＋the）＝特定の今度の週末、または話し手同士が分かっている週末。`I play tennis on weekends.` なら毎週の習慣、`What are you doing on the weekend?` なら今度の週末の予定を指す。イギリス英語では `at the weekend` と at を使うことが多い。この複数形＝習慣という考え方は曜日にも当てはまり、`on Mondays`＝毎週月曜、`on Monday`＝今度の月曜となる。",ja:"週末を除いて、毎日AIを使っています。",lesson:'⑧6/10'},
+  {id:'f0804',pat:'beusedto',month:'2606',type:'fill',q:"I'm used to ___ it because I do it every day.",blank:'doing',choices:['doing','do','done','did'],hint:'be used to + 動名詞',ja:"毎日やっているので、それには慣れています。",lesson:'⑧6/10'},
+  {id:'f0805',pat:'tiredof',month:'2606',type:'fill',q:'Cooking is very time-___.',blank:'consuming',choices:['consuming','wasting','taking','costing'],hint:'時間がかかる',ja:"料理はとても時間がかかる。",lesson:'⑧6/10'},
   {id:'g0801',pat:'usedto',month:'2606',type:'grammar',q:'どちらが正しい？（昔は料理していた）',optA:"I used to cooking.",optB:'I used to cook.',a:'B',explain:'"used to + 動詞の原形" で昔の習慣を表す。"be used to + ing" は「〜に慣れている」なので別の意味。',deep:"【used to / be used to / get used to】この3つは形も意味も違う。①`used to + 動詞の原形`＝昔は〜していた（今はしていない）。②`be used to + 名詞/動名詞`＝〜に慣れている（状態）。③`get used to + 名詞/動名詞`＝〜に慣れてきた（変化）。`I used to cook.`（昔は料理していた）と `I'm used to cooking.`（料理に慣れている）は全く別の意味になる。見分け方は be動詞の有無で、be や get があれば「慣れ」、なければ「過去の習慣」。なお②③の to は不定詞ではなく前置詞なので、後ろは必ず -ing 形になる。",lesson:'⑧6/10'},
   {id:'g0802',pat:'tooto',month:'2606',type:'grammar',q:'どちらが正しい？（怠けすぎて料理する気になれない）',optA:"I'm too lazy for cook.",optB:"I'm too lazy to cook.",a:'B',explain:'"too + 形容詞 + to + 動詞原形" で「〜すぎて...できない」。"for" は不可。',deep:"【too ~ to と enough to】`too + 形容詞 + to + 原形`＝〜すぎて…できない、という否定的な意味を含む。`I'm too lazy to cook.`＝怠けすぎて料理できない。反対に肯定的に「〜するのに十分」と言うなら `形容詞 + enough + to`の語順で `I'm old enough to drive.` となり、enough は形容詞の後ろに置く点が独特。また `too` を `very` に置き換えると意味が変わり、`I'm very lazy.` は単に怠け者だという事実を述べるだけで、できないという含みは消える。",lesson:'⑧6/10'},
   {id:'g0803',pat:'beadj',month:'2606',type:'grammar',q:'どちらが正しい？（それはとても便利だ）',optA:"It's very convenience.",optB:"It's very convenient.",a:'B',explain:"be動詞の後ろに置くのは形容詞なので \"convenient\" が正しい。Aの convenience は名詞で「便利さ・コンビニ」の意味。It's very convenient. / for your convenience のように品詞で使い分ける。",lesson:'⑧6/10'},
@@ -1036,11 +1048,11 @@ const QB = [
   {id:'v0903',pat:'getdone',month:'2606',type:'vocab',q:'"get stuck in traffic" の意味は？',a:'渋滞にはまる',choices:['渋滞にはまる','事故に遭う','道に迷う','駐車する'],explain:"車が動かず渋滞に巻き込まれること。`I got stuck in traffic.` stuck は「動けない」状態を表し、エレベーターに閉じ込められたときにも使う。",lesson:'⑨6/25'},
   {id:'v0904',pat:'goeswith',month:'2606',type:'vocab',q:'"goes well with ~" の意味は？',a:'〜によく合う',choices:['〜によく合う','〜と一緒に行く','〜より優れている','〜と交換する'],explain:"食べ物や飲み物の相性が良いこと。`Mentaiko goes well with beer.` 主語が三人称単数なので goes と s が付く点に注意。",lesson:'⑨6/25'},
   {id:'v0905',pat:'__vocab__',month:'2606',type:'vocab',q:'"time flies" の意味は？',a:'時間があっという間に過ぎる',choices:['時間があっという間に過ぎる','時間が遅く感じる','時間が止まる','暇な時間'],explain:"楽しい時間ほど早く過ぎるという定番表現。`Time flies when you're having fun.` 別れ際の会話でよく使われる。",lesson:'⑨6/25'},
-  {id:'f0901',pat:'feellike',month:'2606',type:'fill',q:'I feel like ___ nothing today.',blank:'doing',choices:['doing','do','done','to do'],hint:'feel like + 動名詞',lesson:'⑨6/25'},
-  {id:'f0902',pat:'goeswith',month:'2606',type:'fill',q:'Mentaiko ___ well with beer.',blank:'goes',choices:['goes','go','is','fits'],hint:'〜によく合う',lesson:'⑨6/25'},
-  {id:'f0903',pat:'getdone',month:'2606',type:'fill',q:'I got my nails ___.',blank:'done',choices:['done','do','doing','did'],hint:'get + 目的語 + done',lesson:'⑨6/25'},
-  {id:'f0904',pat:'getdone',month:'2606',type:'fill',q:'I got ___ in traffic on the way home.',blank:'stuck',choices:['stuck','stock','stacked','stocked'],hint:'渋滞にはまる',lesson:'⑨6/25'},
-  {id:'f0905',pat:'wanna',month:'2606',type:'fill',q:'You can eat as much as you ___.',blank:'want',choices:['want','like','wish','can'],hint:'好きなだけ',lesson:'⑨6/25'},
+  {id:'f0901',pat:'feellike',month:'2606',type:'fill',q:'I feel like ___ nothing today.',blank:'doing',choices:['doing','do','done','to do'],hint:'feel like + 動名詞',ja:"今日は何もしたくない気分だ。",lesson:'⑨6/25'},
+  {id:'f0902',pat:'goeswith',month:'2606',type:'fill',q:'Mentaiko ___ well with beer.',blank:'goes',choices:['goes','go','is','fits'],hint:'〜によく合う',ja:"明太子はビールによく合う。",lesson:'⑨6/25'},
+  {id:'f0903',pat:'getdone',month:'2606',type:'fill',q:'I got my nails ___.',blank:'done',choices:['done','do','doing','did'],hint:'get + 目的語 + done',ja:"ネイルをやってもらった。",lesson:'⑨6/25'},
+  {id:'f0904',pat:'getdone',month:'2606',type:'fill',q:'I got ___ in traffic on the way home.',blank:'stuck',choices:['stuck','stock','stacked','stocked'],hint:'渋滞にはまる',ja:"帰り道で渋滞にはまった。",lesson:'⑨6/25'},
+  {id:'f0905',pat:'wanna',month:'2606',type:'fill',q:'You can eat as much as you ___.',blank:'want',choices:['want','like','wish','can'],hint:'好きなだけ',ja:"好きなだけ食べていいよ。",lesson:'⑨6/25'},
   {id:'g0901',pat:'feellike',month:'2606',type:'grammar',q:'どちらが正しい？（何もしたくない気分だ）',optA:'I feel like do nothing.',optB:'I feel like doing nothing.',a:'B',explain:'"feel like" の後は動名詞（-ing形）が必須。"feel like to do" も誤り。',deep:"【feel like の2つの意味】①`feel like + 動名詞`＝〜したい気分だ。`I feel like eating ramen.` ②`feel like + 名詞`＝〜のような感じがする。`It feels like winter.` どちらも後ろに動詞の原形は置けず、①では必ず -ing になる（×feel like to eat）。「〜したくない」なら `I don't feel like doing anything.` と否定形にする。似た表現の `would like to + 原形`（〜したい）は不定詞を取るので、形を混同しないよう注意。",lesson:'⑨6/25'},
   {id:'g0902',pat:'usedto',month:'2606',type:'grammar',q:'どちらが正しい？（以前は大阪に住んでいた）',optA:'I was used to live in Osaka.',optB:'I used to live in Osaka.',a:'B',explain:'"used to + 動詞原形" で過去の習慣・状態。"was used to" は「慣れていた」なので意味が違う。',lesson:'⑨6/25'},
   {id:'g0903',pat:'getdone',month:'2606',type:'grammar',q:'どちらが正しい？（美容院で髪をやってもらった）',optA:'I cut my hair.',optB:'I got my hair cut.',a:'B',explain:'"get + 目的語 + 過去分詞" で「〜してもらった」。"I cut my hair" は自分で切った意味。',deep:"【get + 目的語 + 過去分詞】「〜してもらう・〜される」を表す形で、自分でやったのではないことを示す。`I got my hair cut.`＝美容院で切ってもらった。`I cut my hair.` だと自分で切ったことになる。同じ意味で `have + 目的語 + 過去分詞`（I had my hair cut.）も使え、have の方がややフォーマル。また被害を表すこともでき、`I got my wallet stolen.`＝財布を盗まれた。語順は必ず 目的語→過去分詞 で、`I got cut my hair.` は誤り。",lesson:'⑨6/25'},
@@ -1059,11 +1071,11 @@ const QB = [
   {id:'v1003',pat:'__vocab__',month:'2607',type:'vocab',q:'"spoil" の意味として間違っているのは？',a:'〜を整理する',choices:['〜を整理する','甘やかす','台無しにする','食べ物が腐る'],explain:"spoil は「台無しにする」「甘やかす」「（食べ物が）傷む」の意味を持つ。「整理する」という意味はない。ネタバレの spoiler も同じ語から来ている。",lesson:'⑩7/23'},
   {id:'v1004',pat:'times',month:'2607',type:'vocab',q:'"once or twice" の意味は？',a:'1〜2回',choices:['1〜2回','2〜3回','たまに','ほぼ毎回'],explain:"1回か2回か、はっきりしない頻度を表す。`I eat out once or twice a week.` 頻度を聞かれたときの定番の答え方。",lesson:'⑩7/23'},
   {id:'v1005',pat:'howoften',month:'2607',type:'vocab',q:'"How often" は何を聞く表現？',a:'頻度',choices:['頻度','数量','時間の長さ','場所'],explain:"頻度を尋ねる疑問詞。`How often do you eat out?` 答えるときは twice a week などで返す。",lesson:'⑩7/23'},
-  {id:'f1001',pat:'sometimes',month:'2607',type:'fill',q:'I some___ go there on weekends.',blank:'sometimes',choices:['sometimes','sometime','sometime\'s','sometim'],hint:'ときどき',lesson:'⑩7/23'},
-  {id:'f1002',pat:'wanna',month:'2607',type:'fill',q:'I try to stay ___ from junk food.',blank:'away',choices:['away','out','off','far'],hint:'avoid の意味',lesson:'⑩7/23'},
-  {id:'f1003',pat:'spendtime',month:'2607',type:'fill',q:'What do you spend the most time ___ during the week?',blank:'on',choices:['on','in','for','at'],hint:'spend time on ~',lesson:'⑩7/23'},
-  {id:'f1004',pat:'spendtime',month:'2607',type:'fill',q:'I ___ time reading books.',blank:'spend',choices:['spend','use','take','make'],hint:'時間を使う',lesson:'⑩7/23'},
-  {id:'f1005',pat:'routine',month:'2607',type:'fill',q:'I wanna take a shower first when I get ___.',blank:'home',choices:['home','house','back','there'],lesson:'⑩7/23'},
+  {id:'f1001',pat:'sometimes',month:'2607',type:'fill',q:'I some___ go there on weekends.',blank:'sometimes',choices:['sometimes','sometime','sometime\'s','sometim'],hint:'ときどき',ja:"週末はときどきそこに行きます。",lesson:'⑩7/23'},
+  {id:'f1002',pat:'wanna',month:'2607',type:'fill',q:'I try to stay ___ from junk food.',blank:'away',choices:['away','out','off','far'],hint:'avoid の意味',ja:"ジャンクフードは避けるようにしている。",lesson:'⑩7/23'},
+  {id:'f1003',pat:'spendtime',month:'2607',type:'fill',q:'What do you spend the most time ___ during the week?',blank:'on',choices:['on','in','for','at'],hint:'spend time on ~',ja:"平日は何に一番時間を使ってる？",lesson:'⑩7/23'},
+  {id:'f1004',pat:'spendtime',month:'2607',type:'fill',q:'I ___ time reading books.',blank:'spend',choices:['spend','use','take','make'],hint:'時間を使う',ja:"読書をして時間を過ごしている。",lesson:'⑩7/23'},
+  {id:'f1005',pat:'routine',month:'2607',type:'fill',q:'I wanna take a shower first when I get ___.',blank:'home',choices:['home','house','back','there'],ja:"帰ったら、まずシャワーを浴びたい。",lesson:'⑩7/23'},
   {id:'g1001',pat:'sometimes',month:'2607',type:'grammar',q:'どちらが正しい？（ときどき週末に行く）',optA:'I sometime go there on weekends.',optB:'I sometimes go there on weekends.',a:'B',explain:'"sometime"=いつか（未来）/ "sometimes"=ときどき（頻度）。頻度を表すには必ず"sometimes"。',lesson:'⑩7/23'},
   {id:'g1002',pat:'indirect',month:'2607',type:'grammar',q:'どちらが正しい？（彼女が何を言うのか気になる）',optA:'I\'m interested in what is she gonna say.',optB:'I\'m interested in what she\'s gonna say.',a:'B',explain:'間接疑問文（embedded question）の語順は「疑問詞＋主語＋動詞」。疑問文の倒置は不要。',lesson:'⑩7/23'},
   {id:'g1003',pat:'spendtime',month:'2607',type:'grammar',q:'どちらが正しい？（平日は何に一番時間を使ってる？）',optA:'What do you spend the most time during the week?',optB:'What do you spend the most time on during the week?',a:'B',explain:'"spend time on ~"の"on"が必要。"spend time on work"など、何に時間を使うかを示す前置詞。',lesson:'⑩7/23'},
@@ -1081,11 +1093,11 @@ const QB = [
   {id:'v1103',pat:'__vocab__',month:'2607',type:'vocab',q:'"principal" の意味は？',a:'校長',choices:['校長','主役','原則','元本'],explain:"学校の校長のこと。`I talked to the principal.` つづりの似た principle（原則）とは別の語なので注意。",lesson:'⑪7/23'},
   {id:'v1104',pat:'__vocab__',month:'2607',type:'vocab',q:'"bow" を動詞として使うと？',a:'お辞儀する',choices:['お辞儀する','手を振る','敬礼する','握手する'],explain:"頭を下げてお辞儀すること。`I always bow when I say thank you.` 名詞では「弓」の意味もある。",lesson:'⑪7/23'},
   {id:'v1105',pat:'considered',month:'2607',type:'vocab',q:'"It\'s considered to be rude." の意味は？',a:'失礼とみなされる',choices:['失礼とみなされる','失礼だと感じる','失礼するつもりだ','失礼だった'],explain:"周囲からそう受け取られる、という言い方。`It's considered to be rude.` 自分の意見ではなく一般的な受け止め方を伝えるときに便利。",lesson:'⑪7/23'},
-  {id:'f1101',pat:'gerundnoun',month:'2607',type:'fill',q:'To ___ on time is very important.',blank:'be',choices:['be','keep','stay','get'],hint:'時間を守る',lesson:'⑪7/23'},
-  {id:'f1102',pat:'considered',month:'2607',type:'fill',q:'I always ___ when I say thank you.',blank:'bow',choices:['bow','wave','nod','salute'],hint:'お辞儀する',lesson:'⑪7/23'},
-  {id:'f1103',pat:'considered',month:'2607',type:'fill',q:'It\'s considered ___ be rude if you come too early.',blank:'to',choices:['to','of','as','for'],lesson:'⑪7/23'},
-  {id:'f1104',pat:'particular',month:'2607',type:'fill',q:'Is there anything in ___?',blank:'particular',choices:['particular','especially','specific','detail'],hint:'特に何か',lesson:'⑪7/23'},
-  {id:'f1105',pat:'startlike',month:'2607',type:'fill',q:'Why did you start ___ this anime?',blank:'liking',choices:['liking','like','liked','to liking'],hint:'start + -ing',lesson:'⑪7/23'},
+  {id:'f1101',pat:'gerundnoun',month:'2607',type:'fill',q:'To ___ on time is very important.',blank:'be',choices:['be','keep','stay','get'],hint:'時間を守る',ja:"時間を守ることはとても大切です。",lesson:'⑪7/23'},
+  {id:'f1102',pat:'considered',month:'2607',type:'fill',q:'I always ___ when I say thank you.',blank:'bow',choices:['bow','wave','nod','salute'],hint:'お辞儀する',ja:"ありがとうと言うときは、いつもお辞儀をします。",lesson:'⑪7/23'},
+  {id:'f1103',pat:'considered',month:'2607',type:'fill',q:'It\'s considered ___ be rude if you come too early.',blank:'to',choices:['to','of','as','for'],ja:"早く来すぎるのは失礼だと思われている。",lesson:'⑪7/23'},
+  {id:'f1104',pat:'particular',month:'2607',type:'fill',q:'Is there anything in ___?',blank:'particular',choices:['particular','especially','specific','detail'],hint:'特に何か',ja:"特に何かありますか？",lesson:'⑪7/23'},
+  {id:'f1105',pat:'startlike',month:'2607',type:'fill',q:'Why did you start ___ this anime?',blank:'liking',choices:['liking','like','liked','to liking'],hint:'start + -ing',ja:"なんでこのアニメを好きになったの？",lesson:'⑪7/23'},
   {id:'g1101',pat:'startlike',month:'2607',type:'grammar',q:'どちらが自然？（このアニメを好きになった）',optA:'I started like this anime.',optB:'I started liking this anime.',a:'B',explain:"start のあとは to不定詞（to like）でも動名詞（liking）でもよく、どちらも正しい。ただし原形の like はそのまま置けないので、Aは文として成り立たない。I started to like / I started liking のどちらで覚えてもよい。",lesson:'⑪7/23'},
   {id:'g1102',pat:'gerundnoun',month:'2607',type:'grammar',q:'どちらが正しい？（時間を守ることが大切）',optA:'To keep on time is very important.',optB:'To be on time is very important.',a:'B',explain:'"be on time"=時間通りに来る。"keep on time"は不自然。"be punctual"も同じ意味で使える。',deep:"【be on time と in time】`on time`＝時間ぴったり・定刻通り。`The train arrived on time.` `in time`＝間に合って（締め切りに遅れずに）。`I arrived in time for the meeting.` 電車が定刻に来たなら on time、会議に遅れずに着いたなら in time。`keep time` は「時間を守る」ではなく「（時計が）正確に動く・リズムを刻む」という別の意味なので、時間厳守を言いたいときは be on time を使う。",lesson:'⑪7/23'},
   {id:'g1103',pat:'wordpair',month:'2607',type:'grammar',q:'どちらが自然？（特に何か食べたいものある？）',optA:'Is there anything especially you want to eat?',optB:'Is there anything in particular you want to eat?',a:'B',explain:'"in particular"は疑問文との相性が良い。"especially"は「特に〜が好き」のような断言に使う。',lesson:'⑪7/23'},
@@ -1104,11 +1116,11 @@ const QB = [
   {id:'v1203',pat:'__vocab__',month:'2607',type:'vocab',q:'"high skill ceiling" の意味は？',a:'極めるのが難しい（上達の余地が大きい）',choices:['極めるのが難しい（上達の余地が大きい）','始めやすい','天井が高い','技術が不要'],explain:"上達の余地が大きく、極めるのが難しいこと。`Table tennis has a high skill ceiling.` 始めやすさを表す low entry と対で使われる。",lesson:'⑫7/25'},
   {id:'v1204',pat:'__vocab__',month:'2607',type:'vocab',q:'"purebred" の意味は？',a:'純血種',choices:['純血種','雑種','子犬','大型犬'],explain:"血統書付きの純血種のこと。`Is your dog purebred?` 雑種は mixed dog。",lesson:'⑫7/25'},
   {id:'v1205',pat:'__vocab__',month:'2607',type:'vocab',q:'"shaved ice" の意味は？',a:'かき氷',choices:['かき氷','アイスクリーム','氷水','削り節'],explain:"日本の夏の定番、かき氷。`I like eating shaved ice in summer.` 削った氷、という文字通りの表現。",lesson:'⑫7/25'},
-  {id:'f1201',pat:'prep',month:'2607',type:'fill',q:'I play table tennis ___.',blank:'recreationally',choices:['recreationally','professional','serious','recreation'],hint:'趣味で',lesson:'⑫7/25'},
-  {id:'f1202',pat:'prep',month:'2607',type:'fill',q:'I have a three-hour ___ in Hong Kong.',blank:'layover',choices:['layover','delay','flight','airport'],hint:'乗り継ぎ待ち',lesson:'⑫7/25'},
-  {id:'f1203',pat:'beadj',month:'2607',type:'fill',q:"I'm ___ motivation these days.",blank:'losing',choices:['losing','lost','lose','loss'],hint:'やる気が落ちている（進行中）',lesson:'⑫7/25'},
-  {id:'f1204',pat:'easytomaster',month:'2607',type:'fill',q:"It's easy to ___, but difficult to master.",blank:'learn',choices:['learn','learning','learned','learns'],hint:'easy to + 動詞原形',lesson:'⑫7/25'},
-  {id:'f1205',pat:'article',month:'2607',type:'fill',q:"I'd like a house ___ a forest.",blank:'near',choices:['near','on','in','of'],hint:'森の近く',lesson:'⑫7/25'},
+  {id:'f1201',pat:'prep',month:'2607',type:'fill',q:'I play table tennis ___.',blank:'recreationally',choices:['recreationally','professional','serious','recreation'],hint:'趣味で',ja:"趣味で卓球をしています。",lesson:'⑫7/25'},
+  {id:'f1202',pat:'prep',month:'2607',type:'fill',q:'I have a three-hour ___ in Hong Kong.',blank:'layover',choices:['layover','delay','flight','airport'],hint:'乗り継ぎ待ち',ja:"香港で3時間の乗り継ぎ待ちがある。",lesson:'⑫7/25'},
+  {id:'f1203',pat:'beadj',month:'2607',type:'fill',q:"I'm ___ motivation these days.",blank:'losing',choices:['losing','lost','lose','loss'],hint:'やる気が落ちている（進行中）',ja:"最近、やる気が落ちている。",lesson:'⑫7/25'},
+  {id:'f1204',pat:'easytomaster',month:'2607',type:'fill',q:"It's easy to ___, but difficult to master.",blank:'learn',choices:['learn','learning','learned','learns'],hint:'easy to + 動詞原形',ja:"習うのは簡単だけど、極めるのは難しい。",lesson:'⑫7/25'},
+  {id:'f1205',pat:'article',month:'2607',type:'fill',q:"I'd like a house ___ a forest.",blank:'near',choices:['near','on','in','of'],hint:'森の近く',ja:"森の近くの家がいい。",lesson:'⑫7/25'},
   {id:'g1201',pat:'easytomaster',month:'2607',type:'grammar',q:'どちらが正しい？（覚えやすいが奥が深い）',optA:"It's easy to learning but difficult to mastering.",optB:"It's easy to learn but difficult to master.",a:'B',explain:'"easy/difficult to + 動詞の原形" が正しい。to の後を動名詞(-ing)にはしない。',lesson:'⑫7/25'},
   {id:'g1202',pat:'beadj',month:'2607',type:'grammar',q:'どちらが正しい？（やる気が落ちている）',optA:"I'm losing my motivate.",optB:"I'm losing motivation.",a:'B',explain:'"motivation" が名詞。"motivate" は動詞なので lose の目的語にできない。進行形 losing で「今まさに落ちてきている」継続を表す。',lesson:'⑫7/25'},
   {id:'g1203',pat:'article',month:'2607',type:'grammar',q:'どちらが正しい？（乗り継ぎ待ちとは空港での待ち時間だ）',optA:'A layover is wait at airport between flight.',optB:'A layover is waiting at an airport between flights.',a:'B',explain:'説明の主語には動名詞 waiting。可算名詞 airport には an、複数の便は flights。',lesson:'⑫7/25'},
@@ -1127,11 +1139,11 @@ const QB = [
   {id:'v1303',pat:'goalplan',month:'2607',type:'vocab',q:'"in the first place" の意味は？',a:'そもそも',choices:['そもそも','最初に到着して','一位で','その場で'],explain:"「そもそも・最初から」と話を根本に戻すときの表現。`Why did he invite me in the first place?` 文末に置いて使う。",lesson:'⑬7/30'},
   {id:'v1304',pat:'within',month:'2607',type:'vocab',q:'"within" の意味は？',a:'〜以内',choices:['〜以内','〜なしで','〜の外で','〜とともに'],explain:"期限や範囲の内側を表す。`I wanna get married within 5 years.` in が「5年後に」なのに対し、within は「5年経つまでに」を意味する。",lesson:'⑬7/30'},
   {id:'v1305',pat:'__vocab__',month:'2607',type:'vocab',q:'"spare time" の意味は？',a:'暇な時間・自由時間',choices:['暇な時間・自由時間','残業時間','予備の部品','節約'],explain:"自由に使える時間のこと。`What do you do in your spare time?` free time とほぼ同じ意味で使える。",lesson:'⑬7/30'},
-  {id:'f1301',pat:'within',month:'2607',type:'fill',q:'I wanna get married ___ 5 years.',blank:'within',choices:['within','without','with','win'],hint:'5年以内に',lesson:'⑬7/30'},
-  {id:'f1302',pat:'article',month:'2607',type:'fill',q:'I worked ___ a Japanese company.',blank:'for',choices:['for','at','in','with'],hint:'work for ～',lesson:'⑬7/30'},
-  {id:'f1303',pat:'turndown',month:'2607',type:'fill',q:'I turned him ___ many times.',blank:'down',choices:['down','up','off','over'],hint:'断った',lesson:'⑬7/30'},
-  {id:'f1304',pat:'goalplan',month:'2607',type:'fill',q:'Why did he invite me in the first ___?',blank:'place',choices:['place','time','line','point'],hint:'そもそも',lesson:'⑬7/30'},
-  {id:'f1305',pat:'article',month:'2607',type:'fill',q:'There was ___ earthquake.',blank:'an',choices:['an','a','the','—'],hint:'可算名詞の冠詞',deep:"【a と an と the の使い分け】数えられる名詞が単数のときは必ず冠詞が必要で、初めて話題に出すなら a/an、すでに特定されているなら the を使う。a か an かは後ろの語の「発音」で決まり、母音の音で始まれば an（an earthquake, an hour）、子音の音なら a（a university ※ユニと読むため）。職業を言うときも `I was a truck driver.` と冠詞が必要で、これは日本語にない感覚なので抜けやすい。ただし複数形や不可算名詞（water, information）には a/an は付かない。",lesson:'⑬7/30'},
+  {id:'f1301',pat:'within',month:'2607',type:'fill',q:'I wanna get married ___ 5 years.',blank:'within',choices:['within','without','with','win'],hint:'5年以内に',ja:"5年以内に結婚したい。",lesson:'⑬7/30'},
+  {id:'f1302',pat:'article',month:'2607',type:'fill',q:'I worked ___ a Japanese company.',blank:'for',choices:['for','at','in','with'],hint:'work for ～',ja:"日本の会社で働いていた。",lesson:'⑬7/30'},
+  {id:'f1303',pat:'turndown',month:'2607',type:'fill',q:'I turned him ___ many times.',blank:'down',choices:['down','up','off','over'],hint:'断った',ja:"彼（の誘い）を何度も断った。",lesson:'⑬7/30'},
+  {id:'f1304',pat:'goalplan',month:'2607',type:'fill',q:'Why did he invite me in the first ___?',blank:'place',choices:['place','time','line','point'],hint:'そもそも',ja:"そもそも、なんで彼は私を誘ったの？",lesson:'⑬7/30'},
+  {id:'f1305',pat:'article',month:'2607',type:'fill',q:'There was ___ earthquake.',blank:'an',choices:['an','a','the','—'],hint:'可算名詞の冠詞',deep:"【a と an と the の使い分け】数えられる名詞が単数のときは必ず冠詞が必要で、初めて話題に出すなら a/an、すでに特定されているなら the を使う。a か an かは後ろの語の「発音」で決まり、母音の音で始まれば an（an earthquake, an hour）、子音の音なら a（a university ※ユニと読むため）。職業を言うときも `I was a truck driver.` と冠詞が必要で、これは日本語にない感覚なので抜けやすい。ただし複数形や不可算名詞（water, information）には a/an は付かない。",ja:"地震があった。",lesson:'⑬7/30'},
   {id:'g1301',pat:'recommend',month:'2607',type:'grammar',q:'どちらが正しい？（阿波踊りに行くのをおすすめします）',optA:'I recommend to go to Awa dance.',optB:'I recommend going to Awa dance.',a:'B',explain:'"recommend" の後は動名詞(-ing)。"recommend to do" は誤り。',deep:"【recommend の後ろの形】recommend は動名詞を取る動詞で `I recommend going.` が正しく、`recommend to go` とは言えない。人に勧める場合は `I recommend that you go.` と that節を使うか、`I recommend Awa dance to you.` と目的語を置く。同じく動名詞だけを取る動詞に enjoy / finish / avoid / mind / suggest / consider があり、これらはまとめて覚えると効率がよい。逆に不定詞だけを取るのは want / hope / decide / promise。start や like のようにどちらも取れる動詞もある。",lesson:'⑬7/30'},
   {id:'g1302',pat:'candothe',month:'2607',type:'grammar',q:'どちらが正しい？（阿波踊りできますか？）',optA:'Can you dance the awa dance?',optB:'Can you do the awa dance?',a:'B',explain:'"the awa dance" のような伝統芸能は動詞 do で受ける。dance を動詞にすると重複して不自然。',lesson:'⑬7/30'},
   {id:'g1303',pat:'article',month:'2607',type:'grammar',q:'どちらが正しい？（日本の会社で働いていた）',optA:'I worked Japanese company.',optB:'I worked for a Japanese company.',a:'B',explain:'「会社に勤める」は "work for ～"。可算名詞 company には冠詞 a も必要。',lesson:'⑬7/30'},
@@ -1150,11 +1162,11 @@ const QB = [
   {id:'v1403',pat:'__vocab__',month:'2608',type:'vocab',q:'"dough" の意味は？',a:'（麺・パンの）生地',choices:['（麺・パンの）生地','小麦粉','スープ','具材'],explain:"小麦粉と水を混ねた生地のこと。`It's made of dough.` パン・ピザ・麺の材料を表すときに使い、発音は「ドウ」。",lesson:'⑭8/4'},
   {id:'v1404',pat:'__vocab__',month:'2608',type:'vocab',q:'"iconic" の意味は？',a:'象徴的な・特徴的な',choices:['象徴的な・特徴的な','古典的な','電子的な','経済的な'],explain:"ひと目でそれとわかる特徴を持っていること。`Does it have an iconic shape?` 有名で象徴となっているものに使う。",lesson:'⑭8/4'},
   {id:'v1405',pat:'__vocab__',month:'2608',type:'vocab',q:'"melt" の意味は？',a:'溶ける',choices:['溶ける','燃える','凍る','割れる'],explain:"熱で固体が液体になること。`Does it melt?` アイスやチョコの話でよく出てくる。",lesson:'⑭8/4'},
-  {id:'f1401',pat:'yesno',month:'2608',type:'fill',q:'Is it ___ of paper?',blank:'made',choices:['made','make','making','made up'],hint:'〜でできている',lesson:'⑭8/4'},
-  {id:'f1402',pat:'yesno',month:'2608',type:'fill',q:'___ you wear it on your hand?',blank:'Do',choices:['Do','Are','Is','Does'],hint:'一般動詞の疑問文',lesson:'⑭8/4'},
-  {id:'f1403',pat:'yesno',month:'2608',type:'fill',q:'Can it be ___?',blank:'charged',choices:['charged','charge','charging','charger'],hint:'充電できる？（受け身）',lesson:'⑭8/4'},
-  {id:'f1404',pat:'yesno',month:'2608',type:'fill',q:'Is it smaller ___ a phone?',blank:'than',choices:['than','then','from','as'],hint:'比較して絞り込む',lesson:'⑭8/4'},
-  {id:'f1405',pat:'__vocab__',month:'2608',type:'fill',q:'Is it ___? — Yes, you can carry it.',blank:'portable',choices:['portable','stationary','electronic','iconic'],hint:'持ち運べる',lesson:'⑭8/4'},
+  {id:'f1401',pat:'yesno',month:'2608',type:'fill',q:'Is it ___ of paper?',blank:'made',choices:['made','make','making','made up'],hint:'〜でできている',ja:"それは紙でできていますか？",lesson:'⑭8/4'},
+  {id:'f1402',pat:'yesno',month:'2608',type:'fill',q:'___ you wear it on your hand?',blank:'Do',choices:['Do','Are','Is','Does'],hint:'一般動詞の疑問文',ja:"それは手に身につけますか？",lesson:'⑭8/4'},
+  {id:'f1403',pat:'yesno',month:'2608',type:'fill',q:'Can it be ___?',blank:'charged',choices:['charged','charge','charging','charger'],hint:'充電できる？（受け身）',ja:"それは充電できますか？",lesson:'⑭8/4'},
+  {id:'f1404',pat:'yesno',month:'2608',type:'fill',q:'Is it smaller ___ a phone?',blank:'than',choices:['than','then','from','as'],hint:'比較して絞り込む',ja:"それはスマホより小さいですか？",lesson:'⑭8/4'},
+  {id:'f1405',pat:'__vocab__',month:'2608',type:'fill',q:'Is it ___? — Yes, you can carry it.',blank:'portable',choices:['portable','stationary','electronic','iconic'],hint:'持ち運べる',ja:"持ち運べる？ ――うん、持ち運べるよ。",lesson:'⑭8/4'},
   {id:'g1401',pat:'yesno',month:'2608',type:'grammar',q:'どちらが正しい？（ガラスでできてる？）',optA:'Is it glass?',optB:'Is it made of glass?',a:'B',explain:"素材を尋ねるときは `made of` を使う。Aの `Is it glass?` だと「それはガラスそのものですか」という意味になり、ガラス製の別の物を指しているときに噛み合わない。`Is it made of paper / wood / dough?` の形で覚える。",deep:"【made of と made from の違い】`made of`＝材料が見た目で分かるまま残っている場合（木の机、紙のお金）。`made from`＝原料が加工されて元の形が分からない場合（ぶどうからワイン、牛乳からチーズ）。`This desk is made of wood.` / `Wine is made from grapes.` と使い分ける。さらに `made in`＝製造された国（made in Japan）、`made with`＝主な材料や具材（made with fresh tomatoes）もあり、前置詞ひとつで意味が変わる。Yes/Noゲームで素材を聞くときは made of が基本になる。",lesson:'⑭8/4'},
   {id:'g1402',pat:'yesno',month:'2608',type:'grammar',q:'どちらが正しい？（充電できますか）',optA:'Can it charge?',optB:'Can it be charged?',a:'B',explain:"物が充電される側なので受け身の `be charged` にする。Aだと「それが（何かを）充電できる」という意味になってしまう。物が主語で「〜されうる」と言いたいときは can be + 過去分詞。",lesson:'⑭8/4'},
   {id:'g1403',pat:'yesno',month:'2608',type:'grammar',q:'どちらが正しい？（食べられますか）',optA:'Can you eat it?',optB:'Do you can eat it?',a:'A',explain:"can は助動詞なので、疑問文では do を使わず can を文頭に出す。Bのように `Do you can` と重ねるのは誤り。`Can you eat it? / Can you wear it? / Can you ride it?` は絞り込み質問の定番。",lesson:'⑭8/4'},
@@ -1171,11 +1183,11 @@ const QB = [
   {id:'v1503',pat:'__vocab__',month:'2608',type:'vocab',q:'"stayed up late" の意味は？',a:'夜更かしした',choices:['夜更かしした','寝坊した','早起きした','徹夜で働いた'],explain:"遅くまで起きていたということ。`I stayed up late last night.` 早起きは got up early。",lesson:'⑮8/6'},
   {id:'v1504',pat:'__vocab__',month:'2608',type:'vocab',q:'"sparkling water" の意味は？',a:'炭酸水',choices:['炭酸水','水道水','ミネラルウォーター','お湯'],explain:"泡の出る炭酸入りの水。`Do you drink sparkling water?` 炭酸なしの普通の水は still water。",lesson:'⑮8/6'},
   {id:'v1505',pat:'__vocab__',month:'2608',type:'vocab',q:'"desert island" の意味は？',a:'無人島',choices:['無人島','砂漠','リゾート地','火山島'],explain:"人の住んでいない島のこと。`If you were on a desert island, what would you bring?` は定番の会話ネタ。dessert（デザート）とはつづりが違う。",lesson:'⑮8/6'},
-  {id:'f1501',pat:'agree',month:'2608',type:'fill',q:'I can swim. — So ___ I.',blank:'can',choices:['can','do','am','did'],hint:'元の文と同じ助動詞を使う',lesson:'⑮8/6'},
-  {id:'f1502',pat:'agree',month:'2608',type:'fill',q:"I don't like raw onions. — ___ do I.",blank:'Neither',choices:['Neither','So','Either','Too'],hint:'否定への同意',lesson:'⑮8/6'},
-  {id:'f1503',pat:'agree',month:'2608',type:'fill',q:'I was tired. — So ___ I.',blank:'was',choices:['was','did','do','am'],hint:'be動詞の過去形に合わせる',lesson:'⑮8/6'},
-  {id:'f1504',pat:'agree',month:'2608',type:'fill',q:"I can't whistle. — I can't ___.",blank:'either',choices:['either','too','neither','so'],hint:'否定文の文末につける',lesson:'⑮8/6'},
-  {id:'f1505',pat:'agree',month:'2608',type:'fill',q:'I stayed up late. — So ___ I.',blank:'did',choices:['did','was','do','have'],hint:'一般動詞の過去形に合わせる',lesson:'⑮8/6'},
+  {id:'f1501',pat:'agree',month:'2608',type:'fill',q:'I can swim. — So ___ I.',blank:'can',choices:['can','do','am','did'],hint:'元の文と同じ助動詞を使う',ja:"私は泳げる。 ――私も。",lesson:'⑮8/6'},
+  {id:'f1502',pat:'agree',month:'2608',type:'fill',q:"I don't like raw onions. — ___ do I.",blank:'Neither',choices:['Neither','So','Either','Too'],hint:'否定への同意',ja:"生の玉ねぎは好きじゃない。 ――私も。",lesson:'⑮8/6'},
+  {id:'f1503',pat:'agree',month:'2608',type:'fill',q:'I was tired. — So ___ I.',blank:'was',choices:['was','did','do','am'],hint:'be動詞の過去形に合わせる',ja:"疲れてた。 ――私も。",lesson:'⑮8/6'},
+  {id:'f1504',pat:'agree',month:'2608',type:'fill',q:"I can't whistle. — I can't ___.",blank:'either',choices:['either','too','neither','so'],hint:'否定文の文末につける',ja:"口笛が吹けない。 ――私も吹けない。",lesson:'⑮8/6'},
+  {id:'f1505',pat:'agree',month:'2608',type:'fill',q:'I stayed up late. — So ___ I.',blank:'did',choices:['did','was','do','have'],hint:'一般動詞の過去形に合わせる',ja:"夜更かしした。 ――私も。",lesson:'⑮8/6'},
   {id:'g1501',pat:'agree',month:'2608',type:'grammar',q:'どちらが正しい？（私も泳げます）',optA:'So can I.',optB:'So I can.',a:'A',explain:"`So + 助動詞 + 主語` の語順で「私も」を表す。Bのように主語を先に置くと「その通り、私はできる」という別の意味の強調表現になってしまう。So do I / So can I / So was I のように必ず倒置する。",lesson:'⑮8/6'},
   {id:'g1502',pat:'agree',month:'2608',type:'grammar',q:'どちらが正しい？（私も好きじゃない）',optA:"Neither don't I.",optB:'Neither do I.',a:'B',explain:"neither 自体に否定の意味が含まれているので、don't を重ねると二重否定になり誤り。`Neither do I.` が正しい形で、これで「私も〜ない」を表す。",deep:"【So do I / Neither do I の作り方】相手の発言に「私も」と返す形で、肯定なら So、否定なら Neither で始める。ポイントは3つ。①必ず倒置する（So do I であって So I do ではない）。②元の文の助動詞に合わせる（I like→So do I / I can→So can I / I was→So was I / I did→So did I）。③neither 自体が否定なので don't を重ねない。文末に置く形もあり、肯定は `I do too.`、否定は `I don't either.` となる。カジュアルには Me too / Me neither で済ませられる。",lesson:'⑮8/6'},
   {id:'g1503',pat:'agree',month:'2608',type:'grammar',q:'どちらが正しい？（私もそうでした）',optA:'So did I.',optB:'So do I.',a:'A',explain:"同意するときは元の文の時制に合わせる。相手が `I stayed up late.` と過去形で言ったなら So did I. となる。現在の話なら So do I.。",lesson:'⑮8/6'},
@@ -1192,11 +1204,11 @@ const QB = [
   {id:'v1602',pat:'eitheror',month:'2608',type:'vocab',q:'"neither A nor B" の意味は？',a:'AもBもどちらも〜ない',choices:['AもBもどちらも〜ない','AかBのどちらか','AとB両方とも','AよりBの方が'],explain:"2つとも当てはまらないときに使う。`Neither Sushiro nor Sukiya is available.` neither は or ではなく nor とペアになる。",lesson:'⑯8月'},
   {id:'v1603',pat:'__vocab__',month:'2608',type:'vocab',q:'"available" の意味は？',a:'利用可能な・空いている',choices:['利用可能な・空いている','高価な','人気の','閉店した'],explain:"使える、手に入る、空いているという意味。`Neither option is available.` 店や部屋、人の予定にも使える便利な形容詞。",lesson:'⑯8月'},
   {id:'v1604',pat:'eitheror',month:'2608',type:'vocab',q:'"Either one is ok." の意味は？',a:'どっちでもいい',choices:['どっちでもいい','どっちもダメ','片方だけ良い','両方欲しい'],explain:"選択肢を出されたときの鉄板の返し。`Do you want the red one or the blue one? → Either one is ok.` ok の代わりに fine や good でもよい。",lesson:'⑯8月'},
-  {id:'f1601',pat:'eitheror',month:'2608',type:'fill',q:'We can ___ go to Hiroshima or Tokyo.',blank:'either',choices:['either','neither','both','nor'],hint:'or とペアになる語',lesson:'⑯8月'},
-  {id:'f1602',pat:'eitheror',month:'2608',type:'fill',q:'Neither Sushiro ___ Sukiya is available.',blank:'nor',choices:['nor','or','and','but'],hint:'neither とペアになる語',lesson:'⑯8月'},
-  {id:'f1603',pat:'eitheror',month:'2608',type:'fill',q:'___ one is ok.',blank:'Either',choices:['Either','Neither','Both','Any'],hint:'どっちでもいい',lesson:'⑯8月'},
-  {id:'f1604',pat:'eitheror',month:'2608',type:'fill',q:'Neither option ___ available.',blank:'is',choices:['is','are','be','were'],hint:'neither は単数扱い',lesson:'⑯8月'},
-  {id:'f1605',pat:'everexp',month:'2608',type:'fill',q:'Have you ___ to North Korea?',blank:'been',choices:['been','gone','go','went'],hint:'〜に行ったことがある',lesson:'⑯8月'},
+  {id:'f1601',pat:'eitheror',month:'2608',type:'fill',q:'We can ___ go to Hiroshima or Tokyo.',blank:'either',choices:['either','neither','both','nor'],hint:'or とペアになる語',ja:"広島か東京のどちらかに行けるよ。",lesson:'⑯8月'},
+  {id:'f1602',pat:'eitheror',month:'2608',type:'fill',q:'Neither Sushiro ___ Sukiya is available.',blank:'nor',choices:['nor','or','and','but'],hint:'neither とペアになる語',ja:"スシローもすき家も空いていない。",lesson:'⑯8月'},
+  {id:'f1603',pat:'eitheror',month:'2608',type:'fill',q:'___ one is ok.',blank:'Either',choices:['Either','Neither','Both','Any'],hint:'どっちでもいい',ja:"どちらでもいいよ。",lesson:'⑯8月'},
+  {id:'f1604',pat:'eitheror',month:'2608',type:'fill',q:'Neither option ___ available.',blank:'is',choices:['is','are','be','were'],hint:'neither は単数扱い',ja:"どちらの選択肢も使えない。",lesson:'⑯8月'},
+  {id:'f1605',pat:'everexp',month:'2608',type:'fill',q:'Have you ___ to North Korea?',blank:'been',choices:['been','gone','go','went'],hint:'〜に行ったことがある',ja:"北朝鮮に行ったことある？",lesson:'⑯8月'},
   {id:'g1601',pat:'eitheror',month:'2608',type:'grammar',q:'どちらが正しい？（すき家もスシローも空いてない）',optA:'Neither Sukiya or Sushiro is available.',optB:'Neither Sukiya nor Sushiro is available.',a:'B',explain:"neither とペアになるのは or ではなく nor。`either A or B` / `neither A nor B` と組み合わせが決まっているので、セットで覚える。",deep:"【either/neither のペアと単複】`either A or B`（AかBのどちらか）、`neither A nor B`（AもBも〜ない）と組み合わせが固定されている。動詞の数は原則として近い方の主語に合わせるため `Neither Sushiro nor Sukiya is available.` と単数の is になる。また neither はそれ自体が否定語なので not と重ねてはいけない（×not neither）。肯定文で「どちらも」と言いたいときは both A and B を使う。会話では `Either one is ok.`（どっちでもいい）が頻出フレーズ。",lesson:'⑯8月'},
   {id:'g1602',pat:'eitheror',month:'2608',type:'grammar',q:'どちらが正しい？（広島か東京どちらかに行ける）',optA:'We can either go to Hiroshima or Tokyo.',optB:'We can neither go to Hiroshima or Tokyo.',a:'A',explain:"「どちらかに行ける」という肯定の選択なので either を使う。Bの neither は「どちらにも行けない」という否定の意味になり、文意が逆になる。",deep:"【either の3つの使い方】①`either A or B`＝AかBのどちらか。②`Either one is ok.`＝どちらでもいい。③否定文の文末で `I don't either.`＝私も〜ない。同じ either でも役割が違うので、文中の位置で判断する。発音は「イーザー」「アイザー」どちらも正しく、アメリカでは前者、イギリスでは後者が優勢。neither も同様に「ニーザー」「ナイザー」の両方が使われる。",lesson:'⑯8月'},
   {id:'g1603',pat:'eitheror',month:'2608',type:'grammar',q:'どちらが正しい？（どちらの選択肢も空いていない）',optA:'Neither option are available.',optB:'Neither option is available.',a:'B',explain:"neither は「2つのうちどちらも」という意味だが、文法上は単数扱いなので動詞は is になる。option も単数形のままにする。",lesson:'⑯8月'},
@@ -1213,11 +1225,11 @@ const QB = [
   {id:'v1703',pat:'__vocab__',month:'2608',type:'vocab',q:'"I jammed my finger" の意味は？',a:'指を突き指した',choices:['指を突き指した','指を切った','指を火傷した','指輪をはめた'],explain:"指を強くぶつけたり挟んだりすること。`I jammed my finger in the door.`（ドアで指を挟んだ）のようにも使う日常的な動詞。",lesson:'⑰8月'},
   {id:'v1704',pat:'__vocab__',month:'2608',type:'vocab',q:'"florist" の意味は？',a:'花屋',choices:['花屋','店員','庭師','パン屋'],explain:"花を売る人、または花屋の店。`I wanted to be a florist when I was a kid.` 店員全般は clerk。",lesson:'⑰8月'},
   {id:'v1705',pat:'childq',month:'2608',type:'vocab',q:'"as a child" の意味は？',a:'子供の頃',choices:['子供の頃','子供として扱う','子供っぽく','子供と一緒に'],explain:"`when you were a kid` と同じ意味で、より短く言える。`What was your favorite snack as a child?` 過去の話をするときの定番表現。",lesson:'⑰8月'},
-  {id:'f1701',pat:'weekendq',month:'2608',type:'fill',q:'How ___ your weekend?',blank:'was',choices:['was','is','did','were'],hint:'週末どうだった？',lesson:'⑰8月'},
-  {id:'f1702',pat:'weekendq',month:'2608',type:'fill',q:'What are you going ___ do this weekend?',blank:'to',choices:['to','for','on','at'],hint:'be going to',lesson:'⑰8月'},
-  {id:'f1703',pat:'childq',month:'2608',type:'fill',q:'What did you want to ___ when you were a kid?',blank:'be',choices:['be','do','have','make'],hint:'なりたかった職業',lesson:'⑰8月'},
-  {id:'f1704',pat:'childq',month:'2608',type:'fill',q:'What did you use to like ___ with your parents?',blank:'doing',choices:['doing','do','did','to do'],hint:'like + 動名詞',lesson:'⑰8月'},
-  {id:'f1705',pat:'weekendq',month:'2608',type:'fill',q:'Which do you like ___, chilled or room temperature?',blank:'more',choices:['more','most','much','many'],hint:'2択で好みを聞く',lesson:'⑰8月'},
+  {id:'f1701',pat:'weekendq',month:'2608',type:'fill',q:'How ___ your weekend?',blank:'was',choices:['was','is','did','were'],hint:'週末どうだった？',ja:"週末はどうだった？",lesson:'⑰8月'},
+  {id:'f1702',pat:'weekendq',month:'2608',type:'fill',q:'What are you going ___ do this weekend?',blank:'to',choices:['to','for','on','at'],hint:'be going to',ja:"今週末は何をする予定？",lesson:'⑰8月'},
+  {id:'f1703',pat:'childq',month:'2608',type:'fill',q:'What did you want to ___ when you were a kid?',blank:'be',choices:['be','do','have','make'],hint:'なりたかった職業',ja:"子供の頃、何になりたかった？",lesson:'⑰8月'},
+  {id:'f1704',pat:'childq',month:'2608',type:'fill',q:'What did you use to like ___ with your parents?',blank:'doing',choices:['doing','do','did','to do'],hint:'like + 動名詞',ja:"昔、親とどんなことをするのが好きだった？",lesson:'⑰8月'},
+  {id:'f1705',pat:'weekendq',month:'2608',type:'fill',q:'Which do you like ___, chilled or room temperature?',blank:'more',choices:['more','most','much','many'],hint:'2択で好みを聞く',ja:"冷やしたのと常温、どっちが好き？",lesson:'⑰8月'},
   {id:'g1701',pat:'weekendq',month:'2608',type:'grammar',q:'どちらが正しい？（週末どうだった？）',optA:'How was your weekend?',optB:'How did your weekend?',a:'A',explain:"weekend が主語で「どうだったか」を尋ねるので be動詞の過去形 was を使う。Bのように did を使うなら `How did you spend your weekend?` のように動詞が必要になる。",lesson:'⑰8月'},
   {id:'g1702',pat:'weekendq',month:'2608',type:'grammar',q:'どちらが正しい？（今週末何する予定？）',optA:'What are you going to do this weekend?',optB:'What do you going to do this weekend?',a:'A',explain:"`be going to` は be動詞とセットなので are が必要。Bのように do を使うと be動詞が抜けて文が成立しない。すでに決まっている予定を言うときの定番構文。",lesson:'⑰8月'},
   {id:'g1703',pat:'childq',month:'2608',type:'grammar',q:'どちらが正しい？（昔よく何をするのが好きだった？）',optA:'What did you used to like doing?',optB:'What did you use to like doing?',a:'B',explain:"did がすでに過去を表しているので、後ろの動詞は原形 use に戻る。肯定文なら `I used to like ~` と d が付くが、疑問文・否定文では use to になる。",deep:"【used to と use to の切り替え】肯定文では `I used to play tennis.` と d が付くが、疑問文や否定文で did が入ると `Did you use to play tennis?` `I didn't use to like it.` のように use に戻る。これは did がすでに過去を示しているため、後ろの動詞が原形になるという一般ルールと同じ理屈で、`Did you went?`（×）が `Did you go?`（○）になるのと同じ現象。発音上は used to も use to もほぼ同じに聞こえるため、書くときにだけ意識すればよい。",lesson:'⑰8月'},
@@ -1235,11 +1247,11 @@ const QB = [
   {id:'v1803',pat:'__vocab__',month:'2608',type:'vocab',q:'"sewing machine" の意味は？',a:'ミシン',choices:['ミシン','洗濯機','編み機','印刷機'],explain:"布を縫う機械のこと。`She makes things with her sewing machine.` 日本語の「ミシン」は machine が訛った言葉。",lesson:'⑱8月'},
   {id:'v1804',pat:'__vocab__',month:'2608',type:'vocab',q:'"root beer" とは？',a:'アメリカの薬草系の炭酸飲料',choices:['アメリカの薬草系の炭酸飲料','根菜のスープ','ビールの一種','麦茶'],explain:"サルサパリラなどのハーブが原料の炭酸飲料で、アルコールは入っていない。`It smells like medicinal plants.` と評されるほど独特な香りがする。",lesson:'⑱8月'},
   {id:'v1805',pat:'__vocab__',month:'2608',type:'vocab',q:'"medicinal plants" の意味は？',a:'薬草',choices:['薬草','観葉植物','食用植物','毒草'],explain:"薬の効果がある植物のこと。`It smells like medicinal plants.` medicine（薬）から派生した形容詞。",lesson:'⑱8月'},
-  {id:'f1801',pat:'beinto',month:'2608',type:'fill',q:"I'm really ___ reading mystery novels.",blank:'into',choices:['into','in','on','at'],hint:'ハマっている',lesson:'⑱8月'},
-  {id:'f1802',pat:'beinto',month:'2608',type:'fill',q:"I can't get enough ___ mazesoba.",blank:'of',choices:['of','for','to','with'],hint:'飽きない',lesson:'⑱8月'},
-  {id:'f1803',pat:'beinto',month:'2608',type:'fill',q:"I'm into ___ things with my sewing machine.",blank:'making',choices:['making','make','made','to make'],hint:'into + 動名詞',lesson:'⑱8月'},
-  {id:'f1804',pat:'beinto',month:'2608',type:'fill',q:"I'm afraid of ___.",blank:'losing',choices:['losing','lose','lost','to lose'],hint:'afraid of + 動名詞',lesson:'⑱8月'},
-  {id:'f1805',pat:'beinto',month:'2608',type:'fill',q:"What are you into ___ days?",blank:'these',choices:['these','this','those','that'],hint:'最近',lesson:'⑱8月'},
+  {id:'f1801',pat:'beinto',month:'2608',type:'fill',q:"I'm really ___ reading mystery novels.",blank:'into',choices:['into','in','on','at'],hint:'ハマっている',ja:"ミステリー小説を読むのにハマっている。",lesson:'⑱8月'},
+  {id:'f1802',pat:'beinto',month:'2608',type:'fill',q:"I can't get enough ___ mazesoba.",blank:'of',choices:['of','for','to','with'],hint:'飽きない',ja:"まぜそばはいくら食べても飽きない。",lesson:'⑱8月'},
+  {id:'f1803',pat:'beinto',month:'2608',type:'fill',q:"I'm into ___ things with my sewing machine.",blank:'making',choices:['making','make','made','to make'],hint:'into + 動名詞',ja:"ミシンで物を作るのにハマっている。",lesson:'⑱8月'},
+  {id:'f1804',pat:'beinto',month:'2608',type:'fill',q:"I'm afraid of ___.",blank:'losing',choices:['losing','lose','lost','to lose'],hint:'afraid of + 動名詞',ja:"負けるのが怖い。",lesson:'⑱8月'},
+  {id:'f1805',pat:'beinto',month:'2608',type:'fill',q:"What are you into ___ days?",blank:'these',choices:['these','this','those','that'],hint:'最近',ja:"最近は何にハマってる？",lesson:'⑱8月'},
   {id:'g1801',pat:'beinto',month:'2608',type:'grammar',q:'どちらが正しい？（シール集めにハマってる）',optA:"I'm really into collect stickers.",optB:"I'm really into collecting stickers.",a:'B',explain:"into は前置詞なので、後ろに動詞が来るときは動名詞(-ing)にする。Aのように原形は置けない。`into + 名詞` か `into + 動名詞` のどちらかになる。",deep:"【前置詞の後ろは必ず動名詞】into / of / at / about などの前置詞の後に動詞を続けるときは、必ず -ing 形にする。`I'm into collecting stickers.` `I'm afraid of losing.` `I'm good at cooking.` すべて同じルール。注意が必要なのは `look forward to` `be used to` で、この to は不定詞の to ではなく前置詞なので `I look forward to seeing you.` と -ing になる。to を見ると原形を続けたくなるが、to の前に動詞以外の語（forward、used）が付いている場合は前置詞と判断する。",lesson:'⑱8月'},
   {id:'g1802',pat:'beinto',month:'2608',type:'grammar',q:'どちらが正しい？（ポーカーが飽きない）',optA:"I can't get enough of playing poker.",optB:"I can't get enough playing poker.",a:'A',explain:"`get enough of ~` と of が必要で、その後ろは名詞か動名詞。Bのように of を落とすと文が成立しない。`I can't get enough of this song.` の形で覚える。",lesson:'⑱8月'},
   {id:'g1803',pat:'beinto',month:'2608',type:'grammar',q:'どちらが正しい？（負けるのが怖い）',optA:"I'm afraid of lose.",optB:"I'm afraid of losing.",a:'B',explain:"afraid of の of も前置詞なので、後ろの動詞は動名詞にする。into や get enough of と同じ形で、前置詞の後ろは必ず -ing になると覚えておくと応用が利く。",lesson:'⑱8月'},
@@ -1256,11 +1268,11 @@ const QB = [
   {id:'v1903',pat:'rather',month:'2609',type:'vocab',q:"\"I'd rather\" の I'd は何の短縮形？",a:'I would',choices:['I would','I had','I did','I should'],explain:"I'd rather = I would rather。I'd は I had の短縮形にもなるが、rather と組むときは必ず would。後ろは動詞の原形になる。",lesson:'⑲9/3'},
   {id:'v1904',pat:'__vocab__',month:'2609',type:'vocab',q:'"apply to a school" の意味は？',a:'学校に出願する',choices:['学校に出願する','学校に通う','学校を卒業する','学校に寄付する'],explain:"apply to ~ で「〜（組織）に応募・出願する」。`I applied to three schools.` 仕事に応募するなら apply for a job と for を使う。",lesson:'⑲9/3'},
   {id:'v1905',pat:'__vocab__',month:'2609',type:'vocab',q:'"competition" の意味は？',a:'大会・競技会',choices:['大会・競技会','練習試合','会社','応援団'],explain:"順位や勝敗を競う大会のこと。`I'm playing in a golf competition.` 動詞 compete（競う）の名詞形。",lesson:'⑲9/3'},
-  {id:'f1901',pat:'prefer',month:'2609',type:'fill',q:'I prefer tea ___ cola.',blank:'to',choices:['to','than','from','for'],hint:'コーラより紅茶',lesson:'⑲9/3'},
-  {id:'f1902',pat:'prefer',month:'2609',type:'fill',q:'I prefer sushi ___ yakiniku.',blank:'over',choices:['over','than','from','above'],hint:'to と同じ意味で使える語',lesson:'⑲9/3'},
-  {id:'f1903',pat:'rather',month:'2609',type:'fill',q:"I'd rather ___ golf.",blank:'play',choices:['play','playing','to play','played'],hint:'rather + 動詞の原形',lesson:'⑲9/3'},
-  {id:'f1904',pat:'rather',month:'2609',type:'fill',q:"I'd rather have a dog ___ a cat.",blank:'than',choices:['than','to','over','from'],hint:'would rather A than B',lesson:'⑲9/3'},
-  {id:'f1905',pat:'morethan',month:'2609',type:'fill',q:'Golf is more difficult ___ baseball.',blank:'than',choices:['than','to','over','from'],hint:'比較級',lesson:'⑲9/3'},
+  {id:'f1901',pat:'prefer',month:'2609',type:'fill',q:'I prefer tea ___ cola.',blank:'to',choices:['to','than','from','for'],hint:'コーラより紅茶',ja:"コーラより紅茶が好き。",lesson:'⑲9/3'},
+  {id:'f1902',pat:'prefer',month:'2609',type:'fill',q:'I prefer sushi ___ yakiniku.',blank:'over',choices:['over','than','from','above'],hint:'to と同じ意味で使える語',ja:"焼肉より寿司が好き。",lesson:'⑲9/3'},
+  {id:'f1903',pat:'rather',month:'2609',type:'fill',q:"I'd rather ___ golf.",blank:'play',choices:['play','playing','to play','played'],hint:'rather + 動詞の原形',ja:"むしろゴルフをしたい。",lesson:'⑲9/3'},
+  {id:'f1904',pat:'rather',month:'2609',type:'fill',q:"I'd rather have a dog ___ a cat.",blank:'than',choices:['than','to','over','from'],hint:'would rather A than B',ja:"猫より犬を飼いたい。",lesson:'⑲9/3'},
+  {id:'f1905',pat:'morethan',month:'2609',type:'fill',q:'Golf is more difficult ___ baseball.',blank:'than',choices:['than','to','over','from'],hint:'比較級',ja:"ゴルフは野球より難しい。",lesson:'⑲9/3'},
   {id:'g1901',pat:'prefer',month:'2609',type:'grammar',q:'どちらが正しい？（野球よりゴルフが好き）',optA:'I prefer golf than baseball.',optB:'I prefer golf to baseball.',a:'B',explain:"prefer は比較級ではないので than は使えない。「〜より」は to か over で表す。than を使うのは more ~ than のような比較級や would rather A than B のとき。",deep:"【prefer A to B と would rather A than B】どちらも「BよりAがいい」だが、後ろの形と相棒の語が違う。prefer は名詞か動名詞を取り、相棒は to（または over）。`I prefer golf to baseball.` `I prefer playing golf to watching TV.` would rather は動詞の原形を取り、相棒は than。`I'd rather play golf than watch TV.` 覚え方は、rather は比較の意味を含むので比較級と同じ than、prefer は「〜に対して好む」なので to。prefer ~ than、would rather ~ to はどちらも誤り。",lesson:'⑲9/3'},
   {id:'g1902',pat:'rather',month:'2609',type:'grammar',q:'どちらが正しい？（むしろゴルフがしたい）',optA:"I'd rather to play golf.",optB:"I'd rather play golf.",a:'B',explain:"would rather の後ろは to を付けない動詞の原形。would や can などの助動詞と同じ扱いと覚える。Aの to play は誤り。",lesson:'⑲9/3'},
   {id:'g1903',pat:'rather',month:'2609',type:'grammar',q:"どちらが正しい？（\"Let's go to karaoke!\" への返事）",optA:"I'd rather play golf.",optB:'I rather play golf.',a:'A',explain:"rather 単独では「むしろしたい」の意味にならず、would（'d）が必要。Bは would が抜けていて文として不自然。会話では I'd がほとんど聞こえないので、書くときに落としやすい。",lesson:'⑲9/3'},
@@ -1277,11 +1289,11 @@ const QB = [
   {id:'v2003',pat:'__vocab__',month:'2609',type:'vocab',q:'"challenging" の意味は？',a:'大変だがやりがいのある',choices:['大変だがやりがいのある','挑発的で失礼な','簡単で楽な','退屈な'],explain:"難しいけれど挑戦しがいがある、という前向きな含みもある語。`My first job was challenging.` difficult より「成長につながる大変さ」を言いやすい。",lesson:'⑳9/8'},
   {id:'v2004',pat:'__vocab__',month:'2609',type:'vocab',q:'"memorable" の意味は？',a:'思い出に残る',choices:['思い出に残る','平凡な','記憶力がいい','懐かしがる'],explain:"memory（記憶）の形容詞で、ずっと覚えているほど印象的なこと。`It was stressful but memorable.`（大変だったけど思い出に残ってる）",lesson:'⑳9/8'},
   {id:'v2005',pat:'__vocab__',month:'2609',type:'vocab',q:'ネガティブな評価の形容詞はどれ？',a:'stressful',choices:['stressful','lively','awesome','memorable'],explain:"stressful は「ストレスがたまる」。ほかに terrible、boring、a nightmare もネガティブ。lively、awesome、memorable はポジティブ。",lesson:'⑳9/8'},
-  {id:'f2001',pat:'whatlike',month:'2609',type:'fill',q:'What was your first trip ___?',blank:'like',choices:['like','as','so','about'],hint:'どんな感じだった？',lesson:'⑳9/8'},
-  {id:'f2002',pat:'article',month:'2609',type:'fill',q:'It was ___ nightmare.',blank:'a',choices:['a','an','the','some'],hint:'nightmare は名詞',lesson:'⑳9/8'},
-  {id:'f2003',pat:'prep',month:'2609',type:'fill',q:'Did you work ___ Christmas?',blank:'on',choices:['on','in','at','for'],hint:'特別な日の当日',lesson:'⑳9/8'},
-  {id:'f2004',pat:'prep',month:'2609',type:'fill',q:'I started this job ___ April.',blank:'in',choices:['in','on','at','for'],hint:'月・年',lesson:'⑳9/8'},
-  {id:'f2005',pat:'whatlike',month:'2609',type:'fill',q:'What time did you start and ___?',blank:'finish',choices:['finish','end','close','stop'],hint:'何時から何時まで？',lesson:'⑳9/8'},
+  {id:'f2001',pat:'whatlike',month:'2609',type:'fill',q:'What was your first trip ___?',blank:'like',choices:['like','as','so','about'],hint:'どんな感じだった？',ja:"初めての旅行はどんな感じだった？",lesson:'⑳9/8'},
+  {id:'f2002',pat:'article',month:'2609',type:'fill',q:'It was ___ nightmare.',blank:'a',choices:['a','an','the','some'],hint:'nightmare は名詞',ja:"悪夢のようだった。",lesson:'⑳9/8'},
+  {id:'f2003',pat:'prep',month:'2609',type:'fill',q:'Did you work ___ Christmas?',blank:'on',choices:['on','in','at','for'],hint:'特別な日の当日',ja:"クリスマスに働いた？",lesson:'⑳9/8'},
+  {id:'f2004',pat:'prep',month:'2609',type:'fill',q:'I started this job ___ April.',blank:'in',choices:['in','on','at','for'],hint:'月・年',ja:"4月にこの仕事を始めた。",lesson:'⑳9/8'},
+  {id:'f2005',pat:'whatlike',month:'2609',type:'fill',q:'What time did you start and ___?',blank:'finish',choices:['finish','end','close','stop'],hint:'何時から何時まで？',ja:"何時から何時までやってた？",lesson:'⑳9/8'},
   {id:'g2001',pat:'whatlike',month:'2609',type:'grammar',q:'どちらが正しい？（地元はどんな感じ？）',optA:'How is your hometown like?',optB:'What is your hometown like?',a:'B',explain:"like は前置詞なので、後ろに来るはずの名詞を What で聞く。How を使うなら like を外して `How is your hometown?` にする。How と like の同時使用は典型的な誤り。",deep:"【What ~ like? と How ~?】What is ~ like? は相手に特徴・様子を描写してもらう質問で、`It's quiet, with lots of old temples.` のように説明が返ってくる。How is ~? は調子や状態を聞く質問で、`How was your trip?` には `It was great!` と一言の評価が返りやすい。人について聞く場合は差が大きく、`What is your boss like?` は性格や人柄、`How is your boss?` は体調や近況を聞くことになる。",lesson:'⑳9/8'},
   {id:'g2002',pat:'article',month:'2609',type:'grammar',q:'どちらが正しい？（悪夢だった）',optA:'It was nightmare.',optB:'It was a nightmare.',a:'B',explain:"nightmare は数えられる名詞なので a が必要。awesome や stressful は形容詞なので冠詞は付けない。`It was awesome.` `It was a nightmare.` の違いに注意。",lesson:'⑳9/8'},
   {id:'g2003',pat:'prep',month:'2609',type:'grammar',q:'どちらが正しい？（4月にこの仕事を始めた）',optA:'I started this job on April.',optB:'I started this job in April.',a:'B',explain:"月・年・季節は in、曜日・日付・特別な日は on。`in April` `in 2024` `on Monday` `on Christmas`。Aは月に on を使っていて誤り。",lesson:'⑳9/8'},
@@ -1295,10 +1307,10 @@ const QB = [
   // ===== 2609（9月）㉑自習 冠詞×前置詞（weekend / Christmas） =====
   {id:'v2101',pat:'weekend',month:'2609',type:'vocab',q:'"on weekends" の意味は？',a:'週末は（毎回・習慣的に）',choices:['週末は（毎回・習慣的に）','この前の週末に','どこかの週末に','週末の間ずっと'],explain:"複数形・無冠詞で「週末が来るたびに」という習慣を表す。`I sometimes go there on weekends.` 直近の1回なら on the weekend。",lesson:'㉑9月自習'},
   {id:'v2102',pat:'prep',month:'2609',type:'vocab',q:'"at Christmas" の意味は？',a:'クリスマスの時期に',choices:['クリスマスの時期に','クリスマス当日だけに','クリスマス会場で','クリスマスの前日に'],explain:"at Christmas はクリスマス前後のシーズン全体。当日の12/25にピンポイントで触れるなら `on Christmas (Day)`。at は主にイギリス英語でよく使う。",lesson:'㉑9月自習'},
-  {id:'f2101',pat:'weekend',month:'2609',type:'fill',q:'What did you do on ___ weekend?',blank:'the',choices:['the','a','an','some'],hint:'この前の週末',lesson:'㉑9月自習'},
-  {id:'f2102',pat:'weekend',month:'2609',type:'fill',q:'I sometimes go there on ___.',blank:'weekends',choices:['weekends','weekend','the weekend','a weekend'],hint:'sometimes = 習慣',lesson:'㉑9月自習'},
-  {id:'f2103',pat:'weekend',month:'2609',type:'fill',q:'I want to visit Kyoto on ___ weekend.',blank:'a',choices:['a','the','an','some'],hint:'いつでもいい、どこかの週末',lesson:'㉑9月自習'},
-  {id:'f2104',pat:'weekend',month:'2609',type:'fill',q:'I had ___ relaxing weekend.',blank:'a',choices:['a','the','an','some'],hint:'形容詞付き＝どんな週末だったか',lesson:'㉑9月自習'},
+  {id:'f2101',pat:'weekend',month:'2609',type:'fill',q:'What did you do on ___ weekend?',blank:'the',choices:['the','a','an','some'],hint:'この前の週末',ja:"この前の週末は何をした？",lesson:'㉑9月自習'},
+  {id:'f2102',pat:'weekend',month:'2609',type:'fill',q:'I sometimes go there on ___.',blank:'weekends',choices:['weekends','weekend','the weekend','a weekend'],hint:'sometimes = 習慣',ja:"週末はときどきそこに行きます。",lesson:'㉑9月自習'},
+  {id:'f2103',pat:'weekend',month:'2609',type:'fill',q:'I want to visit Kyoto on ___ weekend.',blank:'a',choices:['a','the','an','some'],hint:'いつでもいい、どこかの週末',ja:"どこかの週末に京都に行きたい。",lesson:'㉑9月自習'},
+  {id:'f2104',pat:'weekend',month:'2609',type:'fill',q:'I had ___ relaxing weekend.',blank:'a',choices:['a','the','an','some'],hint:'形容詞付き＝どんな週末だったか',ja:"のんびりした週末だった。",lesson:'㉑9月自習'},
   {id:'g2101',pat:'weekend',month:'2609',type:'grammar',q:'どちらが正しい？（この前の週末、何した？）',optA:'What did you do on weekend?',optB:'What did you do on the weekend?',a:'B',explain:"weekend は数えられる名詞なので、単数で無冠詞にはできない。話し手と聞き手が共有している「直近のあの週末」なので the を付ける。Aはネイティブには情報が欠けて聞こえる。",deep:"【weekend の3つの形】on the weekend は直近・特定の1回で `What did you do on the weekend?`。on a weekend は不特定のどれか1つで `I want to visit Kyoto on a weekend.`。on weekends は習慣で `I sometimes go there on weekends.`。見分けるコツは、sometimes / usually / often など頻度の副詞があれば複数形の weekends。形容詞が付いて「どんな週末か」を語るときは a（`I had a relaxing weekend.`）。なお、イギリス英語では on the weekend の代わりに at the weekend と言う。",lesson:'㉑9月自習'},
   {id:'g2102',pat:'weekend',month:'2609',type:'grammar',q:'どちらが正しい？（週末は時々そこに行く）',optA:'I sometimes go there on weekend.',optB:'I sometimes go there on weekends.',a:'B',explain:"sometimes があるので「週末のたびに」という習慣。習慣や一般論は複数形・無冠詞にする。Aの単数・無冠詞 weekend は形として成立しない。",lesson:'㉑9月自習'},
   {id:'g2103',pat:'article',month:'2609',type:'grammar',q:'どちらが正しい？（犬というものは忠実だ）',optA:'Dog is loyal.',optB:'Dogs are loyal.',a:'B',explain:"種類全体の一般論は複数形・無冠詞で言うのが最も自然。`The dog is loyal.` だと「その犬は忠実」と特定の1匹になる。Aの無冠詞単数は誤り。",lesson:'㉑9月自習'},
@@ -1313,12 +1325,12 @@ const QB = [
   {id:'v2204',pat:'__vocab__',month:'2609',type:'vocab',q:'"lately" の意味は？',a:'最近',choices:['最近','遅れて','後で','ついに'],explain:"最近ずっと続いていることに使い、現在完了形と相性がいい。`Lately it has been raining a lot.` 「遅れて」は late。",lesson:'㉒9/10'},
   {id:'v2205',pat:'wordpair',month:'2609',type:'vocab',q:'"drawer" の意味は？',a:'引き出し',choices:['引き出し','描く人','クローゼット','棚'],explain:"引いて出す収納。draw（引く）＋ -er。draw 単体は「描く・引く」という動詞なので書き分けに注意。ハンガーで服を掛ける収納は closet。",lesson:'㉒9/10'},
   {id:'v2206',pat:'__vocab__',month:'2609',type:'vocab',q:'"the same as usual" の意味は？',a:'いつも通り',choices:['いつも通り','いつもと違う','前と同じ場所','普段は'],explain:"「元気？」への返事などで使う。`How are you? — The same as usual.` 普段どおりで変わりない、という意味。",lesson:'㉒9/10'},
-  {id:'f2201',pat:'wordpair',month:'2609',type:'fill',q:'Hold ___ the rail.',blank:'onto',choices:['onto','down','up','off'],hint:'手すりにしがみついて',lesson:'㉒9/10'},
-  {id:'f2202',pat:'wordpair',month:'2609',type:'fill',q:"Hold ___ the tent so it doesn't fly away.",blank:'down',choices:['down','onto','up','off'],hint:'飛ばないように押さえる',lesson:'㉒9/10'},
-  {id:'f2203',pat:'prep',month:'2609',type:'fill',q:'They evacuated ___ a school.',blank:'to',choices:['to','for','at','in'],hint:'避難先',lesson:'㉒9/10'},
-  {id:'f2204',pat:'prep',month:'2609',type:'fill',q:'I bought this cake ___ Yuta.',blank:'for',choices:['for','to','at','with'],hint:'〜のために',lesson:'㉒9/10'},
-  {id:'f2205',pat:'prep',month:'2609',type:'fill',q:"I'm gonna go ___ a trial lesson.",blank:'for',choices:['for','to','at','on'],hint:'体験レッスンを受けに行く',lesson:'㉒9/10'},
-  {id:'f2206',pat:'progress',month:'2609',type:'fill',q:'Lately it has been ___ a lot in Japan.',blank:'raining',choices:['raining','rain','rained','rains'],hint:'has been + -ing',lesson:'㉒9/10'},
+  {id:'f2201',pat:'wordpair',month:'2609',type:'fill',q:'Hold ___ the rail.',blank:'onto',choices:['onto','down','up','off'],hint:'手すりにしがみついて',ja:"手すりにつかまって。",lesson:'㉒9/10'},
+  {id:'f2202',pat:'wordpair',month:'2609',type:'fill',q:"Hold ___ the tent so it doesn't fly away.",blank:'down',choices:['down','onto','up','off'],hint:'飛ばないように押さえる',ja:"飛ばされないように、テントを押さえて。",lesson:'㉒9/10'},
+  {id:'f2203',pat:'prep',month:'2609',type:'fill',q:'They evacuated ___ a school.',blank:'to',choices:['to','for','at','in'],hint:'避難先',ja:"彼らは学校に避難した。",lesson:'㉒9/10'},
+  {id:'f2204',pat:'prep',month:'2609',type:'fill',q:'I bought this cake ___ Yuta.',blank:'for',choices:['for','to','at','with'],hint:'〜のために',ja:"このケーキはユウタのために買った。",lesson:'㉒9/10'},
+  {id:'f2205',pat:'prep',month:'2609',type:'fill',q:"I'm gonna go ___ a trial lesson.",blank:'for',choices:['for','to','at','on'],hint:'体験レッスンを受けに行く',ja:"体験レッスンを受けに行く。",lesson:'㉒9/10'},
+  {id:'f2206',pat:'progress',month:'2609',type:'fill',q:'Lately it has been ___ a lot in Japan.',blank:'raining',choices:['raining','rain','rained','rains'],hint:'has been + -ing',ja:"最近、日本ではよく雨が降っている。",lesson:'㉒9/10'},
   {id:'g2201',pat:'thereis',month:'2609',type:'grammar',q:'どちらが正しい？（土砂崩れがたくさん起きている）',optA:'There has been many landslides.',optB:'There have been many landslides.',a:'B',explain:"There is / There are の動詞は後ろの名詞に合わせる。landslides は複数なので have been。会話では has been も耳にするが、書くときや試験では誤りになる。",lesson:'㉒9/10'},
   {id:'g2202',pat:'prep',month:'2609',type:'grammar',q:'どちらが正しい？（学校に行った）',optA:'I went for school.',optB:'I went to school.',a:'B',explain:"目的地には to を使う。for は「〜を求めて・〜のために」で、`go for a walk`（散歩に行く）`go for a trial lesson`（体験レッスンを受けに行く）のように、場所ではなく目的の行為が来る。",lesson:'㉒9/10'},
   {id:'g2203',pat:'wordpair',month:'2609',type:'grammar',q:'どちらが正しい？（揺れている間、手すりにしがみついた）',optA:'I held down the rail while it was shaking.',optB:'I held onto the rail while it was shaking.',a:'B',explain:"hold onto は自分が離れないようにつかまる。hold down は物が動かないように上から押さえつける。手すりにしがみつくのは自分の身を守る動作なので onto。hold の過去形は held。",deep:"【hold onto / hold down / hold on】hold onto ~ は自分が振り落とされないようにつかまる（`Hold onto the rail.`）。hold down ~ は対象が動いたり飛んだりしないよう押さえる（`Hold down the tent.`）。目的語なしの hold on は「ちょっと待って」（`Hold on a second.`）や「持ちこたえる」の意味になる。onto は on to と2語で書かれることも多い。",lesson:'㉒9/10'},
@@ -1336,11 +1348,11 @@ const QB = [
   {id:'v2303',pat:'__vocab__',month:'2609',type:'vocab',q:'"qualifiers"（スポーツ）の意味は？',a:'予選',choices:['予選','決勝','審判団','資格証明書'],explain:"本大会への出場権を争う試合・大会のこと。複数形の the qualifiers で使うことが多い。動詞は qualify for ~（〜の出場権を得る）。`He qualified for the finals.`",lesson:'㉓9/15'},
   {id:'v2304',pat:'inawhile',month:'2609',type:'vocab',q:'"for the first time in a while" の意味は？',a:'久しぶりに',choices:['久しぶりに','生まれて初めて','しばらくの間','一時的に'],explain:"in a while は「しばらくの間」で、全体で「しばらくぶりに」。`It's being held for the first time in a while.` in years にすると「何年かぶりに」、in a while を外すと「初めて」になる。",lesson:'㉓9/15'},
   {id:'v2305',pat:'__vocab__',month:'2609',type:'vocab',q:'"The guest was Polish." の Polish の意味は？',a:'ポーランド人の',choices:['ポーランド人の','礼儀正しい','洗練された','外国人の'],explain:"国籍を表す形容詞は大文字で始める。小文字の polish は「磨く」という別の単語。Japanese、English も同じく大文字始まり。",lesson:'㉓9/15'},
-  {id:'f2301',pat:'prep',month:'2609',type:'fill',q:'She came ___ a guest.',blank:'as',choices:['as','for','like','to'],hint:'ゲストとして',lesson:'㉓9/15'},
-  {id:'f2302',pat:'prep',month:'2609',type:'fill',q:'She spoke ___ the guest.',blank:'with',choices:['with','for','at','about'],hint:'ゲストと話した',lesson:'㉓9/15'},
-  {id:'f2303',pat:'helpdo',month:'2609',type:'fill',q:'He helps ___ the AI algorithm.',blank:'make',choices:['make','making','made','makes'],hint:'help + 動詞の原形',lesson:'㉓9/15'},
-  {id:'f2304',pat:'beingdone',month:'2609',type:'fill',q:"It's being ___ for the first time in a while.",blank:'held',choices:['held','holding','hold','holded'],hint:'開催されている最中',lesson:'㉓9/15'},
-  {id:'f2305',pat:'__vocab__',month:'2609',type:'fill',q:'My father-___-law was a movie director.',blank:'in',choices:['in','of','by','at'],hint:'義理の父',lesson:'㉓9/15'},
+  {id:'f2301',pat:'prep',month:'2609',type:'fill',q:'She came ___ a guest.',blank:'as',choices:['as','for','like','to'],hint:'ゲストとして',ja:"彼女はゲストとして来た。",lesson:'㉓9/15'},
+  {id:'f2302',pat:'prep',month:'2609',type:'fill',q:'She spoke ___ the guest.',blank:'with',choices:['with','for','at','about'],hint:'ゲストと話した',ja:"彼女はゲストと話した。",lesson:'㉓9/15'},
+  {id:'f2303',pat:'helpdo',month:'2609',type:'fill',q:'He helps ___ the AI algorithm.',blank:'make',choices:['make','making','made','makes'],hint:'help + 動詞の原形',ja:"彼はAIのアルゴリズム作りを手伝っている。",lesson:'㉓9/15'},
+  {id:'f2304',pat:'beingdone',month:'2609',type:'fill',q:"It's being ___ for the first time in a while.",blank:'held',choices:['held','holding','hold','holded'],hint:'開催されている最中',ja:"久しぶりに開催されている。",lesson:'㉓9/15'},
+  {id:'f2305',pat:'__vocab__',month:'2609',type:'fill',q:'My father-___-law was a movie director.',blank:'in',choices:['in','of','by','at'],hint:'義理の父',ja:"義理の父は映画監督だった。",lesson:'㉓9/15'},
   {id:'g2301',pat:'helpdo',month:'2609',type:'grammar',q:'どちらが正しい？（彼はAIアルゴリズム作りを手伝っている）',optA:'He helps making the AI algorithm.',optB:'He helps make the AI algorithm.',a:'B',explain:"help の後ろは動詞の原形か to + 原形。`He helps make ~` と `He helps to make ~` はどちらも正しく、会話では to を省くことが多い。Aの -ing 形は使わない。",lesson:'㉓9/15'},
   {id:'g2302',pat:'beingdone',month:'2609',type:'grammar',q:'どちらが正しい？（その大会は久しぶりに開催されている）',optA:"It's holding for the first time in a while.",optB:"It's being held for the first time in a while.",a:'B',explain:"大会は自分で開催するのではなく「開催される」側なので受け身にする。今まさに進行中なので is being held。Aの is holding だと、大会が何かを開催している意味になる。",deep:"【受け身の時制バリエーション】be + 過去分詞の be の部分を変えると時制が変わる。`It is held every year.`（毎年開催される＝一般的な事実）、`It is being held now.`（今まさに開催中＝進行形）、`It was held last year.`（去年開催された＝過去）、`It will be held next year.`（来年開催される＝未来）。進行形の受け身は being を挟むのがポイントで、`The road is being repaired.`（道路は補修工事中）のように、工事や会議など「今まさに誰かによって行われていること」を言うときに使う。",lesson:'㉓9/15'},
   {id:'g2303',pat:'wordpair',month:'2609',type:'grammar',q:'どちらが正しい？（そのゲストはポーランド人だった）',optA:'The guest was polish.',optB:'The guest was Polish.',a:'B',explain:"国籍の形容詞は大文字で始める。小文字の polish は「磨く・つや出し」という別の単語で、`polish my shoes`（靴を磨く）のように使う。書くときだけの違いだが、意味が完全に変わる。",lesson:'㉓9/15'},
@@ -1356,11 +1368,11 @@ const QB = [
   {id:'v2403',pat:'__vocab__',month:'2609',type:'vocab',q:"\"I'm sorry to hear that.\" の意味は？",a:'それは大変ですね（お気の毒に）',choices:['それは大変ですね（お気の毒に）','ごめんなさい、聞こえませんでした','それは良かったですね','もう一度言ってください'],explain:"悪いニュースを聞いたときの同情・共感のフレーズ。文字通りの「ごめんなさい」ではない。",lesson:'㉔9/18'},
   {id:'v2404',pat:'__vocab__',month:'2609',type:'vocab',q:'"get along with ~" の意味は？',a:'〜と仲良くやる',choices:['〜と仲良くやる','〜から離れる','〜に追いつく','〜を追い越す'],explain:"`I get along with my coworkers.`（同僚とうまくやっている）イギリス英語では get on with も同じ意味でよく使う。",lesson:'㉔9/18'},
   {id:'v2405',pat:'__vocab__',month:'2609',type:'vocab',q:'"again and again" の意味は？',a:'何度も何度も',choices:['何度も何度も','たまに','二度と〜ない','一度きり'],explain:"繰り返しを強調する副詞句。over and over、repeatedly も似た意味で使える。",lesson:'㉔9/18'},
-  {id:'f2401',pat:'weekendq',month:'2609',type:'fill',q:"I'm going ___ casino school this Sunday.",blank:'to',choices:['to','for','at','on'],hint:'be going to',lesson:'㉔9/18'},
-  {id:'f2402',pat:'__vocab__',month:'2609',type:'fill',q:"I'm allergic ___ ragweed.",blank:'to',choices:['to','for','with','at'],hint:'be allergic to',lesson:'㉔9/18'},
-  {id:'f2403',pat:'recommend',month:'2609',type:'fill',q:'I recommend ___ Jiufen.',blank:'visiting',choices:['visiting','to visit','visit','visited'],hint:'recommend + 動名詞',lesson:'㉔9/18'},
-  {id:'f2404',pat:'__vocab__',month:'2609',type:'fill',q:'I get along ___ my coworkers.',blank:'with',choices:['with','to','for','at'],hint:'get along with',lesson:'㉔9/18'},
-  {id:'f2405',pat:'prep',month:'2609',type:'fill',q:"I'm going to stay in Kyoto ___ the 20th to 24th.",blank:'from',choices:['from','since','at','on'],hint:'from A to B',lesson:'㉔9/18'},
+  {id:'f2401',pat:'weekendq',month:'2609',type:'fill',q:"I'm going ___ casino school this Sunday.",blank:'to',choices:['to','for','at','on'],hint:'be going to',ja:"今度の日曜にカジノスクールに行きます。",lesson:'㉔9/18'},
+  {id:'f2402',pat:'__vocab__',month:'2609',type:'fill',q:"I'm allergic ___ ragweed.",blank:'to',choices:['to','for','with','at'],hint:'be allergic to',ja:"ブタクサにアレルギーがある。",lesson:'㉔9/18'},
+  {id:'f2403',pat:'recommend',month:'2609',type:'fill',q:'I recommend ___ Jiufen.',blank:'visiting',choices:['visiting','to visit','visit','visited'],hint:'recommend + 動名詞',ja:"九份に行くのをおすすめするよ。",lesson:'㉔9/18'},
+  {id:'f2404',pat:'__vocab__',month:'2609',type:'fill',q:'I get along ___ my coworkers.',blank:'with',choices:['with','to','for','at'],hint:'get along with',ja:"同僚とうまくやっている。",lesson:'㉔9/18'},
+  {id:'f2405',pat:'prep',month:'2609',type:'fill',q:"I'm going to stay in Kyoto ___ the 20th to 24th.",blank:'from',choices:['from','since','at','on'],hint:'from A to B',ja:"20日から24日まで京都に滞在する予定。",lesson:'㉔9/18'},
   {id:'g2401',pat:'recommend',month:'2609',type:'grammar',q:'どちらが正しい？（九份に行くのをおすすめするよ）',optA:'I recommend to visit Jiufen!',optB:'I recommend visiting Jiufen!',a:'B',explain:"recommend の後ろは動名詞(-ing)。recommend to do は誤り。丁寧に言うなら `I recommend that you visit Jiufen.` や `I recommend you should visit Jiufen.` も使える。",lesson:'㉔9/18'},
   {id:'g2402',pat:'weekendq',month:'2609',type:'grammar',q:'どちらが正しい？（今度の日曜、カジノスクールに行く予定）',optA:"I going to casino school this Sunday.",optB:"I'm going to casino school this Sunday.",a:'B',explain:"be going to は be動詞とセットで使う構文。Aは be動詞（am）が抜けていて文が成立しない。",lesson:'㉔9/18'},
   {id:'g2403',pat:'__vocab__',month:'2609',type:'grammar',q:'どちらが正しい？（ピーナッツアレルギーです）',optA:"I'm allergic for peanuts.",optB:"I'm allergic to peanuts.",a:'B',explain:"be allergic to ~ で「〜アレルギーがある」。forやwithではなくtoを使う決まった形。",lesson:'㉔9/18'},
@@ -1378,11 +1390,11 @@ const QB = [
   {id:'v2503',pat:'__vocab__',month:'2610',type:'vocab',q:'「先生のお気に入り（ひいきされてる子）」を英語で？',a:"teacher's pet",choices:["teacher's pet","teacher's dog","teacher's love","class pet"],explain:"少し皮肉っぽく「先生にひいきされてる子」を指す。`She was the teacher's pet.` pet はペットではなく「お気に入り」の意味。",lesson:'㉕10/2'},
   {id:'v2504',pat:'__vocab__',month:'2610',type:'vocab',q:'"rebellious" の意味は？',a:'反抗的な',choices:['反抗的な','内向的な','楽観的な','几帳面な'],explain:"権威やルールに逆らう性質。`France is a rebellious country.` 名詞は rebellion（反乱）、人なら rebel（反逆者）。",lesson:'㉕10/2'},
   {id:'v2505',pat:'__vocab__',month:'2610',type:'vocab',q:'「外向的な人」を英語で？',a:'extrovert',choices:['extrovert','introvert','optimist','troublemaker'],explain:"人と関わってエネルギーを得るタイプ。`Were you an introvert or an extrovert?` 反対は introvert（内向的な人）。",lesson:'㉕10/2'},
-  {id:'f2501',pat:'article',month:'2610',type:'fill',q:'I was the class ___.',blank:'clown',choices:['clown','clone','crown','cloud'],hint:'クラスのお調子者だった',lesson:'㉕10/2'},
-  {id:'f2502',pat:'__vocab__',month:'2610',type:'fill',q:'Osaka is famous ___ takoyaki.',blank:'for',choices:['for','of','with','by'],hint:'大阪はたこ焼きで有名',lesson:'㉕10/2'},
-  {id:'f2503',pat:'usedto',month:'2610',type:'fill',q:'Did you ___ to play baseball?',blank:'use',choices:['use','used','using','uses'],hint:'昔は野球をしていた？',lesson:'㉕10/2'},
-  {id:'f2504',pat:'__vocab__',month:'2610',type:'fill',q:'Is it well ___?',blank:'paid',choices:['paid','pay','payed','paying'],hint:'それって給料いいの？',lesson:'㉕10/2'},
-  {id:'f2505',pat:'__vocab__',month:'2610',type:'fill',q:'Could you ___ your hair at school?',blank:'dye',choices:['dye','die','dyed','dying'],hint:'学校で髪を染めてもよかった？',lesson:'㉕10/2'},
+  {id:'f2501',pat:'article',month:'2610',type:'fill',q:'I was the class ___.',blank:'clown',choices:['clown','clone','crown','cloud'],hint:'クラスのお調子者だった',ja:"クラスのお調子者だった",lesson:'㉕10/2'},
+  {id:'f2502',pat:'__vocab__',month:'2610',type:'fill',q:'Osaka is famous ___ takoyaki.',blank:'for',choices:['for','of','with','by'],hint:'大阪はたこ焼きで有名',ja:"大阪はたこ焼きで有名",lesson:'㉕10/2'},
+  {id:'f2503',pat:'usedto',month:'2610',type:'fill',q:'Did you ___ to play baseball?',blank:'use',choices:['use','used','using','uses'],hint:'昔は野球をしていた？',ja:"昔は野球をしていた？",lesson:'㉕10/2'},
+  {id:'f2504',pat:'__vocab__',month:'2610',type:'fill',q:'Is it well ___?',blank:'paid',choices:['paid','pay','payed','paying'],hint:'それって給料いいの？',ja:"それって給料いいの？",lesson:'㉕10/2'},
+  {id:'f2505',pat:'__vocab__',month:'2610',type:'fill',q:'Could you ___ your hair at school?',blank:'dye',choices:['dye','die','dyed','dying'],hint:'学校で髪を染めてもよかった？',ja:"学校で髪を染めてもよかった？",lesson:'㉕10/2'},
   {id:'g2501',pat:'usedto',month:'2610',type:'grammar',q:'どちらが正しい？（昔はクラスのお調子者だった？）',optA:'Did you used to be the class clown?',optB:'Did you use to be the class clown?',a:'B',explain:"did が付くと、後ろの動詞は原形に戻るので used ではなく use になる。Aは過去を表す did と過去形の used が二重になっている。否定も同じで I didn't use to ~ の形。",lesson:'㉕10/2'},
   {id:'g2502',pat:'__vocab__',month:'2610',type:'grammar',q:'どちらが正しい？（大阪はおいしい食べ物で有名です）',optA:'Osaka is famous for delicious food.',optB:'Osaka is famous of delicious food.',a:'A',explain:"「〜で有名」は be famous for + 名詞 で前置詞は for に決まっている。Aが正しい。Bの of は be proud of（〜を誇りに思う）などと混同しやすいが、famous とは組まない。",lesson:'㉕10/2'},
   {id:'g2503',pat:'article',month:'2610',type:'grammar',q:'どちらが正しい？（私は本の虫だった）',optA:'I was bookworm.',optB:'I was a bookworm.',a:'B',explain:"bookworm は数えられる名詞なので、単数なら a が要る。Aは冠詞が抜けている。class clown のように「そのクラスに1人の役割」なら the、bookworm のように「そういうタイプ」なら a を付ける。",lesson:'㉕10/2'},
@@ -1400,11 +1412,11 @@ const QB = [
   {id:'v2603',pat:'presperf',month:'2610',type:'vocab',q:'"past participle" の意味は？',a:'過去分詞',choices:['過去分詞','過去形','現在分詞','原形'],explain:"have + 過去分詞 で現在完了をつくる形。`go - went - gone` の gone が過去分詞。現在完了は present perfect と言う。",lesson:'㉖10/8'},
   {id:'v2604',pat:'__vocab__',month:'2610',type:'vocab',q:'"ideal" の意味は？',a:'理想の',choices:['理想の','現実的な','普通の','有名な'],explain:"「理想的な・最適な」という形容詞。`This is an ideal place for travelling.` ideal for ~ で「〜に最適な」。",lesson:'㉖10/8'},
   {id:'v2605',pat:'greeting',month:'2610',type:'vocab',q:'「今日はどんな感じ？」（一日の途中で聞く）を英語で？',a:"How's your day going?",choices:["How's your day going?","How was your day?","How have you been?","What's your day?"],explain:"今日がまだ終わっていないときの挨拶で、現在進行形を使う。`How's your day going? — It's going well.` 一日が終わった後なら How was your day?、久しぶりに会った相手には How have you been?。",lesson:'㉖10/8'},
-  {id:'f2601',pat:'presperf',month:'2610',type:'fill',q:'I have ___ to Okinawa.',blank:'been',choices:['been','gone','went','go'],hint:'沖縄に行ったことがある',lesson:'㉖10/8'},
-  {id:'f2602',pat:'presperf',month:'2610',type:'fill',q:'Have you ever ___ an elephant?',blank:'ridden',choices:['ridden','rode','ride','rided'],hint:'象に乗ったことある？',lesson:'㉖10/8'},
-  {id:'f2603',pat:'presperf',month:'2610',type:'fill',q:'I have lived in Osaka ___ 20 years.',blank:'for',choices:['for','since','from','during'],hint:'大阪に20年住んでいる',lesson:'㉖10/8'},
-  {id:'f2604',pat:'presperf',month:'2610',type:'fill',q:"I haven't finished my homework ___.",blank:'yet',choices:['yet','already','still','ever'],hint:'まだ宿題が終わっていない',lesson:'㉖10/8'},
-  {id:'f2605',pat:'__vocab__',month:'2610',type:'fill',q:'The osmanthus is in ___.',blank:'bloom',choices:['bloom','blooming','bloomed','blooms'],hint:'金木犀が咲いている',lesson:'㉖10/8'},
+  {id:'f2601',pat:'presperf',month:'2610',type:'fill',q:'I have ___ to Okinawa.',blank:'been',choices:['been','gone','went','go'],hint:'沖縄に行ったことがある',ja:"沖縄に行ったことがある",lesson:'㉖10/8'},
+  {id:'f2602',pat:'presperf',month:'2610',type:'fill',q:'Have you ever ___ an elephant?',blank:'ridden',choices:['ridden','rode','ride','rided'],hint:'象に乗ったことある？',ja:"象に乗ったことある？",lesson:'㉖10/8'},
+  {id:'f2603',pat:'presperf',month:'2610',type:'fill',q:'I have lived in Osaka ___ 20 years.',blank:'for',choices:['for','since','from','during'],hint:'大阪に20年住んでいる',ja:"大阪に20年住んでいる",lesson:'㉖10/8'},
+  {id:'f2604',pat:'presperf',month:'2610',type:'fill',q:"I haven't finished my homework ___.",blank:'yet',choices:['yet','already','still','ever'],hint:'まだ宿題が終わっていない',ja:"まだ宿題が終わっていない",lesson:'㉖10/8'},
+  {id:'f2605',pat:'__vocab__',month:'2610',type:'fill',q:'The osmanthus is in ___.',blank:'bloom',choices:['bloom','blooming','bloomed','blooms'],hint:'金木犀が咲いている',ja:"金木犀が咲いている",lesson:'㉖10/8'},
   {id:'g2601',pat:'presperf',month:'2610',type:'grammar',q:'どちらが正しい？（去年沖縄に行った）',optA:'I have been to Okinawa last year.',optB:'I went to Okinawa last year.',a:'B',explain:"last year のように過去の時点をはっきり示す語があるときは過去形を使う。Aの現在完了は「いつかは問わず経験として」を表す形なので、last year と一緒には使えない。",deep:"【現在完了と過去形の分かれ目】現在完了（have + 過去分詞）は過去の出来事を「今につながる経験・結果」として語る形で、いつ起きたかは問題にしない。`I have been to Okinawa.`＝沖縄に行ったことがある。一方、過去形は過去の一点を切り取る形で、`I went to Okinawa last year.` のように時点がはっきりしている。yesterday / last year / in 2024 / ~ ago / when I was a child など時点を示す語があれば迷わず過去形。逆に ever / never / just / already / yet / for / since は現在完了と組みやすい目印になる。",lesson:'㉖10/8'},
   {id:'g2602',pat:'presperf',month:'2610',type:'grammar',q:'どちらが正しい？（彼は大阪に行ってしまって、今ここにいない）',optA:'He has gone to Osaka.',optB:'He has been to Osaka.',a:'A',explain:"has gone to は「行ってしまって今ここにいない」、has been to は「行ったことがある（今は戻っている）」。今ここにいないのでAが正しい。Bだと大阪から帰ってきている意味になる。",lesson:'㉖10/8'},
   {id:'g2603',pat:'presperf',month:'2610',type:'grammar',q:'どちらが正しい？（すき家に一度も行ったことがない）',optA:"I haven't never been to Sukiya.",optB:'I have never been to Sukiya.',a:'B',explain:"never 自体が「一度も〜ない」という否定なので、not と一緒に使うと二重否定になる。Aは haven't と never が重なっている。I have never been ~ か I haven't ever been ~ のどちらかにする。",lesson:'㉖10/8'},
@@ -1422,11 +1434,11 @@ const QB = [
   {id:'v2703',pat:'__vocab__',month:'2610',type:'vocab',q:'「（拾った物を）警察に届ける」を英語で？',a:'hand it in to the police',choices:['hand it in to the police','hand it out to the police','hand it over the police','give it in to the police'],explain:"hand in は「提出する・届け出る」。`I will hand it in to the police.` hand out は「配る」なので意味が変わる。",lesson:'㉗10/13'},
   {id:'v2704',pat:'__vocab__',month:'2610',type:'vocab',q:'"coworker" の意味は？',a:'同僚',choices:['同僚','上司','部下','取引先'],explain:"同じ職場で働く人。`What if you get a new, scary coworker?` 上司は boss、部下は subordinate。",lesson:'㉗10/13'},
   {id:'v2705',pat:'__vocab__',month:'2610',type:'vocab',q:'"benefit" の意味は？（rules that benefit me）',a:'利益を与える',choices:['利益を与える','罰を与える','制限する','説明する'],explain:"「〜のためになる・得をさせる」という動詞。`I would make rules that benefit me.` 名詞で「利益・恩恵」の意味もある。",lesson:'㉗10/13'},
-  {id:'f2701',pat:'whatif',month:'2610',type:'fill',q:'If I ___ the lottery, I would buy a car.',blank:'won',choices:['won','win','will win','winning'],hint:'（仮に）宝くじが当たったら車を買うだろう',lesson:'㉗10/13'},
-  {id:'f2702',pat:'ifclause',month:'2610',type:'fill',q:'If I win the lottery, I ___ buy a car.',blank:'will',choices:['will','would','am','did'],hint:'（本当に）宝くじが当たったら車を買う',lesson:'㉗10/13'},
-  {id:'f2703',pat:'whatif',month:'2610',type:'fill',q:'What if you ___ your phone?',blank:'lose',choices:['lose','loose','losed','losing'],hint:'スマホを無くしたらどうする？',lesson:'㉗10/13'},
-  {id:'f2704',pat:'whatif',month:'2610',type:'fill',q:'If I ___ king of the world, I would stop the war.',blank:'were',choices:['were','am','be','will be'],hint:'もし世界の王様なら、戦争を止めるだろう',lesson:'㉗10/13'},
-  {id:'f2705',pat:'getdone',month:'2610',type:'fill',q:'I will ___ him fired.',blank:'get',choices:['get','make','let','take'],hint:'（誰かに）彼をクビにさせる',lesson:'㉗10/13'},
+  {id:'f2701',pat:'whatif',month:'2610',type:'fill',q:'If I ___ the lottery, I would buy a car.',blank:'won',choices:['won','win','will win','winning'],hint:'（仮に）宝くじが当たったら車を買うだろう',ja:"（仮に）宝くじが当たったら車を買うだろう",lesson:'㉗10/13'},
+  {id:'f2702',pat:'ifclause',month:'2610',type:'fill',q:'If I win the lottery, I ___ buy a car.',blank:'will',choices:['will','would','am','did'],hint:'（本当に）宝くじが当たったら車を買う',ja:"（本当に）宝くじが当たったら車を買う",lesson:'㉗10/13'},
+  {id:'f2703',pat:'whatif',month:'2610',type:'fill',q:'What if you ___ your phone?',blank:'lose',choices:['lose','loose','losed','losing'],hint:'スマホを無くしたらどうする？',ja:"スマホを無くしたらどうする？",lesson:'㉗10/13'},
+  {id:'f2704',pat:'whatif',month:'2610',type:'fill',q:'If I ___ king of the world, I would stop the war.',blank:'were',choices:['were','am','be','will be'],hint:'もし世界の王様なら、戦争を止めるだろう',ja:"もし世界の王様なら、戦争を止めるだろう",lesson:'㉗10/13'},
+  {id:'f2705',pat:'getdone',month:'2610',type:'fill',q:'I will ___ him fired.',blank:'get',choices:['get','make','let','take'],hint:'（誰かに）彼をクビにさせる',ja:"（誰かに）彼をクビにさせる",lesson:'㉗10/13'},
   {id:'g2701',pat:'whatif',month:'2610',type:'grammar',q:'どちらが正しい？（もし宝くじが当たったら車を買うだろう ※仮の話）',optA:'If I won the lottery, I will buy a car.',optB:'If I won the lottery, I would buy a car.',a:'B',explain:"if節を過去形（won）にして「仮の話」にしたなら、主節も would にそろえる。Aは仮定の won と現実の will が混ざってちぐはぐになっている。",deep:"【条件文は2種類】起こりうる話は「If + 現在形, will + 原形」。`If I win the lottery, I will buy a car.`＝（当たる可能性がある前提で）当たったら車を買う。ありえない・想像の話は「If + 過去形, would + 原形」で、これを仮定法過去と呼ぶ。`If I won the lottery, I would buy a car.`＝仮に当たったら買うだろう。過去形を使っても過去の話ではなく、現実から距離を置くための形。主語が I / he / she でも be動詞は were が基本（If I were king of the world, I would ~）。",lesson:'㉗10/13'},
   {id:'g2702',pat:'ifclause',month:'2610',type:'grammar',q:'どちらが正しい？（明日雨が降ったら家にいる）',optA:'If it rains tomorrow, I will stay home.',optB:'If it will rain tomorrow, I will stay home.',a:'A',explain:"if で始まる条件節の中は、未来のことでも現在形で書く。Aが正しい。Bは条件節に will が入っている。will を使うのは主節（I will stay home）の方だけ。",lesson:'㉗10/13'},
   {id:'g2703',pat:'__vocab__',month:'2610',type:'grammar',q:'どちらが正しい？（私が警察に届けるよ）',optA:'I will hand it in to the police.',optB:'It will hand it in to the police.',a:'A',explain:"届けるのは自分なので主語は I。Bは主語が It になっていて「それがそれを警察に届ける」という意味の通らない文になる。I と It の打ち間違いはよくあるので注意。",lesson:'㉗10/13'},
@@ -1444,11 +1456,11 @@ const QB = [
   {id:'v2803',pat:'__vocab__',month:'2610',type:'vocab',q:'"texture" の意味は？',a:'食感・質感',choices:['食感・質感','味付け','香り','温度'],explain:"舌ざわりや手ざわり。`I don't like the texture.`（食感が苦手）。綴りは texture（texutuer は誤り）。",lesson:'㉘10/15'},
   {id:'v2804',pat:'__vocab__',month:'2610',type:'vocab',q:'「世界遺産」を英語で？',a:'World Heritage',choices:['World Heritage','World Hearitage','World Inheritance','World Treasure'],explain:"ユネスコの世界遺産。`I haven't been to a World Heritage Site.` 個々の場所は World Heritage Site と言う。綴りは heritage。",lesson:'㉘10/15'},
   {id:'v2805',pat:'__vocab__',month:'2610',type:'vocab',q:'"meal prep" の意味は？',a:'食事の作り置き・準備',choices:['食事の作り置き・準備','外食','食事制限','出前'],explain:"meal preparation の略で名詞扱い。`I do meal prep on Sundays.` 動詞は do か make を使う。",lesson:'㉘10/15'},
-  {id:'f2801',pat:'beusedto',month:'2610',type:'fill',q:"I'm used to ___ up early.",blank:'getting',choices:['getting','get','got','gets'],hint:'早起きには慣れている',lesson:'㉘10/15'},
-  {id:'f2802',pat:'agree',month:'2610',type:'fill',q:"I can't swim. — Neither ___ I.",blank:'can',choices:['can','do','am',"can't"],hint:'私も泳げない',lesson:'㉘10/15'},
-  {id:'f2803',pat:'agree',month:'2610',type:'fill',q:"I haven't been to Kyoto. — Neither ___ I.",blank:'have',choices:['have','do','did',"haven't"],hint:'私も行ったことがない',lesson:'㉘10/15'},
-  {id:'f2804',pat:'__vocab__',month:'2610',type:'fill',q:"I'm trying to lose ___.",blank:'weight',choices:['weight','wait','weigh','weights'],hint:'減量しようとしている',lesson:'㉘10/15'},
-  {id:'f2805',pat:'__vocab__',month:'2610',type:'fill',q:"You won't be ___ to make it on time.",blank:'able',choices:['able','can','possible','capable'],hint:'時間どおりには間に合わないよ',lesson:'㉘10/15'},
+  {id:'f2801',pat:'beusedto',month:'2610',type:'fill',q:"I'm used to ___ up early.",blank:'getting',choices:['getting','get','got','gets'],hint:'早起きには慣れている',ja:"早起きには慣れている",lesson:'㉘10/15'},
+  {id:'f2802',pat:'agree',month:'2610',type:'fill',q:"I can't swim. — Neither ___ I.",blank:'can',choices:['can','do','am',"can't"],hint:'私も泳げない',ja:"私も泳げない",lesson:'㉘10/15'},
+  {id:'f2803',pat:'agree',month:'2610',type:'fill',q:"I haven't been to Kyoto. — Neither ___ I.",blank:'have',choices:['have','do','did',"haven't"],hint:'私も行ったことがない',ja:"私も行ったことがない",lesson:'㉘10/15'},
+  {id:'f2804',pat:'__vocab__',month:'2610',type:'fill',q:"I'm trying to lose ___.",blank:'weight',choices:['weight','wait','weigh','weights'],hint:'減量しようとしている',ja:"減量しようとしている",lesson:'㉘10/15'},
+  {id:'f2805',pat:'__vocab__',month:'2610',type:'fill',q:"You won't be ___ to make it on time.",blank:'able',choices:['able','can','possible','capable'],hint:'時間どおりには間に合わないよ',ja:"時間どおりには間に合わないよ",lesson:'㉘10/15'},
   {id:'g2801',pat:'agree',month:'2610',type:'grammar',q:'どちらが正しい？（私もパクチーが好きじゃない）',optA:"Neither don't I.",optB:'Neither do I.',a:'B',explain:"neither 自体が否定の意味を含むので、後ろに not は付けない。Bが正しい。Aは neither と don't で否定が二重になっている。語順は Neither + 助動詞 + 主語。",lesson:'㉘10/15'},
   {id:'g2802',pat:'beusedto',month:'2610',type:'grammar',q:'どちらが正しい？（それには慣れている）',optA:"I'm used to it.",optB:'I used to it.',a:'A',explain:"「〜に慣れている」は be used to + 名詞 / ~ing で、be動詞が必要。Aが正しい。Bは be動詞が抜けていて、used to（昔は〜した）とも取れない崩れた文になる。",lesson:'㉘10/15'},
   {id:'g2803',pat:'agree',month:'2610',type:'grammar',q:'どちらが正しい？（私もそれは好きじゃない）',optA:"I don't like it either.",optB:"I don't like it too.",a:'A',explain:"否定文で「〜も（ない）」と言うときは文末に either を使う。too は肯定文用（I like it too.）。否定文の Bは too を使っていて不自然。",lesson:'㉘10/15'},
@@ -1466,11 +1478,11 @@ const QB = [
   {id:'v2903',pat:'__vocab__',month:'2610',type:'vocab',q:'"habit" の意味は？',a:'習慣・くせ',choices:['習慣・くせ','趣味','目標','性格'],explain:"繰り返し身についた行動。`What is a good habit that you have been doing this year?` good habit（良い習慣）／bad habit（悪いくせ）。",lesson:'㉙10/15'},
   {id:'v2904',pat:'__vocab__',month:'2610',type:'vocab',q:'"curious" の意味は？',a:'好奇心旺盛な・気になる',choices:['好奇心旺盛な・気になる','詮索好きな','用心深い','退屈な'],explain:"知りたい気持ちが強い様子で、良い意味。`I'm curious about your habit.` 詮索好きという悪い意味なら nosy を使う。",lesson:'㉙10/15'},
   {id:'v2905',pat:'edingadj',month:'2610',type:'vocab',q:'「（人に）刺激を与える」という形容詞を英語で？',a:'inspiring',choices:['inspiring','inspired','inspire','inspiration'],explain:"-ing は「与え手の性質」。`You are inspiring.`（あなたは刺激をくれる人だ）。受け手の気持ちなら -ed で I'm inspired by you.。",lesson:'㉙10/15'},
-  {id:'f2901',pat:'themore',month:'2610',type:'fill',q:'The ___ I get, the faster time goes.',blank:'older',choices:['older','old','oldest','more old'],hint:'年をとるほど時間が早く過ぎる',lesson:'㉙10/15'},
-  {id:'f2902',pat:'themore',month:'2610',type:'fill',q:'The more I study English, the ___ I speak.',blank:'better',choices:['better','more good','well','best'],hint:'英語を勉強するほどうまく話せる',lesson:'㉙10/15'},
-  {id:'f2903',pat:'themore',month:'2610',type:'fill',q:'The more I use AI, the ___ I become.',blank:'lazier',choices:['lazier','lazyer','more lazy','laziest'],hint:'AIを使うほど怠け者になる',lesson:'㉙10/15'},
-  {id:'f2904',pat:'presperf',month:'2610',type:'fill',q:"I haven't been ___ to wake up early.",blank:'able',choices:['able','can','could','possible'],hint:'（最近）ずっと早起きできていない',lesson:'㉙10/15'},
-  {id:'f2905',pat:'edingadj',month:'2610',type:'fill',q:"I'm ___ by you.",blank:'inspired',choices:['inspired','inspiring','inspire','inspiration'],hint:'あなたに刺激を受けた',lesson:'㉙10/15'},
+  {id:'f2901',pat:'themore',month:'2610',type:'fill',q:'The ___ I get, the faster time goes.',blank:'older',choices:['older','old','oldest','more old'],hint:'年をとるほど時間が早く過ぎる',ja:"年をとるほど時間が早く過ぎる",lesson:'㉙10/15'},
+  {id:'f2902',pat:'themore',month:'2610',type:'fill',q:'The more I study English, the ___ I speak.',blank:'better',choices:['better','more good','well','best'],hint:'英語を勉強するほどうまく話せる',ja:"英語を勉強するほどうまく話せる",lesson:'㉙10/15'},
+  {id:'f2903',pat:'themore',month:'2610',type:'fill',q:'The more I use AI, the ___ I become.',blank:'lazier',choices:['lazier','lazyer','more lazy','laziest'],hint:'AIを使うほど怠け者になる',ja:"AIを使うほど怠け者になる",lesson:'㉙10/15'},
+  {id:'f2904',pat:'presperf',month:'2610',type:'fill',q:"I haven't been ___ to wake up early.",blank:'able',choices:['able','can','could','possible'],hint:'（最近）ずっと早起きできていない',ja:"（最近）ずっと早起きできていない",lesson:'㉙10/15'},
+  {id:'f2905',pat:'edingadj',month:'2610',type:'fill',q:"I'm ___ by you.",blank:'inspired',choices:['inspired','inspiring','inspire','inspiration'],hint:'あなたに刺激を受けた',ja:"あなたに刺激を受けた",lesson:'㉙10/15'},
   {id:'g2901',pat:'themore',month:'2610',type:'grammar',q:'どちらが正しい？（忙しいほど仕事が早く終わる）',optA:'The busier I work, the faster I finish work.',optB:'The busier I am, the faster I finish work.',a:'B',explain:"busy は形容詞なので be動詞（または get）と組む。元の文 I am busy. の busy を比較級にして前に出すと The busier I am になる。Aの work は動詞なので busier と組まない。",deep:"【The 比較級 ~, the 比較級 …】「〜すればするほど…」は、普通の文から比較級だけを先頭に引っ張り出して the を付ける形。`I get older. Time goes faster.` → `The older I get, the faster time goes.` 前半が条件、後半が結果。比較級の作り方は old → older、busy → busier（y を ier に）、well / good → better、much / many → more、長い語は more difficult。この the は冠詞ではなく「その分だけ」という意味の特別な the。口語では `The more, the better.`（多ければ多いほどいい）のように動詞ごと省くこともある。",lesson:'㉙10/15'},
   {id:'g2902',pat:'themore',month:'2610',type:'grammar',q:'どちらが正しい？（年をとるほど時間が早く過ぎる）',optA:'The older I get, the faster time goes.',optB:'Older I get, faster time goes.',a:'A',explain:"「〜すればするほど」の型は前半・後半とも比較級の前に the が必要。Aが正しい。Bは両方の the が抜けていて型として成り立たない。",lesson:'㉙10/15'},
   {id:'g2903',pat:'edingadj',month:'2610',type:'grammar',q:'どちらが正しい？（あなたに刺激を受けた）',optA:'I am inspiring by you.',optB:'I am inspired by you.',a:'B',explain:"刺激を「受けた」側の気持ちは -ed（inspired）。Bが正しい。Aの inspiring は「人に刺激を与える」という与え手の性質なので、主語が I だと意味が逆になる。",lesson:'㉙10/15'},
@@ -1488,11 +1500,11 @@ const QB = [
   {id:'v3003',pat:'__vocab__',month:'2610',type:'vocab',q:'"vegetation" の意味は？',a:'植物・植生',choices:['植物・植生','野菜','菜食主義','農業'],explain:"木や草など、ある場所の緑全体。`Future cities will have more vegetation.` 野菜（vegetable）とは別の語。",lesson:'㉚10/20'},
   {id:'v3004',pat:'__vocab__',month:'2610',type:'vocab',q:'「建築（建物の様式・設計）」を英語で？',a:'architecture',choices:['architecture','architect','archaeology','arcade'],explain:"建物のデザインや様式。`I love Japanese architecture.` architect は「建築家」という人の名詞。",lesson:'㉚10/20'},
   {id:'v3005',pat:'__vocab__',month:'2610',type:'vocab',q:'"teleport" の意味は？',a:'瞬間移動する',choices:['瞬間移動する','遠隔操作する','電話する','空を飛ぶ'],explain:"一瞬で別の場所へ移る。`We will be able to teleport.` 名詞は teleportation（瞬間移動）。",lesson:'㉚10/20'},
-  {id:'f3001',pat:'future',month:'2610',type:'fill',q:'We will be ___ to teleport.',blank:'able',choices:['able','can','possible','could'],hint:'瞬間移動できるようになるだろう',lesson:'㉚10/20'},
-  {id:'f3002',pat:'future',month:'2610',type:'fill',q:'Humans will be ___ by AI.',blank:'replaced',choices:['replaced','replace','replacing','replacement'],hint:'人間はAIに取って代わられるだろう',lesson:'㉚10/20'},
-  {id:'f3003',pat:'wordpair',month:'2610',type:'fill',q:"It won't ___ us.",blank:'affect',choices:['affect','effect','affects','effected'],hint:'私たちには影響しないだろう',lesson:'㉚10/20'},
-  {id:'f3004',pat:'future',month:'2610',type:'fill',q:'Life is ___ be worse because of climate change.',blank:'gonna',choices:['gonna','going','will','gotta'],hint:'気候変動のせいで生活は悪くなるだろう',lesson:'㉚10/20'},
-  {id:'f3005',pat:'future',month:'2610',type:'fill',q:'Students will turn ___ avatars.',blank:'into',choices:['into','to','in','for'],hint:'生徒がアバターになるだろう',lesson:'㉚10/20'},
+  {id:'f3001',pat:'future',month:'2610',type:'fill',q:'We will be ___ to teleport.',blank:'able',choices:['able','can','possible','could'],hint:'瞬間移動できるようになるだろう',ja:"瞬間移動できるようになるだろう",lesson:'㉚10/20'},
+  {id:'f3002',pat:'future',month:'2610',type:'fill',q:'Humans will be ___ by AI.',blank:'replaced',choices:['replaced','replace','replacing','replacement'],hint:'人間はAIに取って代わられるだろう',ja:"人間はAIに取って代わられるだろう",lesson:'㉚10/20'},
+  {id:'f3003',pat:'wordpair',month:'2610',type:'fill',q:"It won't ___ us.",blank:'affect',choices:['affect','effect','affects','effected'],hint:'私たちには影響しないだろう',ja:"私たちには影響しないだろう",lesson:'㉚10/20'},
+  {id:'f3004',pat:'future',month:'2610',type:'fill',q:'Life is ___ be worse because of climate change.',blank:'gonna',choices:['gonna','going','will','gotta'],hint:'気候変動のせいで生活は悪くなるだろう',ja:"気候変動のせいで生活は悪くなるだろう",lesson:'㉚10/20'},
+  {id:'f3005',pat:'future',month:'2610',type:'fill',q:'Students will turn ___ avatars.',blank:'into',choices:['into','to','in','for'],hint:'生徒がアバターになるだろう',ja:"生徒がアバターになるだろう",lesson:'㉚10/20'},
   {id:'g3001',pat:'indirect',month:'2610',type:'grammar',q:'どちらが正しい？（未来の都市はどんな見た目になると思う？）',optA:'What do you think will cities look like?',optB:'What do you think cities will look like?',a:'B',explain:"do you think を挟むと、その後ろは疑問文の語順に戻さず「主語 + 動詞」の普通の並びにする。Bが正しい。Aは will cities と疑問文の語順のままになっている。",deep:"【do you think を挟んだ疑問文】`What will cities look like?`（都市はどんな見た目になる？）に do you think を差し込むと、What の直後に do you think が入り、残りは普通の文の語順に戻る。`What do you think cities will look like?` 同じように `Where do you think he lives?`（彼はどこに住んでいると思う？）、`Who do you think will win?`（誰が勝つと思う？）。Yes / No で答えられる質問なら `Do you think AI will replace your job?` となり、答えは (Yes,) I think so. / (No,) I don't think so.。",lesson:'㉚10/20'},
   {id:'g3002',pat:'article',month:'2610',type:'grammar',q:'どちらが正しい？（100年後には）',optA:'In 100 years',optB:'In a 100 years',a:'A',explain:"数字の 100 を使うなら a は付けない。Aが正しい。単語で書くなら in a hundred years（a hundred ＝ 100）。Bは a と数字の 100 が重なっている。",lesson:'㉚10/20'},
   {id:'g3003',pat:'__vocab__',month:'2610',type:'grammar',q:'どちらが自然？（昔の人たちはどうやってピラミッドを造ったんだろう？）',optA:'How did they build the pyramids?',optB:'How did we build the pyramids?',a:'A',explain:"昔の人たちを指すときは they が自然。Bの we だと話し手自身（現代人）も含まれる響きになり、「私たちはどうやって造ったっけ？」のように聞こえる。",lesson:'㉚10/20'},
@@ -1510,11 +1522,11 @@ const QB = [
   {id:'v3103',pat:'appreciate',month:'2610',type:'vocab',q:'"Kind regards" の意味は？（メールの結び）',a:'よろしくお願いします（結語）',choices:['よろしくお願いします（結語）','ご無沙汰しています','おめでとうございます','お大事に'],explain:"メールの最後に添える結語。`Kind regards, Kuramaru` 丁寧だが堅すぎない。やや親しい相手なら Best regards、改まった手紙なら Sincerely。",lesson:'㉛10/21'},
   {id:'v3104',pat:'__vocab__',month:'2610',type:'vocab',q:'「西洋文化」を英語で？',a:'Western culture',choices:['Western culture','West culture','Westen culture','Western cultural'],explain:"主にヨーロッパや北米の文化。`I'm interested in Western culture.` 東洋文化は Eastern culture。Western は大文字で始める。",lesson:'㉛10/21'},
   {id:'v3105',pat:'appreciate',month:'2610',type:'vocab',q:'"inconvenience" の意味は？',a:'迷惑・不便',choices:['迷惑・不便','誤解','遅延','費用'],explain:"相手にかける手間や不便。`I apologize for any inconvenience.`（ご迷惑をおかけしてすみません）。convenient（便利な）の反対の名詞。",lesson:'㉛10/21'},
-  {id:'f3101',pat:'gerundnoun',month:'2610',type:'fill',q:'I always put off ___ Chinese.',blank:'learning',choices:['learning','learn','to learn','learned'],hint:'いつも中国語の勉強を先延ばしにしている',lesson:'㉛10/21'},
-  {id:'f3102',pat:'appreciate',month:'2610',type:'fill',q:"I'd appreciate it if you ___ find a cover for me.",blank:'could',choices:['could','are','must','had'],hint:'代わりの人を見つけていただけると助かります',lesson:'㉛10/21'},
-  {id:'f3103',pat:'appreciate',month:'2610',type:'fill',q:'I apologize ___ any inconvenience.',blank:'for',choices:['for','about','of','to'],hint:'ご迷惑をおかけしてすみません',lesson:'㉛10/21'},
-  {id:'f3104',pat:'appreciate',month:'2610',type:'fill',q:"I'll be looking forward to your ___.",blank:'reply',choices:['reply','replying','replied','reply to'],hint:'ご返信をお待ちしております',lesson:'㉛10/21'},
-  {id:'f3105',pat:'themost',month:'2610',type:'fill',q:'I like poker the ___ of all the casino games.',blank:'best',choices:['best','better','good','well'],hint:'カジノゲームの中でポーカーが一番好き',lesson:'㉛10/21'},
+  {id:'f3101',pat:'gerundnoun',month:'2610',type:'fill',q:'I always put off ___ Chinese.',blank:'learning',choices:['learning','learn','to learn','learned'],hint:'いつも中国語の勉強を先延ばしにしている',ja:"いつも中国語の勉強を先延ばしにしている",lesson:'㉛10/21'},
+  {id:'f3102',pat:'appreciate',month:'2610',type:'fill',q:"I'd appreciate it if you ___ find a cover for me.",blank:'could',choices:['could','are','must','had'],hint:'代わりの人を見つけていただけると助かります',ja:"代わりの人を見つけていただけると助かります",lesson:'㉛10/21'},
+  {id:'f3103',pat:'appreciate',month:'2610',type:'fill',q:'I apologize ___ any inconvenience.',blank:'for',choices:['for','about','of','to'],hint:'ご迷惑をおかけしてすみません',ja:"ご迷惑をおかけしてすみません",lesson:'㉛10/21'},
+  {id:'f3104',pat:'appreciate',month:'2610',type:'fill',q:"I'll be looking forward to your ___.",blank:'reply',choices:['reply','replying','replied','reply to'],hint:'ご返信をお待ちしております',ja:"ご返信をお待ちしております",lesson:'㉛10/21'},
+  {id:'f3105',pat:'themost',month:'2610',type:'fill',q:'I like poker the ___ of all the casino games.',blank:'best',choices:['best','better','good','well'],hint:'カジノゲームの中でポーカーが一番好き',ja:"カジノゲームの中でポーカーが一番好き",lesson:'㉛10/21'},
   {id:'g3101',pat:'gerundnoun',month:'2610',type:'grammar',q:'どちらが正しい？（いつもランニングを先延ばしにしている）',optA:'I always put off to run.',optB:'I always put off running.',a:'B',explain:"put off の後ろは動名詞（~ing）。Bが正しい。Aの to不定詞は put off の後ろに置けない。enjoy / finish / mind なども同じく後ろは ~ing。",lesson:'㉛10/21'},
   {id:'g3102',pat:'appreciate',month:'2610',type:'grammar',q:'どちらが正しい？（自分のミスについて心からお詫びします）',optA:'I truly apologize for the mistake I made.',optB:'I truly apologize about the mistake I made.',a:'A',explain:"「〜についてお詫びする」は apologize for ~ が決まった形。Aが正しい。Bの about はビジネスメールでは誤りと見なされやすい。the mistake I made は that が省略された形。",lesson:'㉛10/21'},
   {id:'g3103',pat:'__vocab__',month:'2610',type:'grammar',q:'どちらが正しい？（ラスベガスで起きたことはラスベガスに置いていく）',optA:'What happens in Las Vegas, stays in Las Vegas.',optB:'What happen in Las Vegas, stay in Las Vegas.',a:'A',explain:"What happens in Las Vegas（ラスベガスで起きること）という1つの名詞のかたまりが主語で、3人称単数扱いになる。だから happens / stays と -s が付く。Bは両方の -s が抜けている。",lesson:'㉛10/21'},
@@ -1689,7 +1701,7 @@ function defG(){
 /* 文字サイズ。html の data-fs を切り替えるだけで全体がremで追従する */
 /* 版の印＝公開した時刻（日本時間）。公開のたびに、この1行の時刻を書き換える：
    sed -i "s|^const APP_VER='.*';|const APP_VER='$(TZ=Asia/Tokyo date +%m/%d-%H:%M)';|" index.html */
-const APP_VER='10/26-10:40';
+const APP_VER='10/26-10:52';
 (function(){ var e=document.getElementById('app-ver'); if(e) e.textContent='版 '+APP_VER; })();
 const FS_DEF=[{k:'s',n:'小',px:17},{k:'m',n:'ふつう',px:21},{k:'l',n:'大きい',px:25},{k:'xl',n:'特大',px:29}];
 
@@ -2280,7 +2292,7 @@ function renderQ(){
     q.v==='listen' ? '🎧 聞き取り' : q.v==='speak' ? '🎤 発音' : TL[q.type];
   document.getElementById('q-lesson').textContent=q.lesson||'';
   document.getElementById('q-text').textContent=q.q;
-  document.getElementById('q-hint').textContent=q.hint?'💡 '+q.hint:'';
+  document.getElementById('q-hint').innerHTML=hintHTML(q);
   document.getElementById('q-audio').innerHTML='';
   paintStar(); paintCombo();
 
@@ -2344,7 +2356,7 @@ let _lsnTxt='';
 function listenSpec(q){
   if(q.type==='fill'){
     const full=String(q.q).replace(/_+/, q.blank);
-    return {audio:full, prompt:'🎧 音声を聞いて、空欄に入る語を選ぼう', show:q.q,
+    return {audio:full, prompt:'🎧 聞いて、空欄に入る語を選ぼう', show:q.q, ja:q.ja||'',
             choices:shuffle([...q.choices]), correct:q.blank, after:'読まれた英文: '+full};
   }
   if(q.type==='vocab'){
@@ -2363,13 +2375,13 @@ function renderListen(q,body){
   document.getElementById('q-hint').textContent='';
 
   const box=document.createElement('div'); box.className='listen-box';
-  box.innerHTML='<button class="play-btn" id="lsn-play">🔊</button>'
-    +'<div class="listen-note">タップで再生。何回でも聞ける</div>'
-    +'<div class="replay-row">'
+  box.innerHTML='<div class="lsn-ctl">'
+    +'<button class="play-btn" id="lsn-play" title="タップで再生。何回でも聞ける">🔊</button>'
     +'<button class="replay-btn" onclick="playListen(0.6)">🐢 ゆっくり</button>'
     +'<button class="replay-btn" onclick="playListen(0.92)">▶ ふつう</button>'
     +'</div>'
-    +(sp.show?'<div style="margin-top:16px;font-size:1.1rem;font-weight:700;color:var(--text)">'+esc(sp.show)+'</div>':'');
+    +(sp.show?'<div style="margin-top:12px;font-size:1.1rem;font-weight:700;color:var(--text)">'+esc(sp.show)+'</div>':'')
+    +(sp.ja?'<div class="q-ja">'+esc(sp.ja)+'</div>':'');
   body.appendChild(box);
   document.getElementById('lsn-play').onclick=()=>playListen(0.92);
 
@@ -2409,7 +2421,7 @@ function answerListen(btn,isCorrect,sp,ul,q){
   document.getElementById('fb-correct').textContent='正解: '+sp.correct;
   const fe=document.getElementById('fb-explain');
   fe.style.display='block';
-  fe.innerHTML='🔊 '+esc(sp.after)+(q.explain?'<br>📌 '+fmtExplain(q.explain):'');
+  fe.innerHTML='🔊 '+esc(sp.after)+(sp.ja?'<br>和訳：'+esc(sp.ja):'')+(q.explain?'<br>📌 '+fmtExplain(q.explain):'');
   setupDeep(); attachSpeaker(q);
   document.getElementById('fb-self-judge').innerHTML='';
   document.getElementById('q-next-btn').style.display='block';
@@ -2585,6 +2597,15 @@ function makeMicHint(){
 }
 
 /* ---------- 共通の小物 ---------- */
+/* 和訳（ja）とヒント（hint）。10月分のようにヒントがそのまま和訳のものは、重ねて出さない */
+function jaKey(t){ return String(t||'').replace(/[\s。、．，.！!？?「」（）()・…～〜―\-]/g,''); }
+function hintHTML(q){
+  let h='';
+  if(q.ja) h+='<div class="q-ja">'+esc(q.ja)+'</div>';
+  if(q.hint && jaKey(q.hint)!==jaKey(q.ja)) h+='<div>💡 '+esc(q.hint)+'</div>';
+  return h;
+}
+
 function xpTag(){ return (S.lastGain>0) ? '  ＋'+S.lastGain+'XP' : ''; }
 
 /* 解説は画面に収まりきらないことがあるので、出たら見える位置まで寄せる。

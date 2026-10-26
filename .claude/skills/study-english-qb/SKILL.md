@@ -126,7 +126,7 @@ prefix は `v`=vocab、`f`=fill、`g`=grammar、`t`=translate、`fr`=free。複�
 | type | 必須 | 任意 |
 |------|------|------|
 | vocab | `id` `pat` `month` `type` `q` `a` `choices[4]` `explain` `lesson` | — |
-| fill | `id` `pat` `month` `type` `q` `blank` `choices[4]` `hint` `lesson` | — |
+| fill | `id` `pat` `month` `type` `q` `blank` `choices[4]` `hint` `ja` `lesson` | — |
 | grammar | `id` `pat` `month` `type` `q` `optA` `optB` `a` `explain` `lesson` | `deep` |
 | translate | `id` `pat` `month` `type` `q` `a` `hint` `lesson` | — |
 | free | `id` `pat` `month` `type` `q` `a` `hint` `lesson` | — |
@@ -142,7 +142,7 @@ prefix は `v`=vocab、`f`=fill、`g`=grammar、`t`=translate、`fr`=free。複�
 
 **vocab**：`explain` は「意味 → バッククォートで例文 → 関連語や注意点」の順。ダミー選択肢は同じ品詞・同じ分野で紛らわしいものにする。
 
-**fill**：空欄は1つのみ。`choices` に正解（`blank`）を必ず含める。形の違い（原形・-ing・過去分詞等）をダミーにすると効果が高い。
+**fill**：空欄は1つのみ。`choices` に正解（`blank`）を必ず含める。形の違い（原形・-ing・過去分詞等）をダミーにすると効果が高い。`ja` には**英文全体の自然な和訳**を書く（聞き取りの穴埋めでも、英文の下にこの和訳が出る。`hint` が全文の和訳になっている場合は、`ja` に同じ文を入れる。画面では重ねて出さない）。空欄の答えが和訳から透けすぎないように、語そのものを直訳で言い当てない表現にする。
 
 **grammar**：誤文はノートに誤→正の実データがあればそれを使い、無ければ学習者がしやすい誤りを作る。正解位置（A/B）は偏らせない。`explain` には「なぜ正しいか」と「なぜ逆が誤りか」の両方を書く。`deep` は紛らわしい用法の整理や時制比較など深掘りの価値がある問題にだけ付ける（1レッスンあたり0〜2問）。
 
@@ -182,6 +182,7 @@ console.log('pat不整合:',bad.length, bad.map(q=>q.id));
 QB.forEach(q=>{
   if(q.choices){const a=q.type==='vocab'?q.a:q.blank; if(!q.choices.includes(a))console.log('答え不一致:',q.id); if(new Set(q.choices).size!==4)console.log('選択肢重複:',q.id);}
   if(q.type==='grammar'&&!['A','B'].includes(q.a))console.log('grammar解答不正:',q.id);
+  if(q.type==='fill'&&!q.ja)console.log('和訳(ja)なし:',q.id);
 });
 "
 ```
