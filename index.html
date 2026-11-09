@@ -472,6 +472,23 @@
   .q-ja::before { content:'和訳'; display:inline-block; margin-right:8px; padding:0 7px; border-radius:6px;
                   background:var(--surface3); color:var(--text3); font-size:0.7rem; font-weight:700; vertical-align:1px; }
   .listen-box .q-ja { margin:8px 0 0; }
+  .fb-ja { font-size:0.9062rem; font-weight:600; color:var(--text2); line-height:1.6; margin:2px 0 4px; }
+  .fb-ja + .rv { margin-top:6px; }
+
+  /* 結果ページ：間違えた解答と正解を並べる */
+  .rr-mine, .result-row .rr-correct, .rr-ja { margin-top:4px; }
+  .rr-mine { font-size:0.8438rem; font-weight:600; color:var(--text2); line-height:1.5; }
+  .rr-mine span { color:var(--ng); font-weight:700; text-decoration:line-through; text-decoration-thickness:1.5px; }
+  .rr-mine b, .result-row .rr-correct b { display:inline-block; margin-right:8px; padding:0 8px; border-radius:6px;
+        font-size:0.68rem; font-weight:700; text-align:center; vertical-align:1px; }
+  .rr-mine b { background:var(--ng-soft); color:var(--ng); }
+  .result-row .rr-correct b { background:var(--cy-soft); color:var(--cy-lt); }
+  .rr-ja { font-size:0.8438rem; font-weight:500; color:var(--text3); line-height:1.5; }
+
+  /* ボタンに添える操作キー（キーボードのある端末だけ） */
+  .btn .kcap { display:none; margin-left:8px; font-size:0.66rem; font-weight:700; border:1px solid rgba(0,0,0,.35);
+               border-radius:6px; padding:0 7px; color:rgba(0,0,0,.6); }
+  @media (hover:hover) and (pointer:fine) { .btn .kcap { display:inline-block; } }
 
   .spk-btn { background:none; border:none; cursor:pointer; font-size:1.3rem; padding:0 0 0 6px; vertical-align:middle; opacity:.7; }
   .spk-btn:hover { opacity:1; }
@@ -902,11 +919,11 @@ const QB = [
   {id:'t0103',pat:'howoften',month:'2603',type:'translate',q:'「どれくらい外食しますか？」',a:'How often do you eat out?',hint:'How often',lesson:'①3/28'},
   {id:'t0104',pat:'times',month:'2603',type:'translate',q:'「週に1〜2回です」',a:'Once or twice a week.',hint:'once or twice',lesson:'①3/28'},
   {id:'t0105',pat:'greeting',month:'2603',type:'translate',q:'「元気です、あなたは？」',a:"I'm fine. And you? / How about you?",hint:'And you? / How about you?',lesson:'①3/28'},
-  {id:'fr0101',pat:'howoften',month:'2603',type:'free',q:'「頻度」を聞く質問文を英語で書いてみよう',a:'How often do you ~?',hint:'How often ...',lesson:'①3/28'},
-  {id:'fr0102',pat:'favourite',month:'2603',type:'free',q:'"go-to" を使った例文を作ろう',a:'My go-to [place/song/food] is ~.',hint:'My go-to ... is ...',lesson:'①3/28'},
-  {id:'fr0103',pat:'almost',month:'2603',type:'free',q:'「ほぼ毎日〜する」を英語で',a:'I ~ almost every day.',hint:'almost every day',lesson:'①3/28'},
-  {id:'fr0104',pat:'times',month:'2603',type:'free',q:'「週に2〜3回」を英語で',a:'two or three times a week',hint:'times a week',lesson:'①3/28'},
-  {id:'fr0105',pat:'greeting',month:'2603',type:'free',q:'カジュアルに「元気だよ」と答える表現を3つ書こう',a:"I'm fine. / Good. / I'm okay.",hint:'fine / good / okay',lesson:'①3/28'},
+  {id:'fr0101',pat:'howoften',month:'2603',type:'free',q:'「頻度」を聞く質問文を英語で書いてみよう',a:'How often do you ~?',hint:'How often ...',ja:"どれくらいの頻度で〜しますか？",lesson:'①3/28'},
+  {id:'fr0102',pat:'favourite',month:'2603',type:'free',q:'"go-to" を使った例文を作ろう',a:'My go-to [place/song/food] is ~.',hint:'My go-to ... is ...',ja:"私の行きつけの［店／曲／食べ物］は〜です。",lesson:'①3/28'},
+  {id:'fr0103',pat:'almost',month:'2603',type:'free',q:'「ほぼ毎日〜する」を英語で',a:'I ~ almost every day.',hint:'almost every day',ja:"私はほぼ毎日〜します。",lesson:'①3/28'},
+  {id:'fr0104',pat:'times',month:'2603',type:'free',q:'「週に2〜3回」を英語で',a:'two or three times a week',hint:'times a week',ja:"週に2〜3回",lesson:'①3/28'},
+  {id:'fr0105',pat:'greeting',month:'2603',type:'free',q:'カジュアルに「元気だよ」と答える表現を3つ書こう',a:"I'm fine. / Good. / I'm okay.",hint:'fine / good / okay',ja:"元気です。／いい感じ。／大丈夫です。",lesson:'①3/28'},
 
   // ===== 2604（4月）②YUTA 4/4 =====
   {id:'v0201',pat:'favourite',month:'2604',type:'vocab',q:'"least favourite" の意味は？',a:'一番嫌いな',choices:['一番嫌いな','大好きな','あまり好きじゃない','そこそこ好き'],explain:"「一番嫌いな」という意味で、favourite（お気に入り）の反対。`My least favourite food is natto.` 直接 hate と言うより角が立たない言い方。",lesson:'②4/4'},
@@ -925,8 +942,8 @@ const QB = [
   {id:'t0201',pat:'reasonwhy',month:'2604',type:'translate',q:'「私が英語を学び始めた理由は〜だからです」',a:'The reason why I started learning English is because ~.',lesson:'②4/4'},
   {id:'t0202',pat:'favourite',month:'2604',type:'translate',q:'「私の一番嫌いな食べ物は〜です」',a:'My least favourite food is ~.',lesson:'②4/4'},
   {id:'t0203',pat:'taste',month:'2604',type:'translate',q:'「苦い味がします」',a:'It tastes bitter.',lesson:'②4/4'},
-  {id:'fr0201',pat:'gerundnoun',month:'2604',type:'free',q:'趣味を3つ使って "My hobbies are ..." を作ろう',a:'My hobbies are [動名詞], [動名詞] and [動名詞].',lesson:'②4/4'},
-  {id:'fr0202',pat:'tiredof',month:'2604',type:'free',q:'「〜に飽き飽きしている」を使った文を作ろう',a:"I'm getting tired of ~.",lesson:'②4/4'},
+  {id:'fr0201',pat:'gerundnoun',month:'2604',type:'free',q:'趣味を3つ使って "My hobbies are ..." を作ろう',a:'My hobbies are [動名詞], [動名詞] and [動名詞].',ja:"私の趣味は〜すること、〜すること、〜することです。",lesson:'②4/4'},
+  {id:'fr0202',pat:'tiredof',month:'2604',type:'free',q:'「〜に飽き飽きしている」を使った文を作ろう',a:"I'm getting tired of ~.",ja:"〜に飽き飽きしてきた。",lesson:'②4/4'},
 
   // ===== 2604（4月）③AYANA 4/23 =====
   {id:'v0301',pat:'__vocab__',month:'2604',type:'vocab',q:'"calf" の意味は？',a:'子牛・子象',choices:['子牛・子象','子犬','子猫','子馬'],explain:"子牛のほか、象やクジラの子どもも指す。複数形は calves と不規則に変化する。",lesson:'③4/23'},
@@ -943,8 +960,8 @@ const QB = [
   {id:'g0302',pat:'diffrom',month:'2604',type:'grammar',q:'どちらが自然？（ポーカーはギャンブルとは違う）',optA:'Poker is different than gambling.',optB:'Poker is different from gambling.',a:'B',explain:"「〜とは違う」は \"different from ~\" が正式な形。Aの than は比較級（bigger than など）の後に使うもので、different は比較級ではないため than は取らない。会話では different than も聞くが、書き言葉では from が安全。",deep:"【different from / than / to】標準的で最も安全なのは `different from`。アメリカ英語の口語では `different than` も使われるが、書き言葉では避けた方がよい。イギリス英語では `different to` も一般的で、地域差がある。試験や文書では from を選んでおけば間違いない。関連表現として `be similar to`（〜に似ている）、`be the same as`（〜と同じ）があり、それぞれ前置詞が異なるのでセットで覚える。",lesson:'③4/23'},
   {id:'t0301',pat:'pasttense',month:'2604',type:'translate',q:'「私はハネムーンでネパールへ行きました」',a:'I went to Nepal for my honeymoon.',lesson:'③4/23'},
   {id:'t0302',pat:'pasttense',month:'2604',type:'translate',q:'「象に乗って手綱を握りました」',a:'I rode an elephant and held the harness.',lesson:'③4/23'},
-  {id:'fr0301',pat:'__vocab__',month:'2604',type:'free',q:'動物の赤ちゃん：犬・猫・馬・熊の英語を書こう',a:'puppy/pup / kitten/kit / foal / cub',lesson:'③4/23'},
-  {id:'fr0302',pat:'everexp',month:'2604',type:'free',q:'「象に乗ったことがありますか？」と英語で聞こう',a:'Have you ever ridden an elephant?',lesson:'③4/23'},
+  {id:'fr0301',pat:'__vocab__',month:'2604',type:'free',q:'動物の赤ちゃん：犬・猫・馬・熊の英語を書こう',a:'puppy/pup / kitten/kit / foal / cub',ja:"子犬／子猫／子馬／子熊",lesson:'③4/23'},
+  {id:'fr0302',pat:'everexp',month:'2604',type:'free',q:'「象に乗ったことがありますか？」と英語で聞こう',a:'Have you ever ridden an elephant?',ja:"象に乗ったことがありますか？",lesson:'③4/23'},
 
   // ===== 2604（4月）④YUTA 4/25 =====
   {id:'v0401',pat:'__vocab__',month:'2604',type:'vocab',q:'"immature" の意味は？',a:'幼稚な・未熟な',choices:['幼稚な・未熟な','成熟した','知的な','明るい'],explain:"年齢のわりに考え方が幼いこと。`That was an immature reaction.` 反対語は mature（成熟した）で、im- が否定を表す接頭辞。",lesson:'④4/25'},
@@ -961,8 +978,8 @@ const QB = [
   {id:'t0402',pat:'routine',month:'2604',type:'translate',q:'「自転車で通勤しています」',a:'I go to work by bike / bicycle.',lesson:'④4/25'},
   {id:'t0403',pat:'morethan',month:'2604',type:'translate',q:'「USJはディズニーより高い」',a:'USJ is more expensive than Disney.',lesson:'④4/25'},
   {id:'t0404',pat:'favourite',month:'2604',type:'translate',q:'「大阪で一番好きな場所は？」',a:'Where is your favourite place in Osaka?',lesson:'④4/25'},
-  {id:'fr0401',pat:'routine',month:'2604',type:'free',q:'自分の朝のルーティンを3文で英語で書こう',a:'I get up at ~. After that, I ~. I leave home at ~.',lesson:'④4/25'},
-  {id:'fr0402',pat:'themost',month:'2604',type:'free',q:'「比較最上級」を使って何かについて書いてみよう',a:'~ is the most ... [noun].',lesson:'④4/25'},
+  {id:'fr0401',pat:'routine',month:'2604',type:'free',q:'自分の朝のルーティンを3文で英語で書こう',a:'I get up at ~. After that, I ~. I leave home at ~.',ja:"私は〜時に起きます。そのあと〜します。〜時に家を出ます。",lesson:'④4/25'},
+  {id:'fr0402',pat:'themost',month:'2604',type:'free',q:'「比較最上級」を使って何かについて書いてみよう',a:'~ is the most ... [noun].',ja:"〜は一番…な［名詞］です。",lesson:'④4/25'},
 
   // ===== 2605（5月）⑤Ray 5/9 =====
   {id:'v0501',pat:'__vocab__',month:'2605',type:'vocab',q:'"abandoned" の意味は？',a:'捨てられた・廃墟の',choices:['捨てられた・廃墟の','新しい','有名な','発展した'],explain:"人がいなくなって放置された状態。`The house is abandoned.` 形容詞なので be動詞とセットで使う。動詞なら abandon（捨てる）。",lesson:'⑤5/9'},
@@ -978,7 +995,7 @@ const QB = [
   {id:'t0501',pat:'beadj',month:'2605',type:'translate',q:'「その家は捨てられている」',a:'The house is abandoned.',lesson:'⑤5/9'},
   {id:'t0502',pat:'progress',month:'2605',type:'translate',q:'「彼らは移動しています」',a:'They are migrating.',lesson:'⑤5/9'},
   {id:'fr0501',pat:'__vocab__',month:'2605',type:'free',q:'南アフリカの3都市と役割を英語で書こう',a:'Pretoria=Executive / Bloemfontein=Judicial / Cape Town=Constitutional',lesson:'⑤5/9'},
-  {id:'fr0502',pat:'beadj',month:'2605',type:'free',q:'"abandoned" を使った文を2つ作ろう（形容詞と動詞）',a:'The house is abandoned. / I will abandon my house.',lesson:'⑤5/9'},
+  {id:'fr0502',pat:'beadj',month:'2605',type:'free',q:'"abandoned" を使った文を2つ作ろう（形容詞と動詞）',a:'The house is abandoned. / I will abandon my house.',ja:"その家は空き家（放置されている）。／私は家を手放すつもりです。",lesson:'⑤5/9'},
 
   // ===== 2605（5月）⑥Yuichiro 5/12 =====
   {id:'v0601',pat:'__vocab__',month:'2605',type:'vocab',q:'"blood vessel" の意味は？',a:'血管',choices:['血管','臓器','骨','筋肉'],explain:"体内で血液を運ぶ管のこと。`Exercise is good for your blood vessels.` artery（動脈）、vein（静脈）の総称にあたる。",lesson:'⑥5/12'},
@@ -999,7 +1016,7 @@ const QB = [
   {id:'t0602',pat:'edingadj',month:'2605',type:'translate',q:'「私は映画で感動した」',a:'I was moved / touched by the movie.',lesson:'⑥5/12'},
   {id:'t0603',pat:'lasttime',month:'2605',type:'translate',q:'「最後に旅行したのはいつですか？」',a:'When was the last time you went on a trip?',lesson:'⑥5/12'},
   {id:'t0604',pat:'times',month:'2605',type:'translate',q:'「月に1回ボランティアをします」',a:'I do volunteer work once a month.',lesson:'⑥5/12'},
-  {id:'fr0601',pat:'lasttime',month:'2605',type:'free',q:'"When was the last time you ..." で質問を3つ作ろう',a:'When was the last time you [過去形]?',lesson:'⑥5/12'},
+  {id:'fr0601',pat:'lasttime',month:'2605',type:'free',q:'"When was the last time you ..." で質問を3つ作ろう',a:'When was the last time you [過去形]?',ja:"最後に〜したのはいつ？",lesson:'⑥5/12'},
   {id:'fr0602',pat:'edingadj',month:'2605',type:'free',q:'"moved" と "moving" の違いを例文で説明しよう',a:'I was moved. (私が感動した) / The film was moving. (映画が感動的)',lesson:'⑥5/12'},
 
   // ===== 2605（5月）⑦RINA 5/14 =====
@@ -1016,8 +1033,8 @@ const QB = [
   {id:'t0701',pat:'have',month:'2605',type:'translate',q:'「私の理想の家には大きなキッチンがある」',a:'My ideal house has a big kitchen.',lesson:'⑦5/14'},
   {id:'t0702',pat:'ideal',month:'2605',type:'translate',q:'「理想の休日は何ですか？」',a:'What is your ideal day off?',lesson:'⑦5/14'},
   {id:'t0703',pat:'ideal',month:'2605',type:'translate',q:'「理想の旅行先はどこですか？」',a:'What is your ideal place for travelling?',lesson:'⑦5/14'},
-  {id:'fr0701',pat:'ideal',month:'2605',type:'free',q:'"ideal" を使った質問を2つ作ろう',a:'What is your ideal ~? / What would be your ideal ~?',lesson:'⑦5/14'},
-  {id:'fr0702',pat:'wordpair',month:'2605',type:'free',q:'thunder と lightning の違いを日本語で説明してから英文例を書こう',a:'Thunder=音(雷鳴) / Lightning=光(稲妻)\nI heard thunder. / I saw lightning.',lesson:'⑦5/14'},
+  {id:'fr0701',pat:'ideal',month:'2605',type:'free',q:'"ideal" を使った質問を2つ作ろう',a:'What is your ideal ~? / What would be your ideal ~?',ja:"あなたの理想の〜は何ですか？／あなたにとって理想の〜はどんなものでしょう？",lesson:'⑦5/14'},
+  {id:'fr0702',pat:'wordpair',month:'2605',type:'free',q:'thunder と lightning の違いを日本語で説明してから英文例を書こう',a:'Thunder=音(雷鳴) / Lightning=光(稲妻)\nI heard thunder. / I saw lightning.',ja:"雷の音を聞いた。／稲光を見た。",lesson:'⑦5/14'},
 
   // ===== 2606（6月）⑧1on1 6/10 =====
   {id:'v0801',pat:'__vocab__',month:'2606',type:'vocab',q:'"waste of time" の意味は？',a:'時間の無駄',choices:['時間の無駄','暇つぶし','時間節約','無駄遣い'],explain:"やっても意味がなかったこと。`That meeting was a waste of time.` お金なら a waste of money。",lesson:'⑧6/10'},
@@ -1039,7 +1056,7 @@ const QB = [
   {id:'t0803',pat:'prep',month:'2606',type:'translate',q:'「週末を除いて毎日使っています」',a:'I use it every day, except for weekends.',hint:'except for',lesson:'⑧6/10'},
   {id:'t0804',pat:'howcome',month:'2606',type:'translate',q:'「なんでAIが不要なの？」（カジュアルに）',a:'How come AI is unnecessary for you?',hint:'How come + 主語 + 動詞',lesson:'⑧6/10'},
   {id:'t0805',pat:'usedto',month:'2606',type:'translate',q:'「当時、私はとても内気でした」',a:'I was very shy back then.',hint:'back then',deep:"【back then と at that time はほぼ同じ】どちらも「当時は」を意味し、置き換えても通じる。違いは響きで、`back then` は口語的で「あの頃はさ」と昔を懐かしむニュアンスが出る。`at that time` はやや中立・フォーマルで、報告や説明でも使える。会話なら back then、書き言葉なら at that time が自然。似た表現に `in those days`（あの時代は）があり、これはより長い期間を指す。",lesson:'⑧6/10'},
-  {id:'fr0801',pat:'tooto',month:'2606',type:'free',q:'"too ~ to ..." を使った文を自由に作ろう',a:"I'm too tired to go out. / I'm too busy to study. など",hint:'too + 形容詞 + to + 動詞原形',lesson:'⑧6/10'},
+  {id:'fr0801',pat:'tooto',month:'2606',type:'free',q:'"too ~ to ..." を使った文を自由に作ろう',a:"I'm too tired to go out. / I'm too busy to study. など",hint:'too + 形容詞 + to + 動詞原形',ja:"疲れすぎて出かけられない。／忙しすぎて勉強できない。など",lesson:'⑧6/10'},
   {id:'fr0802',pat:'usedto',month:'2606',type:'free',q:'"used to" と "be used to" の違いを例文で書こう',a:"I used to cook.（昔は料理していた） / I'm used to cooking.（料理に慣れている）",lesson:'⑧6/10'},
 
   // ===== 2606（6月）⑨Coco 6/25 =====
@@ -1062,8 +1079,8 @@ const QB = [
   {id:'t0903',pat:'feellike',month:'2606',type:'translate',q:'「何もしたくない気分だ」',a:'I feel like doing nothing.',hint:'feel like + doing',lesson:'⑨6/25'},
   {id:'t0904',pat:'goeswith',month:'2606',type:'translate',q:'「ビールによく合います」',a:'It goes well with beer.',hint:'goes well with',lesson:'⑨6/25'},
   {id:'t0905',pat:'feellike',month:'2606',type:'translate',q:'「いつ自分にご褒美をあげたくなりますか？」',a:'When do you feel like treating yourself?',hint:'feel like + treating',lesson:'⑨6/25'},
-  {id:'fr0901',pat:'feellike',month:'2606',type:'free',q:'"feel like doing ~" を使った文を3つ作ろう',a:'I feel like eating ramen. / I feel like going out. / I feel like doing nothing. など',hint:'feel like + 動名詞',lesson:'⑨6/25'},
-  {id:'fr0902',pat:'getdone',month:'2606',type:'free',q:'"get ~ done" を使った文を2つ作ろう（違う動作で）',a:'I got my hair cut. / I got my car fixed. / I got my nails done. など',hint:'get + 目的語 + 過去分詞',lesson:'⑨6/25'},
+  {id:'fr0901',pat:'feellike',month:'2606',type:'free',q:'"feel like doing ~" を使った文を3つ作ろう',a:'I feel like eating ramen. / I feel like going out. / I feel like doing nothing. など',hint:'feel like + 動名詞',ja:"ラーメンが食べたい気分。／出かけたい気分。／何もしたくない気分。など",lesson:'⑨6/25'},
+  {id:'fr0902',pat:'getdone',month:'2606',type:'free',q:'"get ~ done" を使った文を2つ作ろう（違う動作で）',a:'I got my hair cut. / I got my car fixed. / I got my nails done. など',hint:'get + 目的語 + 過去分詞',ja:"髪を切ってもらった。／車を直してもらった。／ネイルをやってもらった。など",lesson:'⑨6/25'},
 
   // ===== 2607（7月）⑩ちゃぴお先生 7/23 =====
   {id:'v1001',pat:'sometimes',month:'2607',type:'vocab',q:'"sometime" と "sometimes" の違いは？',a:'sometime=いつか(未来) / sometimes=ときどき(頻度)',choices:['sometime=いつか(未来) / sometimes=ときどき(頻度)','同じ意味','sometime=頻度 / sometimes=未来','どちらも「いつか」'],explain:"sometime は「いつか（未来の一時点）」、sometimes は「ときどき（頻度）」。`Let's meet sometime.` と `I sometimes go there.` で意味がまったく変わる。",deep:"【sometime / sometimes / some time】①`sometime`＝いつか（未来の漠然とした一時点）。`Let's meet sometime.` ②`sometimes`＝ときどき（頻度）。`I sometimes go there.` ③`some time`（2語）＝しばらくの間。`It took some time.` s ひとつとスペースひとつで意味が全く変わる紛らわしい組み合わせ。頻度の sometimes は文頭・動詞の前・文末のどこにでも置けるが、動詞の前が最も自然。",lesson:'⑩7/23'},
@@ -1084,8 +1101,8 @@ const QB = [
   {id:'t1003',pat:'wanna',month:'2607',type:'translate',q:'「ジャンクフードを避けるようにしています」',a:'I try to stay away from junk food.',hint:'stay away from',lesson:'⑩7/23'},
   {id:'t1004',pat:'indirect',month:'2607',type:'translate',q:'「彼女が何を言うか気になる」',a:"I'm interested in what she's gonna say.",hint:'間接疑問文の語順',lesson:'⑩7/23'},
   {id:'t1005',pat:'routine',month:'2607',type:'translate',q:'「家に帰ったらまずシャワーを浴びたい」',a:'I wanna take a shower first when I get home.',hint:'when I get home',lesson:'⑩7/23'},
-  {id:'fr1001',pat:'indirect',month:'2607',type:'free',q:'"I\'m interested in what ..." を使った文を作ろう',a:"I'm interested in what he thinks. / I'm interested in what she's gonna say. など",hint:'what / why / how + 主語 + 動詞',lesson:'⑩7/23'},
-  {id:'fr1002',pat:'wanna',month:'2607',type:'free',q:'"stay away from" を使った文を2つ作ろう（場所・物）',a:'Stay away from that area. / I try to stay away from junk food. など',lesson:'⑩7/23'},
+  {id:'fr1001',pat:'indirect',month:'2607',type:'free',q:'"I\'m interested in what ..." を使った文を作ろう',a:"I'm interested in what he thinks. / I'm interested in what she's gonna say. など",hint:'what / why / how + 主語 + 動詞',ja:"彼が何を考えているのか気になる。／彼女が何を言うのか気になる。など",lesson:'⑩7/23'},
+  {id:'fr1002',pat:'wanna',month:'2607',type:'free',q:'"stay away from" を使った文を2つ作ろう（場所・物）',a:'Stay away from that area. / I try to stay away from junk food. など',ja:"その地域には近づかないで。／ジャンクフードは避けるようにしている。など",lesson:'⑩7/23'},
 
   // ===== 2607（7月）⑪グループレッスン 7/23 =====
   {id:'v1101',pat:'particular',month:'2607',type:'vocab',q:'"in particular" の特徴として正しいのは？',a:'疑問文との相性が良い・特定のものを指す',choices:['疑問文との相性が良い・特定のものを指す','断言・強調に使う','口語的すぎる','否定文にしか使えない'],explain:"「特に・とりわけ」の意味で、選択肢の中から特定のものを指す。`Is there anything in particular you want to eat?` 疑問文と相性が良い。",lesson:'⑪7/23'},
@@ -1107,8 +1124,8 @@ const QB = [
   {id:'t1103',pat:'considered',month:'2607',type:'translate',q:'「お礼を言うときはいつもお辞儀します」',a:'I always bow when I say thank you.',hint:'bow',lesson:'⑪7/23'},
   {id:'t1104',pat:'considered',month:'2607',type:'translate',q:'「早く来すぎると失礼とみなされます」',a:"If you come too early, it's considered to be rude.",hint:'considered to be',lesson:'⑪7/23'},
   {id:'t1105',pat:'particular',month:'2607',type:'translate',q:'「特に何か食べたいものありますか？」',a:'Is there anything in particular you want to eat?',hint:'in particular',lesson:'⑪7/23'},
-  {id:'fr1101',pat:'whystart',month:'2607',type:'free',q:'"Why did you start liking ~?" を使って質問文を作ろう',a:'Why did you start liking [趣味/食べ物/スポーツ]?',hint:'start liking + 名詞',lesson:'⑪7/23'},
-  {id:'fr1102',pat:'wordpair',month:'2607',type:'free',q:'"in particular" と "especially" を1文ずつ使って書こう',a:'Is there anything in particular you want? / I especially love Osaka food.',lesson:'⑪7/23'},
+  {id:'fr1101',pat:'whystart',month:'2607',type:'free',q:'"Why did you start liking ~?" を使って質問文を作ろう',a:'Why did you start liking [趣味/食べ物/スポーツ]?',hint:'start liking + 名詞',ja:"なんで［趣味／食べ物／スポーツ］を好きになったの？",lesson:'⑪7/23'},
+  {id:'fr1102',pat:'wordpair',month:'2607',type:'free',q:'"in particular" と "especially" を1文ずつ使って書こう',a:'Is there anything in particular you want? / I especially love Osaka food.',ja:"特にほしいものはありますか？／私は特に大阪の食べ物が大好きです。",lesson:'⑪7/23'},
 
   // ===== 2607（7月）⑫マルチトピック 7/25 =====
   {id:'v1201',pat:'prep',month:'2607',type:'vocab',q:'"recreationally" の意味は？',a:'趣味で・レジャーとして',choices:['趣味で・レジャーとして','プロとして','真剣に','たまに'],explain:"本気やプロとしてではなく、楽しみでやっているニュアンス。`I play table tennis recreationally.` 対になる語は competitively。",lesson:'⑫7/25'},
@@ -1130,8 +1147,8 @@ const QB = [
   {id:'t1203',pat:'prep',month:'2607',type:'translate',q:'「香港で3時間の乗り継ぎがあります」',a:'I have a three-hour layover in Hong Kong.',hint:'layover',lesson:'⑫7/25'},
   {id:'t1204',pat:'beadj',month:'2607',type:'translate',q:'「最近やる気が落ちています」',a:"I'm losing motivation. / I've been losing motivation recently. / I've been losing motivation lately. / Recently, I've been losing motivation. / Lately, I've been losing motivation. / I'm losing motivation these days. / I'm losing motivation lately.",hint:'losing motivation',lesson:'⑫7/25'},
   {id:'t1205',pat:'article',month:'2607',type:'translate',q:'「森の近くの美しい庭がある家に住みたい」',a:"I'd like a house near a forest with a beautiful garden.",hint:'near a forest / with',lesson:'⑫7/25'},
-  {id:'fr1201',pat:'__vocab__',month:'2607',type:'free',q:'日本の夏の風物詩を英語で3つ書こう',a:'shaved ice / summer festival / fireworks / swimming in the sea など',hint:'夏の単語',lesson:'⑫7/25'},
-  {id:'fr1202',pat:'easytomaster',month:'2607',type:'free',q:'"easy to ~, difficult to ~" を使った文を作ろう',a:"It's easy to learn, but difficult to master. など",hint:'easy to + 原形',lesson:'⑫7/25'},
+  {id:'fr1201',pat:'__vocab__',month:'2607',type:'free',q:'日本の夏の風物詩を英語で3つ書こう',a:'shaved ice / summer festival / fireworks / swimming in the sea など',hint:'夏の単語',ja:"かき氷／夏祭り／花火／海水浴 など",lesson:'⑫7/25'},
+  {id:'fr1202',pat:'easytomaster',month:'2607',type:'free',q:'"easy to ~, difficult to ~" を使った文を作ろう',a:"It's easy to learn, but difficult to master. など",hint:'easy to + 原形',ja:"習うのは簡単だけど、極めるのは難しい。など",lesson:'⑫7/25'},
 
   // ===== 2607（7月）⑬Efe 7/30 質問力アップ =====
   {id:'v1301',pat:'__vocab__',month:'2607',type:'vocab',q:'"litter" の意味は（動詞）？',a:'ポイ捨てする',choices:['ポイ捨てする','拾う','掃除する','分別する'],explain:"ゴミをポイ捨てすること。`Don't litter.` 名詞では散らかったゴミそのものを指す。",lesson:'⑬7/30'},
@@ -1153,8 +1170,8 @@ const QB = [
   {id:'t1303',pat:'howlong',month:'2607',type:'translate',q:'「日本にどれくらい住んでいますか？」',a:'How long have you been living in Japan?',hint:'現在完了進行形',lesson:'⑬7/30'},
   {id:'t1304',pat:'turndown',month:'2607',type:'translate',q:'「彼を何度も断りました」',a:'I turned him down many times.',hint:'turn down',lesson:'⑬7/30'},
   {id:'t1305',pat:'article',month:'2607',type:'translate',q:'「日本の会社で働いていました」',a:'I worked for a Japanese company.',hint:'work for a ～',lesson:'⑬7/30'},
-  {id:'fr1301',pat:'goalplan',month:'2607',type:'free',q:'"What\'s your goal in 5 years?" に自分の言葉で答えよう',a:'I wanna [目標] within 5 years. など',hint:'within 5 years',lesson:'⑬7/30'},
-  {id:'fr1302',pat:'article',month:'2607',type:'free',q:'職業を言う文を冠詞つきで2つ作ろう',a:'I was a truck driver. / I am a trainer. など（職業には a/an が必要）',hint:'a + 職業',lesson:'⑬7/30'},
+  {id:'fr1301',pat:'goalplan',month:'2607',type:'free',q:'"What\'s your goal in 5 years?" に自分の言葉で答えよう',a:'I wanna [目標] within 5 years. など',hint:'within 5 years',ja:"5年以内に［目標］したい。など",lesson:'⑬7/30'},
+  {id:'fr1302',pat:'article',month:'2607',type:'free',q:'職業を言う文を冠詞つきで2つ作ろう',a:'I was a truck driver. / I am a trainer. など（職業には a/an が必要）',hint:'a + 職業',ja:"私はトラック運転手でした。／私はトレーナーです。など",lesson:'⑬7/30'},
 
   // ===== 2608（8月）⑭Brendan 8/4 Yes/No Questions Game =====
   {id:'v1401',pat:'__vocab__',month:'2608',type:'vocab',q:'"stationary" の意味は？',a:'静止している・動かない',choices:['静止している・動かない','持ち運べる','文房具を売る','高性能な'],explain:"動かずその場にとどまっている状態。`Is it stationary?` 同じ発音の stationery（文房具）とはつづりが違うので注意。",lesson:'⑭8/4'},
@@ -1174,8 +1191,8 @@ const QB = [
   {id:'t1402',pat:'yesno',month:'2608',type:'translate',q:'「それは持ち運べますか？」',a:'Is it portable?',hint:'portable',lesson:'⑭8/4'},
   {id:'t1403',pat:'yesno',month:'2608',type:'translate',q:'「それを手に身につけますか？」',a:'Do you wear it on your hand?',hint:'wear it on',lesson:'⑭8/4'},
   {id:'t1404',pat:'yesno',month:'2608',type:'translate',q:'「それは溶けますか？」',a:'Does it melt?',hint:'melt',lesson:'⑭8/4'},
-  {id:'fr1401',pat:'yesno',month:'2608',type:'free',q:'"made of" を使った質問を3つ作ろう',a:'Is it made of paper? / Is it made of glass? / Is it made of dough?',hint:'Is it made of ~?',lesson:'⑭8/4'},
-  {id:'fr1402',pat:'yesno',month:'2608',type:'free',q:'カテゴリを広い→狭い順に絞る質問を3つ書こう',a:'Is it alive? → Is it an animal? → Can you eat it? など',hint:'広い質問から順に',lesson:'⑭8/4'},
+  {id:'fr1401',pat:'yesno',month:'2608',type:'free',q:'"made of" を使った質問を3つ作ろう',a:'Is it made of paper? / Is it made of glass? / Is it made of dough?',hint:'Is it made of ~?',ja:"それは紙でできていますか？／ガラスでできていますか？／生地（パン生地）でできていますか？",lesson:'⑭8/4'},
+  {id:'fr1402',pat:'yesno',month:'2608',type:'free',q:'カテゴリを広い→狭い順に絞る質問を3つ書こう',a:'Is it alive? → Is it an animal? → Can you eat it? など',hint:'広い質問から順に',ja:"生きていますか？ → 動物ですか？ → 食べられますか？ など",lesson:'⑭8/4'},
 
   // ===== 2608（8月）⑮8/6 Too & Either / Neither（同意） =====
   {id:'v1501',pat:'agree',month:'2608',type:'vocab',q:'"So do I." の意味は？',a:'私もそうです（肯定への同意）',choices:['私もそうです（肯定への同意）','私は違います','私もしません','どちらでもいい'],explain:"相手の肯定文に「私も」と同意する形。`I like natto. → So do I.` カジュアルには Me too. でも同じ意味になる。",lesson:'⑮8/6'},
@@ -1196,7 +1213,7 @@ const QB = [
   {id:'t1502',pat:'agree',month:'2608',type:'translate',q:'「私も〜しません」（相手が I don\'t ~ と言ったとき）',a:'Neither do I.',hint:'Neither + 助動詞 + I',lesson:'⑮8/6'},
   {id:'t1503',pat:'agree',month:'2608',type:'translate',q:'「私も泳げます」',a:'So can I.',hint:'can に合わせる',lesson:'⑮8/6'},
   {id:'t1504',pat:'agree',month:'2608',type:'translate',q:'「え、そうなん？私はしないよ」（相手の肯定に不同意）',a:"Really? I don't.",hint:'Really? で受ける',lesson:'⑮8/6'},
-  {id:'fr1501',pat:'agree',month:'2608',type:'free',q:'"So ~ I" の形を助動詞を変えて3つ書こう',a:'So do I. / So can I. / So was I. / So did I. など',hint:'元の文の助動詞に合わせる',lesson:'⑮8/6'},
+  {id:'fr1501',pat:'agree',month:'2608',type:'free',q:'"So ~ I" の形を助動詞を変えて3つ書こう',a:'So do I. / So can I. / So was I. / So did I. など',hint:'元の文の助動詞に合わせる',ja:"私もそう。／私もできる。／私もそうだった。／私もした。など",lesson:'⑮8/6'},
   {id:'fr1502',pat:'agree',month:'2608',type:'free',q:'"Neither do I" と "Me neither" の使い分けを書こう',a:'Neither do I.（ややきちんとした形） / Me neither.（カジュアルな言い方）どちらも「私も〜ない」',hint:'フォーマル度の違い',lesson:'⑮8/6'},
 
   // ===== 2608（8月）⑯8月 Either / Neither（選択編） =====
@@ -1216,7 +1233,7 @@ const QB = [
   {id:'t1602',pat:'eitheror',month:'2608',type:'translate',q:'「すき家もスシローもどちらも空いていません」',a:'Neither Sushiro nor Sukiya is available.',hint:'neither ~ nor',lesson:'⑯8月'},
   {id:'t1603',pat:'eitheror',month:'2608',type:'translate',q:'「どっちでもいいよ」',a:'Either one is ok.',hint:'Either one',lesson:'⑯8月'},
   {id:'t1604',pat:'everexp',month:'2608',type:'translate',q:'「北朝鮮に行ったことありますか？」',a:'Have you been to North Korea?',hint:'have been to',lesson:'⑯8月'},
-  {id:'fr1601',pat:'eitheror',month:'2608',type:'free',q:'"either A or B" を使った文を2つ作ろう',a:'We can either go to Osaka or Kyoto. / You can either call me or send an email. など',hint:'either ~ or ~',lesson:'⑯8月'},
+  {id:'fr1601',pat:'eitheror',month:'2608',type:'free',q:'"either A or B" を使った文を2つ作ろう',a:'We can either go to Osaka or Kyoto. / You can either call me or send an email. など',hint:'either ~ or ~',ja:"大阪か京都のどちらかに行けるよ。／電話するかメールを送るか、どちらかでいいよ。など",lesson:'⑯8月'},
   {id:'fr1602',pat:'eitheror',month:'2608',type:'free',q:'"Me neither" と "neither A nor B" の違いを書こう',a:'Me neither.＝私も〜ない（同意） / Neither A nor B＝AもBもどちらも〜ない（選択の否定）',hint:'同意か、選択の否定か',lesson:'⑯8月'},
 
   // ===== 2608（8月）⑰Ryan 8月 Free Conversation 質問パターン =====
@@ -1238,8 +1255,8 @@ const QB = [
   {id:'t1703',pat:'childq',month:'2608',type:'translate',q:'「子供の頃なりたかった職業は何ですか？」',a:'What did you want to be when you were a kid?',hint:'want to be',lesson:'⑰8月'},
   {id:'t1704',pat:'childq',month:'2608',type:'translate',q:'「子供の頃好きだったお菓子は何ですか？」',a:'What was your favorite snack as a child?',hint:'as a child',lesson:'⑰8月'},
   {id:'t1705',pat:'weekendq',month:'2608',type:'translate',q:'「普通の水と炭酸水、どっちを飲みますか？」',a:'Do you usually drink still water or sparkling water?',hint:'still / sparkling',lesson:'⑰8月'},
-  {id:'fr1701',pat:'weekendq',month:'2608',type:'free',q:'週末について聞く質問を2つ書こう（過去と未来）',a:'How was your weekend? / What are you going to do this weekend?',hint:'was と going to',lesson:'⑰8月'},
-  {id:'fr1702',pat:'childq',month:'2608',type:'free',q:'子供の頃について聞く質問を3つ作ろう',a:'What did you want to be when you were a kid? / What was your favorite snack as a child? / What did you use to like doing with your parents?',hint:'as a child / when you were a kid',lesson:'⑰8月'},
+  {id:'fr1701',pat:'weekendq',month:'2608',type:'free',q:'週末について聞く質問を2つ書こう（過去と未来）',a:'How was your weekend? / What are you going to do this weekend?',hint:'was と going to',ja:"週末はどうだった？／今週末は何をする予定？",lesson:'⑰8月'},
+  {id:'fr1702',pat:'childq',month:'2608',type:'free',q:'子供の頃について聞く質問を3つ作ろう',a:'What did you want to be when you were a kid? / What was your favorite snack as a child? / What did you use to like doing with your parents?',hint:'as a child / when you were a kid',ja:"子供の頃、何になりたかった？／子供の頃、好きなおやつは何だった？／昔、親とどんなことをするのが好きだった？",lesson:'⑰8月'},
 
   // ===== 2608（8月）⑱CONVERSATIONAL ENGLISH ハマってること =====
   {id:'v1801',pat:'beinto',month:'2608',type:'vocab',q:'"be into ~" の意味は？',a:'〜にハマっている',choices:['〜にハマっている','〜の中に入る','〜が苦手だ','〜を始める'],explain:"趣味や関心ごとに夢中になっていること。`I'm really into reading mystery novels.` really を足すと熱量が上がる。",lesson:'⑱8月'},
@@ -1259,7 +1276,7 @@ const QB = [
   {id:'t1802',pat:'beinto',month:'2608',type:'translate',q:'「まぜそばが飽きない」',a:"I can't get enough of mazesoba.",hint:"can't get enough of",lesson:'⑱8月'},
   {id:'t1803',pat:'beinto',month:'2608',type:'translate',q:'「最近何にハマってる？」',a:'What are you into these days?',hint:'What are you into',lesson:'⑱8月'},
   {id:'t1804',pat:'beinto',month:'2608',type:'translate',q:'「負けるのが怖いです」',a:"I'm afraid of losing.",hint:'afraid of + 動名詞',lesson:'⑱8月'},
-  {id:'fr1801',pat:'beinto',month:'2608',type:'free',q:'"be into ~" を使って自分の趣味を2つ書こう',a:"I'm into playing poker. / I'm really into studying English. など",hint:'into + 名詞/動名詞',lesson:'⑱8月'},
+  {id:'fr1801',pat:'beinto',month:'2608',type:'free',q:'"be into ~" を使って自分の趣味を2つ書こう',a:"I'm into playing poker. / I'm really into studying English. など",hint:'into + 名詞/動名詞',ja:"ポーカーにハマっている。／英語の勉強に本当にハマっている。など",lesson:'⑱8月'},
   {id:'fr1802',pat:'beinto',month:'2608',type:'free',q:'"be into" と "can\'t get enough of" の熱量の違いを書こう',a:"I'm into ~（最近ハマってる・ライト） / I can't get enough of ~（飽きない・病みつき・より強い）",hint:'強さの違い',lesson:'⑱8月'},
 // ============================================================
   // ===== 2609（9月）⑲9/3 Prefer / I'd rather（好み・選択） =====
@@ -1281,8 +1298,8 @@ const QB = [
   {id:'t1902',pat:'rather',month:'2609',type:'translate',q:'「（それより）むしろゴルフがしたい」',a:"I'd rather play golf. / I would rather play golf.",hint:"I'd rather + 原形",lesson:'⑲9/3'},
   {id:'t1903',pat:'rather',month:'2609',type:'translate',q:'「むしろシンガポールに行きたい」',a:"I'd rather go to Singapore. / I would rather go to Singapore.",hint:"I'd rather go to",lesson:'⑲9/3'},
   {id:'t1904',pat:'rather',month:'2609',type:'translate',q:'「猫より犬を飼いたい」',a:"I'd rather have a dog than a cat. / I would rather have a dog than a cat.",hint:'would rather A than B',lesson:'⑲9/3'},
-  {id:'fr1901',pat:'prefer',month:'2609',type:'free',q:'"prefer A over B" で自分の好みを2つ書こう',a:'I prefer golf over baseball. / I prefer sushi over yakiniku. など',hint:'prefer + 名詞 + over + 名詞',lesson:'⑲9/3'},
-  {id:'fr1902',pat:'rather',month:'2609',type:'free',q:"友達の誘いに \"I'd rather ~\" で別案を返す会話を書こう",a:"A: Let's go to karaoke! / B: I'd rather play golf. など",hint:"Let's ~ → I'd rather ~",lesson:'⑲9/3'},
+  {id:'fr1901',pat:'prefer',month:'2609',type:'free',q:'"prefer A over B" で自分の好みを2つ書こう',a:'I prefer golf over baseball. / I prefer sushi over yakiniku. など',hint:'prefer + 名詞 + over + 名詞',ja:"野球よりゴルフが好き。／焼肉より寿司が好き。など",lesson:'⑲9/3'},
+  {id:'fr1902',pat:'rather',month:'2609',type:'free',q:"友達の誘いに \"I'd rather ~\" で別案を返す会話を書こう",a:"A: Let's go to karaoke! / B: I'd rather play golf. など",hint:"Let's ~ → I'd rather ~",ja:"A：カラオケ行こう！／B：むしろゴルフがしたいな。など",lesson:'⑲9/3'},
   // ===== 2609（9月）⑳9/8 What is/was ~ like? =====
   {id:'v2001',pat:'whatlike',month:'2609',type:'vocab',q:'"What is your hometown like?" の意味は？',a:'あなたの地元はどんな感じ？',choices:['あなたの地元はどんな感じ？','地元は好きですか？','地元はどこですか？','地元に似ている場所は？'],explain:"この like は「好き」ではなく「〜のような」という前置詞。直訳は「あなたの地元は何のようですか」。答えは `It is quiet and safe.` のように It is + 形容詞で返す。",lesson:'⑳9/8'},
   {id:'v2002',pat:'__vocab__',month:'2609',type:'vocab',q:'"lively" の意味は？',a:'活気がある',choices:['活気がある','生きている','寂しい','長生きの'],explain:"人や店がにぎわっている様子。`The town is very lively at night.` 見た目は副詞っぽいが形容詞で、「生きている」は alive や living。",lesson:'⑳9/8'},
@@ -1302,8 +1319,8 @@ const QB = [
   {id:'t2002',pat:'__vocab__',month:'2609',type:'translate',q:'「大変だったけど思い出に残ってる」',a:'It was stressful but memorable. / It was challenging but memorable.',hint:'stressful / memorable',lesson:'⑳9/8'},
   {id:'t2003',pat:'prep',month:'2609',type:'translate',q:'「クリスマスに働いた？」',a:'Did you work on Christmas?',hint:'on + 特別な日',lesson:'⑳9/8'},
   {id:'t2004',pat:'whatlike',month:'2609',type:'translate',q:'「今の仕事はどんな感じ？」',a:"What is your current job like? / What's your current job like?",hint:'current job',lesson:'⑳9/8'},
-  {id:'fr2001',pat:'whatlike',month:'2609',type:'free',q:'"What was ~ like?" で質問を3つ作ろう',a:'What was your school like? / What was your first trip like? / What was your first job like? など',hint:'What was + 名詞 + like?',lesson:'⑳9/8'},
-  {id:'fr2002',pat:'whatlike',month:'2609',type:'free',q:'Positive・Neutral・Negative の形容詞を1つずつ使い、"It was ~." で3文書こう',a:'It was exciting. / It was pretty normal. / It was a nightmare. など',hint:'a nightmare は冠詞付き',lesson:'⑳9/8'},
+  {id:'fr2001',pat:'whatlike',month:'2609',type:'free',q:'"What was ~ like?" で質問を3つ作ろう',a:'What was your school like? / What was your first trip like? / What was your first job like? など',hint:'What was + 名詞 + like?',ja:"学校はどんな感じだった？／初めての旅行はどんな感じだった？／初めての仕事はどんな感じだった？など",lesson:'⑳9/8'},
+  {id:'fr2002',pat:'whatlike',month:'2609',type:'free',q:'Positive・Neutral・Negative の形容詞を1つずつ使い、"It was ~." で3文書こう',a:'It was exciting. / It was pretty normal. / It was a nightmare. など',hint:'a nightmare は冠詞付き',ja:"わくわくした。／かなり普通だった。／悪夢のようだった。など",lesson:'⑳9/8'},
   // ===== 2609（9月）㉑自習 冠詞×前置詞（weekend / Christmas） =====
   {id:'v2101',pat:'weekend',month:'2609',type:'vocab',q:'"on weekends" の意味は？',a:'週末は（毎回・習慣的に）',choices:['週末は（毎回・習慣的に）','この前の週末に','どこかの週末に','週末の間ずっと'],explain:"複数形・無冠詞で「週末が来るたびに」という習慣を表す。`I sometimes go there on weekends.` 直近の1回なら on the weekend。",lesson:'㉑9月自習'},
   {id:'v2102',pat:'prep',month:'2609',type:'vocab',q:'"at Christmas" の意味は？',a:'クリスマスの時期に',choices:['クリスマスの時期に','クリスマス当日だけに','クリスマス会場で','クリスマスの前日に'],explain:"at Christmas はクリスマス前後のシーズン全体。当日の12/25にピンポイントで触れるなら `on Christmas (Day)`。at は主にイギリス英語でよく使う。",lesson:'㉑9月自習'},
@@ -1317,7 +1334,7 @@ const QB = [
   {id:'t2101',pat:'weekend',month:'2609',type:'translate',q:'「この前の週末、何した？」',a:'What did you do on the weekend?',hint:'on the weekend',lesson:'㉑9月自習'},
   {id:'t2102',pat:'weekend',month:'2609',type:'translate',q:'「週末は時々そこに行きます」',a:'I sometimes go there on weekends.',hint:'on weekends',lesson:'㉑9月自習'},
   {id:'t2103',pat:'weekend',month:'2609',type:'translate',q:'「リラックスした週末を過ごした」',a:'I had a relaxing weekend.',hint:'a + 形容詞 + weekend',lesson:'㉑9月自習'},
-  {id:'fr2101',pat:'weekend',month:'2609',type:'free',q:'on the weekend / on a weekend / on weekends を使い分けて3文書こう',a:'What did you do on the weekend? / I want to go there on a weekend. / I usually play golf on weekends. など',hint:'特定の1回 / どれか1つ / 習慣',lesson:'㉑9月自習'},
+  {id:'fr2101',pat:'weekend',month:'2609',type:'free',q:'on the weekend / on a weekend / on weekends を使い分けて3文書こう',a:'What did you do on the weekend? / I want to go there on a weekend. / I usually play golf on weekends. など',hint:'特定の1回 / どれか1つ / 習慣',ja:"この前の週末は何をした？／どこかの週末にそこへ行きたい。／たいてい週末はゴルフをする。など",lesson:'㉑9月自習'},
   // ===== 2609（9月）㉒9/10 災害・避難の語彙 / for と to / hold onto・down =====
   {id:'v2201',pat:'__vocab__',month:'2609',type:'vocab',q:'"landslide" の意味は？',a:'土砂崩れ',choices:['土砂崩れ','地震','津波','落雷'],explain:"大雨などで山の斜面が崩れること。`There have been many landslides.` land（土地）が slide（滑る）と覚える。",lesson:'㉒9/10'},
   {id:'v2202',pat:'__vocab__',month:'2609',type:'vocab',q:'"flash flood" の意味は？',a:'鉄砲水・急な洪水',choices:['鉄砲水・急な洪水','高潮','大雪','停電'],explain:"flash（一瞬の光）のように突然起きる洪水。短時間の豪雨で川が一気にあふれる状況を指す。",lesson:'㉒9/10'},
@@ -1340,7 +1357,7 @@ const QB = [
   {id:'t2204',pat:'wordpair',month:'2609',type:'translate',q:'「手すりにつかまって」',a:'Hold onto the rail. / Hold on to the rail.',hint:'hold onto',lesson:'㉒9/10'},
   {id:'t2205',pat:'prep',month:'2609',type:'translate',q:'「体験レッスンに行ってみる」',a:"I'm gonna go for a trial lesson. / I'm going to go for a trial lesson.",hint:'go for a trial lesson',lesson:'㉒9/10'},
   {id:'fr2201',pat:'wordpair',month:'2609',type:'free',q:'"hold onto" と "hold down" の違いを例文で書こう',a:"Hold onto the rail.（自分がしがみつく） / Hold down the tent.（物を押さえる） など",hint:'誰が離れないようにするか',lesson:'㉒9/10'},
-  {id:'fr2202',pat:'__vocab__',month:'2609',type:'free',q:'ブラックジャックのルール「21に一番近い手が勝ち、21を超えたらアウト」を英語で書こう',a:'The closest hand to 21 wins. / Over 21 is out. など',hint:'closest（一番近い）',lesson:'㉒9/10'},
+  {id:'fr2202',pat:'__vocab__',month:'2609',type:'free',q:'ブラックジャックのルール「21に一番近い手が勝ち、21を超えたらアウト」を英語で書こう',a:'The closest hand to 21 wins. / Over 21 is out. など',hint:'closest（一番近い）',ja:"21に一番近い手が勝ち。／21を超えたらアウト。など",lesson:'㉒9/10'},
   // ===== 2609（9月）㉓9/15 ゲスト・家族・受け身の進行形 =====
   // ===== 2609（9月）㉓9/15 ゲスト・家族・受け身の進行形 =====
   {id:'v2301',pat:'__vocab__',month:'2609',type:'vocab',q:'"She is responsible." の意味は？',a:'彼女は責任感がある',choices:['彼女は責任感がある','彼女は反応が速い','彼女は責任を問われている','彼女は尊敬されている'],explain:"responsible は「責任感がある・きちんとしている」。`He is a responsible person.` responsible for ~ にすると「〜の担当・責任者」になる。`She is responsible for the project.`",lesson:'㉓9/15'},
@@ -1360,7 +1377,7 @@ const QB = [
   {id:'t2302',pat:'beingdone',month:'2609',type:'translate',q:'「それは久しぶりに開催されている」',a:"It's being held for the first time in a while. / It is being held for the first time in a while.",hint:'being held / in a while',lesson:'㉓9/15'},
   {id:'t2303',pat:'prep',month:'2609',type:'translate',q:'「彼女はゲストとして来た」',a:'She came as a guest.',hint:'as a guest',lesson:'㉓9/15'},
   {id:'t2304',pat:'helpdo',month:'2609',type:'translate',q:'「彼はAIアルゴリズムを作るのを手伝っている」',a:'He helps make the AI algorithm. / He helps to make the AI algorithm.',hint:'help + 動詞の原形',lesson:'㉓9/15'},
-  {id:'fr2301',pat:'helpdo',month:'2609',type:'free',q:'"help + 動詞の原形" を使った文を2つ作ろう',a:'He helps make the AI algorithm. / She helped me finish the report. など',hint:'help (人) + 原形',lesson:'㉓9/15'},
+  {id:'fr2301',pat:'helpdo',month:'2609',type:'free',q:'"help + 動詞の原形" を使った文を2つ作ろう',a:'He helps make the AI algorithm. / She helped me finish the report. など',hint:'help (人) + 原形',ja:"彼はAIのアルゴリズム作りを手伝っている。／彼女は私がレポートを仕上げるのを手伝ってくれた。など",lesson:'㉓9/15'},
   {id:'fr2302',pat:'beingdone',month:'2609',type:'free',q:'"is held" と "is being held" の違いを例文で書こう',a:'It is held every year.（毎年開催される） / It is being held now.（今まさに開催中）',hint:'一般的な事実 / 進行中',lesson:'㉓9/15'},
   // ===== 2609（9月）㉔9/18 予定・used to・アレルギー・recommend =====
   {id:'v2401',pat:'__vocab__',month:'2609',type:'vocab',q:'"strict" の意味は？',a:'厳しい',choices:['厳しい','優しい','忙しい','面白い'],explain:"人にも規則にも使える形容詞。`My teacher is strict.`（先生は厳しい）`This is a strict rule.`（厳しい規則だ）",lesson:'㉔9/18'},
@@ -1381,8 +1398,8 @@ const QB = [
   {id:'t2402',pat:'__vocab__',month:'2609',type:'translate',q:'「ブタクサのアレルギーです」',a:"I'm allergic to ragweed.",hint:'be allergic to',lesson:'㉔9/18'},
   {id:'t2403',pat:'recommend',month:'2609',type:'translate',q:'「九份に行くのをおすすめするよ」',a:'I recommend visiting Jiufen! / I recommend you should visit Jiufen!',hint:'recommend + ~ing',lesson:'㉔9/18'},
   {id:'t2404',pat:'__vocab__',month:'2609',type:'translate',q:'「同僚とうまくやっている」',a:'I get along with my coworkers. / I get on with my coworkers.',hint:'get along with',lesson:'㉔9/18'},
-  {id:'fr2401',pat:'weekendq',month:'2609',type:'free',q:'"be going to" を使って、日付や期間を入れた予定の文を2つ書こう',a:"I'm going to Taiwan with my mum this November. / I'm going to stay in Kyoto from the 20th to 24th. など",hint:'from A to B / this + 月名',lesson:'㉔9/18'},
-  {id:'fr2402',pat:'__vocab__',month:'2609',type:'free',q:'自分がアレルギーのあるもの（または無いこと）を "allergic" を使って書こう',a:"I'm allergic to pollen. / I'm not allergic to anything. など",hint:'be allergic to',lesson:'㉔9/18'},
+  {id:'fr2401',pat:'weekendq',month:'2609',type:'free',q:'"be going to" を使って、日付や期間を入れた予定の文を2つ書こう',a:"I'm going to Taiwan with my mum this November. / I'm going to stay in Kyoto from the 20th to 24th. など",hint:'from A to B / this + 月名',ja:"今年の11月に母と台湾に行く予定です。／20日から24日まで京都に滞在する予定です。など",lesson:'㉔9/18'},
+  {id:'fr2402',pat:'__vocab__',month:'2609',type:'free',q:'自分がアレルギーのあるもの（または無いこと）を "allergic" を使って書こう',a:"I'm allergic to pollen. / I'm not allergic to anything. など",hint:'be allergic to',ja:"花粉にアレルギーがある。／アレルギーは何もない。など",lesson:'㉔9/18'},
 
   // ===== 2610（10月）㉕10/2 学生時代の話・性格タイプの語彙 =====
   {id:'v2501',pat:'__vocab__',month:'2610',type:'vocab',q:'「クラスのお調子者」を英語で？',a:'class clown',choices:['class clown','class pierrot','class leader','class mascot'],explain:"みんなを笑わせるムードメーカー。`I was the class clown.` 1クラスに1人の役割なので the が付きやすい。",lesson:'㉕10/2'},
@@ -1403,8 +1420,8 @@ const QB = [
   {id:'t2502',pat:'__vocab__',month:'2610',type:'translate',q:'「大阪はたこ焼きで有名です」',a:'Osaka is famous for takoyaki.',hint:'be famous for',lesson:'㉕10/2'},
   {id:'t2503',pat:'__vocab__',month:'2610',type:'translate',q:'「それって給料いいの？」',a:'Is it well paid? / Is it well-paid? / Does it pay well?',hint:'well paid',lesson:'㉕10/2'},
   {id:'t2504',pat:'usedto',month:'2610',type:'translate',q:'「昔は野球をしていなかった」',a:"I didn't use to play baseball. / I did not use to play baseball. / I never used to play baseball.",hint:"didn't use to",lesson:'㉕10/2'},
-  {id:'fr2501',pat:'article',month:'2610',type:'free',q:'学生時代にどんな生徒だったか、学生タイプの語彙を使って書こう',a:'I was a bookworm. / I was the class clown. / I was a sleepy student. など',hint:'I was a / the ~',lesson:'㉕10/2'},
-  {id:'fr2502',pat:'__vocab__',month:'2610',type:'free',q:'自分の国や町が有名なものを "be famous for" で書こう',a:'Osaka is famous for takoyaki. / Japan is famous for anime. など',hint:'be famous for + 名詞',lesson:'㉕10/2'},
+  {id:'fr2501',pat:'article',month:'2610',type:'free',q:'学生時代にどんな生徒だったか、学生タイプの語彙を使って書こう',a:'I was a bookworm. / I was the class clown. / I was a sleepy student. など',hint:'I was a / the ~',ja:"私は本の虫だった。／私はクラスのお調子者だった。／私は眠そうな生徒だった。など",lesson:'㉕10/2'},
+  {id:'fr2502',pat:'__vocab__',month:'2610',type:'free',q:'自分の国や町が有名なものを "be famous for" で書こう',a:'Osaka is famous for takoyaki. / Japan is famous for anime. など',hint:'be famous for + 名詞',ja:"大阪はたこ焼きで有名。／日本はアニメで有名。など",lesson:'㉕10/2'},
 
   // ===== 2610（10月）㉖10/8 挨拶の返し方・現在完了形 =====
   {id:'v2601',pat:'__vocab__',month:'2610',type:'vocab',q:'「金木犀（キンモクセイ）」を英語で？',a:'osmanthus',choices:['osmanthus','osmanthas','lavender','magnolia'],explain:"秋に香るオレンジの花。`The osmanthus is in bloom.` 綴りは -us で終わる（osmanthas は誤り）。",lesson:'㉖10/8'},
@@ -1425,8 +1442,8 @@ const QB = [
   {id:'t2602',pat:'everexp',month:'2610',type:'translate',q:'「ジブリ映画を全部見たことある？」',a:'Have you ever watched all of the Ghibli movies? / Have you ever seen all of the Ghibli movies? / Have you ever watched all the Ghibli movies? / Have you ever seen all the Ghibli movies?',hint:'Have you ever',lesson:'㉖10/8'},
   {id:'t2603',pat:'presperf',month:'2610',type:'translate',q:'「ちょうど着いたところです」',a:"I've just arrived. / I have just arrived.",hint:'just',lesson:'㉖10/8'},
   {id:'t2604',pat:'howlong',month:'2610',type:'translate',q:'「大阪にどのくらい住んでいるの？」',a:'How long have you lived in Osaka? / How long have you been living in Osaka?',hint:'How long have you',lesson:'㉖10/8'},
-  {id:'fr2601',pat:'everexp',month:'2610',type:'free',q:'"Have you ever ~?" を使って、相手に経験を聞く質問を書こう',a:'Have you ever been to Kyoto? / Have you ever eaten mazesoba? など',hint:'Have you ever + 過去分詞',lesson:'㉖10/8'},
-  {id:'fr2602',pat:'presperf',month:'2610',type:'free',q:'"for" か "since" を使って、ずっと続けていることを書こう',a:"I have lived in Osaka for 20 years. / I've studied English since April. など",hint:'have + 過去分詞 + for / since',lesson:'㉖10/8'},
+  {id:'fr2601',pat:'everexp',month:'2610',type:'free',q:'"Have you ever ~?" を使って、相手に経験を聞く質問を書こう',a:'Have you ever been to Kyoto? / Have you ever eaten mazesoba? など',hint:'Have you ever + 過去分詞',ja:"京都に行ったことある？／まぜそばを食べたことある？など",lesson:'㉖10/8'},
+  {id:'fr2602',pat:'presperf',month:'2610',type:'free',q:'"for" か "since" を使って、ずっと続けていることを書こう',a:"I have lived in Osaka for 20 years. / I've studied English since April. など",hint:'have + 過去分詞 + for / since',ja:"大阪に20年住んでいる。／4月から英語を勉強している。など",lesson:'㉖10/8'},
 
   // ===== 2610（10月）㉗10/13 仮定の質問（What if）・条件文 =====
   {id:'v2701',pat:'__vocab__',month:'2610',type:'vocab',q:'"retrace my steps" の意味は？',a:'来た道をたどり直す',choices:['来た道をたどり直す','足跡を消す','一歩下がる','歩数を数える'],explain:"無くし物を探すときの定番表現。`I would retrace my steps.` re-（もう一度）+ trace（たどる）。",lesson:'㉗10/13'},
@@ -1447,8 +1464,8 @@ const QB = [
   {id:'t2702',pat:'whatif',month:'2610',type:'translate',q:'「スマホを無くしたらどうする？」',a:'What if you lose your phone? / What would you do if you lost your phone? / What will you do if you lose your phone?',hint:'What if',lesson:'㉗10/13'},
   {id:'t2703',pat:'whatif',month:'2610',type:'translate',q:'「もし1日だけ世界の王様だったら、何をする？」',a:'What would you do if you were king of the world for one day? / What would you do if you were king of the world for a day? / What if you were king of the world for one day?',hint:'if you were',lesson:'㉗10/13'},
   {id:'t2704',pat:'__vocab__',month:'2610',type:'translate',q:'「来た道をたどり直すよ」',a:"I will retrace my steps. / I'll retrace my steps. / I would retrace my steps. / I'd retrace my steps.",hint:'retrace my steps',lesson:'㉗10/13'},
-  {id:'fr2701',pat:'whatif',month:'2610',type:'free',q:'"If I won the lottery, I would ~" の続きを自由に書こう',a:'If I won the lottery, I would buy a house. / If I won the lottery, I would travel around the world. など',hint:'If I won ~, I would ~',lesson:'㉗10/13'},
-  {id:'fr2702',pat:'whatif',month:'2610',type:'free',q:'"What if ~?" を使って、相手に仮の質問を1つ作ろう',a:'What if you were king of the world? / What if you lose your phone? など',hint:'What if + 主語 + 動詞',lesson:'㉗10/13'},
+  {id:'fr2701',pat:'whatif',month:'2610',type:'free',q:'"If I won the lottery, I would ~" の続きを自由に書こう',a:'If I won the lottery, I would buy a house. / If I won the lottery, I would travel around the world. など',hint:'If I won ~, I would ~',ja:"もし宝くじが当たったら、家を買うだろう。／世界中を旅するだろう。など",lesson:'㉗10/13'},
+  {id:'fr2702',pat:'whatif',month:'2610',type:'free',q:'"What if ~?" を使って、相手に仮の質問を1つ作ろう',a:'What if you were king of the world? / What if you lose your phone? など',hint:'What if + 主語 + 動詞',ja:"もし世界の王様だったらどうする？／スマホを無くしたらどうする？など",lesson:'㉗10/13'},
 
   // ===== 2610（10月）㉘10/15 ダイエット・食事 / neither・either =====
   {id:'v2801',pat:'__vocab__',month:'2610',type:'vocab',q:'「パクチー」を英語で？（米国英語）',a:'cilantro',choices:['cilantro','celery','parsley','basil'],explain:"香りの強い葉の野菜。`I can't eat cilantro.` 英国英語では coriander と言う。",lesson:'㉘10/15'},
@@ -1469,8 +1486,8 @@ const QB = [
   {id:'t2802',pat:'__vocab__',month:'2610',type:'translate',q:'「トマトを抜いてもらえますか？」',a:'Could you remove the tomato, please? / Could you remove the tomato? / Can you remove the tomato, please? / Can I have it without tomato? / No tomato, please.',hint:'remove',lesson:'㉘10/15'},
   {id:'t2803',pat:'howoften',month:'2610',type:'translate',q:'「奥さんと出かけることはある？」',a:'Do you ever go out with your wife?',hint:'Do you ever',lesson:'㉘10/15'},
   {id:'t2804',pat:'__vocab__',month:'2610',type:'translate',q:'「（その食べ物の）食感が苦手です」',a:"I don't like the texture. / I do not like the texture.",hint:'texture',lesson:'㉘10/15'},
-  {id:'fr2801',pat:'agree',month:'2610',type:'free',q:"相手の否定文に「私も」と返す会話を作ろう（例：I can't ~. → Neither ~ I.）",a:"I can't eat cilantro. → Neither can I. / I don't drink coffee. → Neither do I. など",hint:'Neither + 助動詞 + 主語',lesson:'㉘10/15'},
-  {id:'fr2802',pat:'__vocab__',month:'2610',type:'free',q:'自分の普段の食事について "diet" を使って書こう',a:"My diet is healthy. / I'm on a diet now. など",hint:'diet',lesson:'㉘10/15'},
+  {id:'fr2801',pat:'agree',month:'2610',type:'free',q:"相手の否定文に「私も」と返す会話を作ろう（例：I can't ~. → Neither ~ I.）",a:"I can't eat cilantro. → Neither can I. / I don't drink coffee. → Neither do I. など",hint:'Neither + 助動詞 + 主語',ja:"パクチーは食べられない。→ 私も。／コーヒーは飲まない。→ 私も。など",lesson:'㉘10/15'},
+  {id:'fr2802',pat:'__vocab__',month:'2610',type:'free',q:'自分の普段の食事について "diet" を使って書こう',a:"My diet is healthy. / I'm on a diet now. など",hint:'diet',ja:"私の食事は健康的です。／今ダイエット中です。など",lesson:'㉘10/15'},
 
   // ===== 2610（10月）㉙10/15 the 比較級, the 比較級 / 習慣・刺激を受ける =====
   {id:'v2901',pat:'__vocab__',month:'2610',type:'vocab',q:'「夜型の人」を英語で？',a:'night owl',choices:['night owl','night bird','night bat','late bird'],explain:"夜に強いタイプ。`I'm a night owl.` owl（フクロウ）が夜行性なことから。",lesson:'㉙10/15'},
@@ -1491,8 +1508,8 @@ const QB = [
   {id:'t2902',pat:'__vocab__',month:'2610',type:'translate',q:'「私は朝型の人です」',a:"I'm a morning person. / I am a morning person. / I'm an early bird. / I am an early bird.",hint:'morning person / early bird',lesson:'㉙10/15'},
   {id:'t2903',pat:'__vocab__',month:'2610',type:'translate',q:'「あなたの習慣が気になる」',a:"I'm curious about your habit. / I am curious about your habit. / I'm curious about your habits. / I am curious about your habits.",hint:'curious about',lesson:'㉙10/15'},
   {id:'t2904',pat:'presperf',month:'2610',type:'translate',q:'「（最近）ずっと早起きできていない」',a:"I haven't been able to wake up early. / I have not been able to wake up early. / I haven't been able to get up early. / I have not been able to get up early.",hint:"haven't been able to",lesson:'㉙10/15'},
-  {id:'fr2901',pat:'themore',month:'2610',type:'free',q:'"The more ~, the more / better ~" で自分のことを1文書こう',a:'The more I practice, the better I get. / The more I eat, the heavier I get. など',hint:'The + 比較級 ~, the + 比較級 ~',lesson:'㉙10/15'},
-  {id:'fr2902',pat:'presperf',month:'2610',type:'free',q:"今年続けている良い習慣を「I've been ~ing」で書こう",a:"I've been walking every morning. / I've been doing meal prep every Sunday. など",hint:"I've been ~ing",lesson:'㉙10/15'},
+  {id:'fr2901',pat:'themore',month:'2610',type:'free',q:'"The more ~, the more / better ~" で自分のことを1文書こう',a:'The more I practice, the better I get. / The more I eat, the heavier I get. など',hint:'The + 比較級 ~, the + 比較級 ~',ja:"練習するほど上手になる。／食べるほど太る。など",lesson:'㉙10/15'},
+  {id:'fr2902',pat:'presperf',month:'2610',type:'free',q:"今年続けている良い習慣を「I've been ~ing」で書こう",a:"I've been walking every morning. / I've been doing meal prep every Sunday. など",hint:"I've been ~ing",ja:"毎朝歩いている。／毎週日曜に作り置きをしている。など",lesson:'㉙10/15'},
 
   // ===== 2610（10月）㉚10/20 Life in the future・未来の予想 =====
   {id:'v3001',pat:'__vocab__',month:'2610',type:'vocab',q:'"optimistic" の意味は？',a:'楽観的な',choices:['楽観的な','悲観的な','現実的な','感情的な'],explain:"物事を良い方に考える様子。`I'm optimistic about the future.` be optimistic about ~ の形でよく使う。名詞は optimist（楽観主義者）。",lesson:'㉚10/20'},
@@ -1513,8 +1530,8 @@ const QB = [
   {id:'t3002',pat:'indirect',month:'2610',type:'translate',q:'「未来の都市はどんな見た目になると思う？」',a:'What do you think cities will look like in the future? / What do you think future cities will look like? / What do you think cities will look like?',hint:'What do you think',lesson:'㉚10/20'},
   {id:'t3003',pat:'__vocab__',month:'2610',type:'translate',q:'「未来について楽観的です」',a:"I'm optimistic about the future. / I am optimistic about the future.",hint:'optimistic about',lesson:'㉚10/20'},
   {id:'t3004',pat:'future',month:'2610',type:'translate',q:'「多くの人間がAIに取って代わられると思う」',a:'I think a lot of humans will be replaced by AI. / I think many humans will be replaced by AI. / I think lots of humans will be replaced by AI.',hint:'will be replaced by',lesson:'㉚10/20'},
-  {id:'fr3001',pat:'future',month:'2610',type:'free',q:"100年後の世界の予想を will / won't / will be able to で書こう",a:"We will have floating cities. / There won't be pianos. / We will be able to teleport. など",hint:"will / won't / will be able to",lesson:'㉚10/20'},
-  {id:'fr3002',pat:'__vocab__',month:'2610',type:'free',q:'過去と未来、どちらに旅行したいか理由も書こう',a:'I want to travel to the past. I want to see how the pyramids were built. など',hint:'travel to the past / the future',lesson:'㉚10/20'},
+  {id:'fr3001',pat:'future',month:'2610',type:'free',q:"100年後の世界の予想を will / won't / will be able to で書こう",a:"We will have floating cities. / There won't be pianos. / We will be able to teleport. など",hint:"will / won't / will be able to",ja:"空に浮かぶ都市ができる。／ピアノはなくなる。／瞬間移動できるようになる。など",lesson:'㉚10/20'},
+  {id:'fr3002',pat:'__vocab__',month:'2610',type:'free',q:'過去と未来、どちらに旅行したいか理由も書こう',a:'I want to travel to the past. I want to see how the pyramids were built. など',hint:'travel to the past / the future',ja:"過去に旅行したい。ピラミッドがどう造られたか見たい。など",lesson:'㉚10/20'},
 
   // ===== 2610（10月）㉛10/21 先延ばし・今年の達成 / ビジネスメール =====
   {id:'v3101',pat:'__vocab__',month:'2610',type:'vocab',q:'"put off" の意味は？',a:'先延ばしにする',choices:['先延ばしにする','脱ぐ','火を消す','片付ける'],explain:"後回しにすること（postpone と同じ）。`I always put off learning Chinese.` 脱ぐは take off、火を消すは put out、片付けるは put away。",lesson:'㉛10/21'},
@@ -1536,8 +1553,8 @@ const QB = [
   {id:'t3103',pat:'appreciate',month:'2610',type:'translate',q:'「代わりの人を見つけていただけると助かります」',a:"I'd appreciate it if you could find a cover for me. / I would appreciate it if you could find a cover for me.",hint:'appreciate it if you could',lesson:'㉛10/21'},
   {id:'t3104',pat:'appreciate',month:'2610',type:'translate',q:'「ご理解ありがとうございます」（メールの結び）',a:'Thank you for your understanding.',hint:'Thank you for',lesson:'㉛10/21'},
   {id:'t3105',pat:'goalplan',month:'2610',type:'translate',q:'「（カジノの話で）それはどこに建てる予定なの？」',a:'Where are they going to build it?',hint:'be going to',lesson:'㉛10/21'},
-  {id:'fr3101',pat:'appreciate',month:'2610',type:'free',q:'明日仕事を休むことを上司に伝えるメールを2〜3文で書こう',a:"I'm sorry to inform you that I'm sick. I will not be able to come to work tomorrow. Thank you for your understanding. など",hint:"I'm sorry to inform you that ~",lesson:'㉛10/21'},
-  {id:'fr3102',pat:'presperf',month:'2610',type:'free',q:"今年達成したことを「I've finally ~」で書こう",a:"I've finally started taking English lessons. / I've finally passed the exam. など",hint:"I've finally + 過去分詞",lesson:'㉛10/21'},
+  {id:'fr3101',pat:'appreciate',month:'2610',type:'free',q:'明日仕事を休むことを上司に伝えるメールを2〜3文で書こう',a:"I'm sorry to inform you that I'm sick. I will not be able to come to work tomorrow. Thank you for your understanding. など",hint:"I'm sorry to inform you that ~",ja:"大変心苦しいのですが、体調を崩しています。明日は出勤できません。ご理解ありがとうございます。など",lesson:'㉛10/21'},
+  {id:'fr3102',pat:'presperf',month:'2610',type:'free',q:"今年達成したことを「I've finally ~」で書こう",a:"I've finally started taking English lessons. / I've finally passed the exam. など",hint:"I've finally + 過去分詞",ja:"やっと英会話レッスンを受け始めた。／やっと試験に合格した。など",lesson:'㉛10/21'},
 
 // ===== 2610（10月）㉜10/23 Personality（性格）・MBTI =====
   {id:"v3201",pat:"__vocab__",month:"2610",type:"vocab",q:"\"stubborn\" の意味は？",a:"頑固な",choices:["頑固な", "気前がいい", "恥ずかしがり屋の", "穏やかな"],explain:"自分の考えを曲げない様子で、悪い意味で使うことが多い。`He is so stubborn. He never listens to anyone.` 名詞は stubbornness。",lesson:"㉜10/23"},
@@ -1558,8 +1575,8 @@ const QB = [
   {id:"t3202",pat:"whatcall",month:"2610",type:"translate",q:"「新しいことを試すのが好きな人を何と呼ぶ？」",a:"What do we call someone who likes to try new things? / What do you call someone who likes to try new things? / What do we call a person who likes to try new things?",hint:"What do we call",lesson:"㉜10/23"},
   {id:"t3203",pat:"__vocab__",month:"2610",type:"translate",q:"「どんな人が嫌い？」",a:"What kind of people do you hate?",hint:"What kind of people do you",lesson:"㉜10/23"},
   {id:"t3204",pat:"__vocab__",month:"2610",type:"translate",q:"「あなたの性格はどんな感じ？」",a:"What's your personality like? / What is your personality like? / What kind of person are you? / What are your qualities?",hint:"personality",lesson:"㉜10/23"},
-  {id:"fr3201",pat:"__vocab__",month:"2610",type:"free",q:"自分の性格タイプ（外向的・内向的など）を英語で書こう",a:"I'm an extrovert. / I'm an introvert. / I'm an INFP. など",hint:"I'm a / an ~",lesson:"㉜10/23"},
-  {id:"fr3202",pat:"__vocab__",month:"2610",type:"free",q:"好きな人・嫌いな人のタイプを、形容詞を使って書こう",a:"I like generous people. / I hate impolite people. / I don't like people who are arrogant. など",hint:"people who ~",lesson:"㉜10/23"},
+  {id:"fr3201",pat:"__vocab__",month:"2610",type:"free",q:"自分の性格タイプ（外向的・内向的など）を英語で書こう",a:"I'm an extrovert. / I'm an introvert. / I'm an INFP. など",hint:"I'm a / an ~",ja:"私は外向的です。／私は内向的です。／私はINFPです。など",lesson:"㉜10/23"},
+  {id:"fr3202",pat:"__vocab__",month:"2610",type:"free",q:"好きな人・嫌いな人のタイプを、形容詞を使って書こう",a:"I like generous people. / I hate impolite people. / I don't like people who are arrogant. など",hint:"people who ~",ja:"気前のいい人が好き。／失礼な人が嫌い。／傲慢な人は好きじゃない。など",lesson:"㉜10/23"},
 // ===== 2610（10月）㉝10/29 What brought you to ~? ・ A reminds me of B ・ 共通点 =====
   {id:"v3301",pat:"__vocab__",month:"2610",type:"vocab",q:"\"generous\" の意味は？",a:"太っ腹な・気前がいい",choices:["太っ腹な・気前がいい", "ケチな", "頑固な", "内向的な"],explain:"お金や時間を惜しまず人に与える様子。`He is very generous.` 名詞は generosity。反対は stingy / cheap（ケチな）。",lesson:"㉝10/29"},
   {id:"v3302",pat:"remindof",month:"2610",type:"vocab",q:"\"remind\" の意味は？",a:"思い出させる",choices:["思い出させる", "覚えている", "忘れる", "思い出す"],explain:"remind 人 of ~ で「人に〜を思い出させる」。`This song reminds me of my school days.` 思い出す人は me、思い出させる原因は This song。人が主語で「思い出す」なら remember。",lesson:"㉝10/29"},
@@ -1575,8 +1592,8 @@ const QB = [
   {id:"t3302",pat:"remindof",month:"2610",type:"translate",q:"「カレーの匂いは母を思い出させる」",a:"The smell of curry reminds me of my mother. / The smell of curry reminds me of my mom.",hint:"remind me of",lesson:"㉝10/29"},
   {id:"t3303",pat:"incommon",month:"2610",type:"translate",q:"「私たちには共通点がたくさんある」",a:"We have a lot in common.",hint:"in common",lesson:"㉝10/29"},
   {id:"t3304",pat:"__vocab__",month:"2610",type:"translate",q:"「彼はとても気前がいい」",a:"He is very generous. / He's very generous. / He is really generous. / He's really generous.",hint:"generous",lesson:"㉝10/29"},
-  {id:"fr3301",pat:"remindof",month:"2610",type:"free",q:"\"reminds me of\" を使って、思い出すものを1文書こう",a:"This song reminds me of my school days. / This town reminds me of Osaka. など",hint:"reminds me of",lesson:"㉝10/29"},
-  {id:"fr3302",pat:"incommon",month:"2610",type:"free",q:"\"in common\" を使って、相手との共通点を書こう",a:"We both like poker. We have that in common. / We have a lot in common. など",hint:"have ~ in common",lesson:"㉝10/29"},
+  {id:"fr3301",pat:"remindof",month:"2610",type:"free",q:"\"reminds me of\" を使って、思い出すものを1文書こう",a:"This song reminds me of my school days. / This town reminds me of Osaka. など",hint:"reminds me of",ja:"この曲は学生時代を思い出させる。／この町は大阪を思い出させる。など",lesson:"㉝10/29"},
+  {id:"fr3302",pat:"incommon",month:"2610",type:"free",q:"\"in common\" を使って、相手との共通点を書こう",a:"We both like poker. We have that in common. / We have a lot in common. など",hint:"have ~ in common",ja:"私たちは二人ともポーカーが好き。それが共通点だ。／私たちには共通点がたくさんある。など",lesson:"㉝10/29"},
 ];
 
 const CATS_DEF = [
@@ -1744,8 +1761,8 @@ function defG(){
 
 /* 文字サイズ。html の data-fs を切り替えるだけで全体がremで追従する */
 /* 版の印＝公開した時刻（日本時間）。公開のたびに、この1行の時刻を書き換える：
-   sed -i "s|^const APP_VER='.*';|const APP_VER='$(TZ=Asia/Tokyo date +%m/%d-%H:%M)';|" index.html */
-const APP_VER='10/30-14:44';
+   sed -i "s|^const APP_VER='11/9-09:07';|const APP_VER='$(TZ=Asia/Tokyo date +%m/%d-%H:%M)';|" index.html */
+const APP_VER='11/9-09:07';
 (function(){ var e=document.getElementById('app-ver'); if(e) e.textContent='版 '+APP_VER; })();
 const FS_DEF=[{k:'s',n:'小',px:17},{k:'m',n:'ふつう',px:21},{k:'l',n:'大きい',px:25},{k:'xl',n:'特大',px:29}];
 
@@ -2349,7 +2366,7 @@ function renderQ(){
   document.getElementById('q-next-btn').style.display='none';
 
   const body=document.getElementById('q-body'); body.innerHTML='';
-  unbindChoiceKeys();
+  unbindChoiceKeys(); disableEnterNext(); unbindJudgeKeys();
 
   if(q.v==='listen'){ renderListen(q,body); return; }
   if(q.v==='speak'){  renderSpeak(q,body);  return; }
@@ -2458,7 +2475,7 @@ function answerListen(btn,isCorrect,sp,ul,q){
     if(b.dataset.val===String(sp.correct)) b.classList.add('ok');
     else if(b===btn&&!isCorrect) b.classList.add('ng');
   });
-  recordResult(q,isCorrect);
+  recordResult(q,isCorrect,btn.dataset.val);
   const fb=document.getElementById('q-feedback');
   fb.className='feedback show '+(isCorrect?'ok':'ng');
   document.getElementById('fb-title').textContent=(isCorrect?'✓ 正解！よう聞けてる':'✗ 残念...')+xpTag();
@@ -2527,7 +2544,7 @@ function gradeSpeak(q,txt){
   const ok=matchSpeech(txt,q.a);
   if(note) note.textContent = ok?'✅ 伝わる発音や！':'あと一歩。模範解答を聞いてみ';
 
-  recordResult(q,ok);
+  recordResult(q,ok,txt);
   const fb=document.getElementById('q-feedback');
   fb.className='feedback show '+(ok?'ok':'ng');
   document.getElementById('fb-title').textContent=(ok?'✓ 正解！':'✗ ちょっと違うかも')+xpTag();
@@ -2562,7 +2579,7 @@ function overrideSpeak(correct){
     S.g.vc[r.q.v]=Math.max(0,(S.g.vc[r.q.v]||0)-1);
   S.results.pop();
   S.combo = correct ? S.combo : 0;
-  recordResult(r.q,correct);
+  recordResult(r.q,correct,r.ans);
   const fb=document.getElementById('q-feedback');
   fb.className='feedback show '+(correct?'ok':'ng');
   document.getElementById('fb-title').textContent=(correct?'✓ 自己採点: 正解！':'✗ 自己採点: 不正解')+xpTag();
@@ -2683,14 +2700,14 @@ function answerChoice(btn,isCorrect,correctAns,ul,q){
     if(b.dataset.val===String(correctAns)) b.classList.add('ok');
     else if(b===btn&&!isCorrect) b.classList.add('ng');
   });
-  recordResult(q,isCorrect);
+  recordResult(q,isCorrect,btn.dataset.val);
   showFeedback(isCorrect,'正解: '+correctAns,q.explain||null);
 }
 
 function answerGrammar(letter,btn,ul,q){
   const isCorrect=letter===q.a;
   ul.querySelectorAll('.choice-btn').forEach((b,i)=>{ b.disabled=true; const l=i===0?'A':'B'; if(l===q.a)b.classList.add('ok'); else if(b===btn&&!isCorrect)b.classList.add('ng'); });
-  recordResult(q,isCorrect);
+  recordResult(q,isCorrect,letter+': '+q['opt'+letter]);
   showFeedback(isCorrect,`正解: ${q.a} — ${q['opt'+q.a]}`,q.explain);
 }
 
@@ -2897,12 +2914,15 @@ function buildReview(user, model, hint, opt){
   const rp=recentlyProgHint(user); if(rp) found.push({pri:1, k:'tip', t:rp});
   const dv=doubleVerbHint(user); if(dv) found.push({pri:2, k:'tip', t:dv});
   const ag=agreementHint(user);  if(ag) found.push({pri:3, k:'err', t:ag});
-  /* hint の使い忘れ。模範解答もhintも「/」で別解を並べることがあるので、
-     どちらも分解したうえで、どれか1つでも使われていればよしとする */
-  if(hint && model){
-    const nu=normalizeAns(user);
-    const hs=String(hint).split('/').map(h=>normalizeAns(h)).filter(Boolean);
-    const ms=String(model).split('/').map(m=>normalizeAns(m));
+  /* hint の使い忘れ。模範解答もhintも「/」で別解を並べることがある。
+     「hintを使わない別解」も正解として用意されていることがあり、
+     それを書いた人に「ポイントが使われてへん」と言うのは誤指摘。
+     正解した解答にはポイントの指摘は不要なので、一致したら抑止する。
+     短縮形（I'd / I would）の違いで誤指摘しないよう expandContr を通す */
+  if(hint && model && !gradeText(user, model).match){
+    const nu=expandContr(normalizeAns(user));
+    const hs=String(hint).split('/').map(h=>expandContr(normalizeAns(h))).filter(Boolean);
+    const ms=String(model).split('/').map(m=>expandContr(normalizeAns(m)));
     const relevant=hs.some(h=>ms.some(m=>m.indexOf(h)>=0));   /* 模範解答に実在する語句か */
     const used=hs.some(h=>nu.indexOf(h)>=0);
     if(relevant && !used) found.push({pri:2, k:'tip', t:'ポイントの表現「'+hint+'」が使われてへん。'});
@@ -2944,7 +2964,7 @@ function submitFree(q,ta,row){
   if(q.type==='translate'){
     const result=gradeText(ta.value, q.a);
     const isCorrect=result.match;
-    recordResult(q,isCorrect);
+    recordResult(q,isCorrect,ta.value.trim());
     fb.className='feedback show '+(isCorrect?'ok':'ng');
     const note=result.typo?' (スペルミスはスルー！)':(result.articleOnly?' (冠詞だけ違うで)':'');
     document.getElementById('fb-title').textContent=(isCorrect?'✓ 正解！'+note:'✗ 残念...')+xpTag();
@@ -2959,26 +2979,30 @@ function submitFree(q,ta,row){
     setupDeep(); attachSpeaker(q);
     if(S.g.autoPlay) setTimeout(()=>say(q.a,0.9),300);
     document.getElementById('q-next-btn').style.display='block';
-    revealFeedback();
+    enableEnterNext(); revealFeedback();
   } else {
     document.getElementById('fb-self-judge').innerHTML='';
     fb.className='feedback neutral show';
     document.getElementById('fb-title').textContent='📋 模範解答';
     document.getElementById('fb-correct').textContent=q.a;
+    S.lastFree=ta.value.trim();
     const fe2=document.getElementById('fb-explain');
     const rv2=renderReview(ta.value, null, null, {noDiff:true});   /* 模範解答に [A/B] が入るため差分は出さん */
-    if(rv2){ fe2.style.display='block'; fe2.innerHTML=rv2; } else fe2.style.display='none';
+    const h2=(q.ja?'<div class="fb-ja">和訳：'+esc(q.ja)+'</div>':'')+(rv2||'');
+    if(h2){ fe2.style.display='block'; fe2.innerHTML=h2; } else fe2.style.display='none';
     setupDeep();
     const sj=document.getElementById('fb-self-judge');
-    sj.innerHTML=`<div class="self-judge"><button class="btn btn-green" onclick="selfJudge(true,'${q.id}')">✓ 合ってた</button><button class="btn btn-red" onclick="selfJudge(false,'${q.id}')">✗ 違った</button></div>`;
+    sj.innerHTML=`<div class="self-judge"><button class="btn btn-green" onclick="selfJudge(true)">✓ 合ってた<span class="kcap">Enter</span></button><button class="btn btn-red" onclick="selfJudge(false)">✗ 違った<span class="kcap">2</span></button></div>`;
+    bindJudgeKeys();
     revealFeedback();
   }
 }
 
 function selfJudge(correct){
+  unbindJudgeKeys();
   const q=S.session[S.idx];
   document.getElementById('fb-self-judge').innerHTML='';
-  recordResult(q,correct);
+  recordResult(q,correct,S.lastFree||'');
   const fb=document.getElementById('q-feedback');
   fb.className='feedback show '+(correct?'ok':'ng');
   document.getElementById('fb-title').textContent=(correct?'✓ 自己採点: 正解！':'✗ 自己採点: 不正解')+xpTag();
@@ -3053,19 +3077,46 @@ function choiceButton(label, text, idx){
   return btn;
 }
 
-let _enterNextHandler=null;
+let _enterNextHandler=null, _enterTok=0;
+function quizActive(){ const e=document.getElementById('s-quiz'); return !!(e&&e.classList.contains('active')); }
+function disableEnterNext(){
+  _enterTok++;
+  if(_enterNextHandler){ document.removeEventListener('keydown',_enterNextHandler); _enterNextHandler=null; }
+}
 function enableEnterNext(){
-  if(_enterNextHandler) document.removeEventListener('keydown',_enterNextHandler);
-  _enterNextHandler=(e)=>{
-    if(e.key==='Enter'){
-      const nb=document.getElementById('q-next-btn');
-      if(nb&&nb.style.display!=='none'){ e.preventDefault(); nextQuestion(); }
-    }
+  disableEnterNext();
+  const tok=_enterTok;
+  const h=(e)=>{
+    if(e.key!=='Enter'||e.repeat||e.metaKey||e.ctrlKey||e.altKey) return;
+    if(!quizActive()) return;                      /* 他の画面でEnterを押しても進まない */
+    const t=e.target; if(t&&(t.tagName==='TEXTAREA'||t.tagName==='INPUT')) return;
+    const nb=document.getElementById('q-next-btn');
+    if(nb&&nb.style.display!=='none'){ e.preventDefault(); nextQuestion(); }
   };
-  document.addEventListener('keydown',_enterNextHandler);
+  /* 解答をEnterで送信したとき、その同じキー押下が登録直後のこのハンドラにも届いて、
+     解説を見る間もなく次へ進んでしまう。1拍おいてから登録する */
+  setTimeout(()=>{ if(tok!==_enterTok) return; _enterNextHandler=h; document.addEventListener('keydown',h); },0);
 }
 
-function recordResult(q,correct){
+/* 自己採点（合ってた／違った）のキー操作：Enter か 1 ＝ 合ってた、2 ＝ 違った */
+let _judgeKeyHandler=null, _judgeTok=0;
+function unbindJudgeKeys(){
+  _judgeTok++;
+  if(_judgeKeyHandler){ document.removeEventListener('keydown',_judgeKeyHandler); _judgeKeyHandler=null; }
+}
+function bindJudgeKeys(){
+  unbindJudgeKeys();
+  const tok=_judgeTok;
+  const h=(e)=>{
+    if(e.repeat||e.metaKey||e.ctrlKey||e.altKey||!quizActive()) return;
+    const t=e.target; if(t&&(t.tagName==='TEXTAREA'||t.tagName==='INPUT')) return;
+    if(e.key==='Enter'||e.key==='1'){ e.preventDefault(); selfJudge(true); }
+    else if(e.key==='2'){ e.preventDefault(); selfJudge(false); }
+  };
+  setTimeout(()=>{ if(tok!==_judgeTok) return; _judgeKeyHandler=h; document.addEventListener('keydown',h); },0);
+}
+
+function recordResult(q,correct,ans){
   const x=hist(q.id);
   if(correct) x.c++; else x.w++;
   applySRS(q.id,correct);
@@ -3102,13 +3153,13 @@ function recordResult(q,correct){
 
   S.lastGain=gain;
   recomputeStreak();
-  S.results.push({q,correct,gain});
+  S.results.push({q,correct,gain,ans:(ans==null?'':String(ans))});
   save();
   paintCombo();
 }
 
 function nextQuestion(){
-  if(_enterNextHandler){ document.removeEventListener('keydown',_enterNextHandler); _enterNextHandler=null; }
+  disableEnterNext(); unbindJudgeKeys();
   unbindChoiceKeys();
   try{ speechSynthesis.cancel(); stopRec(); }catch(e){}
   _micOn=false;
@@ -3133,9 +3184,26 @@ function showResultScreen(){
   const list=document.getElementById('r-list'); list.innerHTML='';
   S.results.forEach(r=>{
     const row=document.createElement('div'); row.className='result-row';
-    const ca=r.q.type==='grammar'?`${r.q.a}: ${r.q['opt'+r.q.a]}`:r.q.a;
+    /* 穴埋めは答えを blank に持つ（a ではない）。a を読むと「正解: undefined」になっていた */
+    let ca=r.q.type==='grammar'?`${r.q.a}: ${r.q['opt'+r.q.a]}`:(r.q.type==='fill'?r.q.blank:r.q.a);
+    /* 翻訳は別解が「/」で並ぶ。間違えた解答に一番近いものを1つだけ出し、残りは件数で示す */
+    if(r.q.type==='translate'){
+      const vs=String(r.q.a).split('/').map(v=>v.trim()).filter(Boolean);
+      if(vs.length>1){
+        let best=vs[0];
+        /* 違いの「語数」で比べる。まとまりの数で比べると、1語違いも3語違いも同じ1件になる */
+        if(r.ans){
+          const cost=v=>wordDiff(r.ans,v).reduce((n,o)=>n+String(o.t==='swap'?o.from+' '+o.to:o.w).split(' ').length,0);
+          let bn=1e9; vs.forEach(v=>{ const n=cost(v); if(n<bn){bn=n;best=v;} });
+        }
+        ca=best+'  （ほか'+(vs.length-1)+'通りも正解）';
+      }
+    }
     const fav=isFav(r.q.id);
-    row.innerHTML=`<div class="rr-icon">${r.correct?'✅':'❌'}</div><div style="flex:1"><div class="rr-q"><span class="rr-type">${TL[r.q.type]}</span>${r.q.q}</div>${!r.correct?`<div class="rr-correct">正解: ${ca}</div>`:''}</div><div class="rr-star${fav?' on':''}" onclick="toggleFavFromResult('${r.q.id}',this)">${fav?'★':'☆'}</div>`;
+    const isFill=r.q.type==='fill';
+    const jaH=r.q.ja&&(isFill||!r.correct)?`<div class="rr-ja">和訳：${esc(r.q.ja)}</div>`:'';
+    const mine=(!r.correct&&r.ans)?`<div class="rr-mine"><b>あなた</b><span>${esc(r.ans)}</span></div>`:'';
+    row.innerHTML=`<div class="rr-icon">${r.correct?'✅':'❌'}</div><div style="flex:1"><div class="rr-q"><span class="rr-type">${TL[r.q.type]}</span>${r.q.q}</div>${isFill?jaH:''}${mine}${!r.correct?`<div class="rr-correct"><b>正解</b>${esc(ca)}</div>${isFill?'':jaH}`:''}</div><div class="rr-star${fav?' on':''}" onclick="toggleFavFromResult('${r.q.id}',this)">${fav?'★':'☆'}</div>`;
     list.appendChild(row);
   });
 
