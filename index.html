@@ -1762,7 +1762,7 @@ function defG(){
 /* 文字サイズ。html の data-fs を切り替えるだけで全体がremで追従する */
 /* 版の印＝公開した時刻（日本時間）。公開のたびに、この1行の時刻を書き換える：
    sed -i "s|^const APP_VER='11/9-09:07';|const APP_VER='$(TZ=Asia/Tokyo date +%m/%d-%H:%M)';|" index.html */
-const APP_VER='11/9-09:07';
+const APP_VER='11/10-08:49';
 (function(){ var e=document.getElementById('app-ver'); if(e) e.textContent='版 '+APP_VER; })();
 const FS_DEF=[{k:'s',n:'小',px:17},{k:'m',n:'ふつう',px:21},{k:'l',n:'大きい',px:25},{k:'xl',n:'特大',px:29}];
 
@@ -2905,6 +2905,83 @@ function wordDiff(user, model){
   return out;
 }
 
+/* 似た表現の使い分け。
+   解答と模範解答で「別のほうを使っている」ときだけ、その違いを解説する。
+   組の中で自分が使ったのが1つだけ、かつ模範解答がそれを使っていない場合に出す */
+const CONFUSABLE_SETS=[
+ {vs:[{n:'will', re:/\bwill\b/},
+      {n:'be going to', re:/\b(am|is|are|be|was|were)\b(?:\s+\w+)?\s+(going to|gonna)\b|\bgonna\b/}],
+  m:'will は「今その場で決めたこと・単なる予測」、be going to は「前から決めてた予定・そうなる兆しがあること」。もう決めてある予定は be going to が自然。'},
+
+ {vs:[{n:'現在進行形', re:/\b(am|is|are)\b(?:\s+\w+)?\s+(?!going\b)\w+ing\b/},
+      {n:'be going to', re:/\b(am|is|are|be|was|were)\b(?:\s+\w+)?\s+(going to|gonna)\b|\bgonna\b/}],
+  m:'現在進行形も未来の予定を表せるが、日時や相手まで決まってる確定の予定向き（I\'m meeting him at 7.）。be going to は「〜するつもり」という意図を含むぶん幅広く使え、予定をたずねる定番は What are you going to do?。'},
+
+ {vs:[{n:'must', re:/\bmust\b/},
+      {n:'have to', re:/\b(have|has|had)\s+to\b/}],
+  m:'must は話し手自身の強い気持ちや規則、have to は周りの事情で「せなあかん」場合。過去形は had to しかない。否定は意味が変わるので注意（must not＝禁止、don\'t have to＝せんでもええ）。'},
+
+ {vs:[{n:'Could you', re:/\bcould you\b/},
+      {n:'Would you', re:/\bwould you\b/},
+      {n:'Can you',   re:/\bcan you\b/},
+      {n:'Will you',  re:/\bwill you\b/}],
+  m:'依頼の丁寧さは Could you ＞ Would you ＞ Can you ＞ Will you。Could you は「できますか」と可能性を、Would you は「してもらえますか」と意向をたずねる形で、どちらも丁寧。Can / Will you は親しい相手向け。'},
+
+ {vs:[{n:'should', re:/\bshould\b/},
+      {n:'had better', re:/\b(had|would)\s+better\b|'d better\b/}],
+  m:'should は「〜した方がええよ」という助言。had better は「せんと困ったことになる」という警告で、かなり強い。目上の相手には should か You might want to を使う。'},
+
+ {vs:[{n:'can', re:/\b(can|cannot)\b(?! you)/},
+      {n:'be able to', re:/\bable to\b/}],
+  m:'能力は can が基本。be able to は can が使えん形（未来・完了形・to不定詞）で使う（will be able to）。過去の「その時1回できた」は could やなく was able to。'},
+
+ {vs:[{n:'used to', re:/(?<!\b(?:am|is|are|was|were|get|got)\s)\bused to\s+(?!being|\w+ing)/},
+      {n:'be used to', re:/\b(am|is|are|was|were|get|got)\s+used to\b/}],
+  m:'used to＋動詞の原形は「昔はよく〜した（今はせん）」。be used to＋-ing は「〜に慣れている」。形も意味も別物。'},
+
+ {vs:[{n:'say', re:/\b(say|says|said)\b/},
+      {n:'tell', re:/\b(tell|tells|told)\b/}],
+  m:'say は内容を言う動詞で、人を置くなら say to 人。tell は tell 人 ~ と人を直接置く（He told me the news／He said to me ~）。'},
+
+ {vs:[{n:'borrow', re:/\bborrow\b/},
+      {n:'lend',   re:/\blend\b/}],
+  m:'borrow は「借りる」、lend は「貸す」。Can I borrow your pen?／Can you lend me your pen?'},
+
+ {vs:[{n:'hear', re:/\b(hear|hears|heard)\b/},
+      {n:'listen to', re:/\blisten to\b/}],
+  m:'hear は自然と聞こえてくる、listen to は意識して聞く。'},
+
+ {vs:[{n:'see', re:/\b(see|sees|saw)\b/},
+      {n:'watch', re:/\b(watch|watches|watched)\b/},
+      {n:'look at', re:/\blook at\b/}],
+  m:'see は自然と目に入る、watch は動くものをじっと見続ける、look at は意識して視線を向ける。'},
+
+ {vs:[{n:'many', re:/\bmany\b/},
+      {n:'much', re:/\bmuch\b/}],
+  m:'many は数えられる名詞（many people）、much は数えられへん名詞（much time）。どちらでも使えるのは a lot of。'},
+
+ {vs:[{n:'almost', re:/\balmost\b/},
+      {n:'most of', re:/\bmost of\b/}],
+  m:'almost は「ほとんど〜しかけ」の副詞で、名詞は直接続けられへん。「ほとんどの〜」は most of the ~ / almost all of the ~。'},
+];
+
+function confusableHints(user, model){
+  if(!model) return [];
+  const u=expandContr(normalizeAns(user));
+  const ms=String(model).split('/').map(v=>expandContr(normalizeAns(v))).filter(Boolean);
+  const out=[];
+  CONFUSABLE_SETS.forEach(s=>{
+    const uHit=s.vs.filter(v=>v.re.test(u));
+    if(uHit.length!==1) return;                                  /* 使ってへん／両方使ってる */
+    const mHit=s.vs.filter(v=>ms.some(m=>v.re.test(m)));
+    if(!mHit.length) return;                                     /* 模範解答がこの組と無関係 */
+    if(mHit.some(v=>v.n===uHit[0].n)) return;                    /* 同じ方を使ってるので指摘不要 */
+    out.push({pri:1, k:'tip',
+      t:'「'+uHit[0].n+'」と「'+mHit.map(v=>v.n).join('／')+'」の違い：'+s.m});
+  });
+  return out.slice(0,1);
+}
+
 /* 指摘をまとめる。断定できるものを先に、最大3件まで */
 function buildReview(user, model, hint, opt){
   opt=opt||{};
@@ -2914,6 +2991,7 @@ function buildReview(user, model, hint, opt){
   const rp=recentlyProgHint(user); if(rp) found.push({pri:1, k:'tip', t:rp});
   const dv=doubleVerbHint(user); if(dv) found.push({pri:2, k:'tip', t:dv});
   const ag=agreementHint(user);  if(ag) found.push({pri:3, k:'err', t:ag});
+  confusableHints(user, model).forEach(h=>found.push(h));
   /* hint の使い忘れ。模範解答もhintも「/」で別解を並べることがある。
      「hintを使わない別解」も正解として用意されていることがあり、
      それを書いた人に「ポイントが使われてへん」と言うのは誤指摘。
